@@ -1,0 +1,923 @@
+/* Reset and general styles */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-size: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header Stili */
+.header-container {
+    background-color: #333;
+    color: white;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Ta?an i?eri?i gizle */
+}
+
+.player-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.player-container:hover {
+    transform: scale(1.05);
+}
+
+.player-select-btn {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.placeholder-player {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.player-icon {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden; /* ?nemli: Bu, foto?raf?n ta?mas?n? engeller */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.player-icon img {
+    width: 70%; /* Geni?lik ve y?kseklik %100 olacak */
+    height: 95%;
+    object-fit: cover; /* Resmi kare i?inde k?rpmadan optimize et */
+    object-position: center; /* Resmin ortas?n? g?ster */
+}
+
+.add-player-svg {
+    bottom: 0;
+    right: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-section {
+    display: flex;
+    height: 80px;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+}
+
+.header-content {
+    display: flex;
+    margin: 0 auto;
+    width: min(100vw - 60px, 1280px);
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    padding: 0.5rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: white;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    position: relative;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    background-color: #444;
+    border-radius: 4px;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+    width: 70%;
+}
+
+/* Footer Stili */
+footer {
+    background-color: #444;
+    color: white;
+    padding: 2rem 0;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) min(100%, 1280px) minmax(0, 1fr);
+    width: 100%;
+}
+
+.footer-content > * {
+    grid-column: 2;
+    padding: 0 1rem;
+}
+
+/* Ana Grid Yap?s? */
+main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) min(100%, 1280px) minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1rem 0;
+    flex: 1;
+}
+
+.left-sidebar, .right-sidebar {
+    min-height: 100px;
+}
+
+.left-sidebar {
+    grid-column: 1;
+}
+
+.main-content {
+    grid-column: 2;
+    padding: 0 1rem;
+}
+
+.right-sidebar {
+    grid-column: 3;
+}
+
+/* Grid Layout - 3 kolonlu ana d?zen */
+.grid-layout {
+    display: grid;
+    grid-template-columns: 308px 632px 308px;
+    gap: 1rem;
+    width: 100%;
+}
+
+@media (max-width: 1280px) {
+    .grid-layout {
+        grid-template-columns: 1fr 2fr 1fr;
+    }
+}
+
+/* Field Section - Orta kolon */
+.field-section {
+    width: 100%;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    position: relative;
+    padding: 0;
+    height: 742px; /* Sabit y?kseklik */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    grid-column: 2;
+    transition: all 0.3s ease;
+}
+
+.field {
+    background-image: url('assets/images/Football-field.png');
+    background-size: 95% 98%;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lineup-section {
+    width: 100%;
+    height: 95%; /* Sabit y?kseklik */
+    position: absolute; /* Mutlak konumland?rma */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 21px; /* ?stten bo?luk */
+}
+
+.lineup-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 s?tunlu grid layout */
+    gap: 10px;
+    height: 600px; /* Sabit y?kseklik */
+    max-width: 600px;
+    width: 100%;
+    overflow-y: auto; /* ??erik ta?arsa kayd?rma ?ubu?u ekle */
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Oyuncu kartlar? i?in daire ve i?erik stillemeleri */
+.player-div {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+}
+
+.formation-1f {
+    top: 3.4%;
+    left: 0%;
+    height: 19.2%;
+    width: 100%;
+}
+
+.formation-3fl {
+    top: 3%;
+    left: 6.5%;
+    height: 20%;
+    width: 29%;
+}
+
+.formation-3fm {
+    top: 3%;
+    left: 35.5%;
+    height: 20%;
+    width: 29%;
+}
+
+.formation-3fr {
+    top: 3%;
+    left: 64.5%;
+    height: 20%;
+    width: 29%;
+}
+
+.formation-2fl {
+    top: 3%;
+    left: 10%;
+    height: 20%;
+    width: 40%;
+}
+
+.formation-2fr {
+    top: 3%;
+    left: 50%;
+    height: 20%;
+    width: 40%;
+}
+
+.formation-3aml {
+    top: 22.6%;
+    left: -0.05%;
+    height: 19.2%;
+    width: 32.5%;
+}
+
+.formation-3amm {
+    top: 22.6%;
+    left: 33.1%;
+    height: 19.2%;
+    width: 32.5%;
+}
+
+.formation-3amr {
+    top: 22.6%;
+    left: 67.45%;
+    height: 19.2%;
+    width: 32.5%;
+}
+
+.formation-3ml {
+    top: 28.7%;
+    left: 6.5%;
+    height: 20%;
+    width: 29%;
+}
+
+.formation-3mm {
+    top: 28.7%;
+    left: 35.5%;
+    height: 20%;
+    width: 29%;
+}
+
+.formation-3mr {
+    top: 28.7%;
+    left: 64.5%;
+    height: 20%;
+    width: 29%;
+}
+
+.formation-4ll {
+    top: 28.7%;
+    left: 0%;
+    height: 20%;
+    width: 25%;
+}
+
+.formation-4ml {
+    top: 28.7%;
+    left: 25%;
+    height: 20%;
+    width: 25%;
+}
+
+.formation-4mr {
+    top: 28.7%;
+    left: 50%;
+    height: 20%;
+    width: 25%;
+}
+
+.formation-4rr {
+    top: 28.7%;
+    left: 75%;
+    height: 20%;
+    width: 25%;
+}
+
+
+.formation-2dml {
+    top: 41.9%;
+    left: 10%;
+    height: 19.2%;
+    width: 40%;
+}
+
+.formation-2dmr {
+    top: 41.9%;
+    left: 50%;
+    height: 19.2%;
+    width: 40%;
+}
+
+.formation-4dll {
+    top: 61.1%;
+    left: 0%;
+    height: 19.2%;
+    width: 25%;
+}
+
+.formation-4dml {
+    top: 61.1%;
+    left: 25%;
+    height: 19.2%;
+    width: 25%;
+}
+
+.formation-4dmr {
+    top: 61.1%;
+    left: 50%;
+    height: 19.2%;
+    width: 25%;
+}
+
+.formation-4drr {
+    top: 61.1%;
+    left: 75%;
+    height: 19.2%;
+    width: 25%;
+}
+
+.formation-gk {
+    top: 80.4%;
+    left: 0%;
+    height: 19.2%;
+    width: 100%;
+}
+
+.player-container{
+    cursor: grab;
+    opacity: 1;
+}
+
+.player-select-btn {
+    text-decoration: none;
+    outline: none;
+    border: 0;
+    background: 0;
+    cursor: pointer;
+    padding: 0;
+}
+
+.placeholder-player {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 27px;
+    align-items: center;
+}
+
+.player-icon {
+    width: 48px;
+    height: 48px;
+    background-color: #666666;
+    color: white;
+    display: flex;
+    position: relative;
+    box-sizing: content-box;
+    justify-content: center;
+    align-items: end;
+    border-radius: 50%;
+}
+
+.add-player-svg {
+    display: flex;
+    height: 32px;
+    justify-content: start;
+    flex-direction: column;
+    fill: #1a73e8;
+}
+
+/* Substitutes Section - Sol kolon */
+.substitutes-section {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-height: 550px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    grid-column: 1;
+}
+
+.substitute-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* Modal Stil Ayarlar? */
+.modal {
+    display: none; /* Ba?lang??ta gizli */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Arka plan karartma */
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.position-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Control Panel - Sa? kolon */
+.control-panel {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 1rem;
+    min-height: 550px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    grid-column: 3;
+}
+
+.tab-header {
+    display: flex;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+    border-radius: 6px 6px 0 0;
+    padding: 0 5px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    position: relative;
+    color: #666;
+    font-weight: 500;
+}
+
+.tab-btn span {
+    position: relative;
+    z-index: 2;
+    color: inherit;
+}
+
+.tab-btn.active {
+    color: #1a73e8;
+    font-weight: 600;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #1a73e8;
+    box-shadow: 0 0 4px rgba(26, 115, 232, 0.5);
+}
+
+.tab-pane {
+    display: none;
+    min-height: auto;
+    max-height: 600px;
+    width: 100%;
+    margin-top: 10px;
+    overflow-y: auto;
+}
+
+.tab-pane.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-content {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+}
+
+/* Players tab styles */
+.search-container {
+    margin-bottom: 20px;
+}
+
+#player-search {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#player-search:focus {
+    border-color: #1a73e8;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(26,115,232,0.3);
+}
+
+.player-list {
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding-right: 5px;
+    margin-top: 0;
+    flex: 1;
+}
+
+.player-list-section {
+    margin-bottom: 25px;
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.player-list-section h3 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.starting-players,
+.substitute-players {
+    list-style: none;
+    padding: 0;
+}
+
+.player-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 8px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    cursor: default;
+    transition: all 0.2s ease;
+}
+
+.player-item.empty-slot {
+    background-color: #eef1f5;
+    color: #333;
+    border: 1px solid #e0e0e0;
+}
+    
+    .tab-btn:not(.active) {
+        border: none;
+}
+
+.player-select {
+    background-color: #1a73e8;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.player-select:hover {
+    background-color: #1565c0;
+}
+
+.player-item:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.player-item.selected {
+    border: 2px solid #1a73e8;
+    background-color: #e8f0fe;
+}
+
+.player-number {
+    width: 32px;
+    height: 32px;
+    background-color: #1a73e8;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.player-name {
+    flex-grow: 1;
+    font-weight: 500;
+}
+
+.player-position {
+    display: none;
+}
+
+/* Saha ?zerindeki oyuncu daireleri - ?u an i?in gizli */
+.field-player {
+    display: none; /* Oyuncu dairelerini gizle */
+}
+
+/* Formasyon pozisyonlar? - oyuncu daireleri gizlendi?i i?in ?imdilik yok */
+
+.player-controls {
+    display: flex;
+    gap: 8px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.player-item:hover .player-controls {
+    opacity: 1;
+}
+
+.player-controls button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.player-edit {
+    background-color: #1a73e8;
+    color: white;
+}
+
+.player-edit:hover {
+    background-color: #1565c0;
+}
+
+.add-player-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.add-player-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.add-player-btn:hover {
+    background-color: #218838;
+}
+
+/* Scrollbar stillemesi */
+.player-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.player-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.player-list::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 4px;
+}
+
+.player-list::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
+/* Oyuncu bulunamad? durumu i?in stil */
+.no-results {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+}
+
+.form-group {
+    margin-bottom: 0.8rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+select, input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.save-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.share-btn {
+    background-color: #2196F3;
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .main-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+    
+    .nav-links {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-nav {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+    
+    .main-container {
+        margin-top: 120px; /* Mobil g?r?n?mde daha fazla bo?luk */
+    }
+}
