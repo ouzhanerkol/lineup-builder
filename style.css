@@ -1,4 +1,3 @@
-/* Reset and general styles */
 html, body {
     margin: 0;
     padding: 0;
@@ -23,7 +22,6 @@ body {
     min-height: 100vh;
 }
 
-/* Header Stili */
 .header-container {
     background-color: #333;
     color: white;
@@ -32,11 +30,10 @@ body {
     width: 100%;
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden; /* Ta?an i?eri?i gizle */
+    overflow: hidden;
 }
 
 .player-container {
@@ -78,7 +75,7 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    overflow: hidden; /* ?nemli: Bu, foto?raf?n ta?mas?n? engeller */
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,10 +83,10 @@ body {
 }
 
 .player-icon img {
-    width: 70%; /* Geni?lik ve y?kseklik %100 olacak */
+    width: 70%;
     height: 95%;
-    object-fit: cover; /* Resmi kare i?inde k?rpmadan optimize et */
-    object-position: center; /* Resmin ortas?n? g?ster */
+    object-fit: cover;
+    object-position: center;
 }
 
 .add-player-svg {
@@ -102,6 +99,7 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 
 .header-section {
     display: flex;
@@ -119,7 +117,6 @@ body {
     align-items: center;
     justify-content: space-between;
 }
-
 
 .logo {
     font-size: 28px;
@@ -142,7 +139,7 @@ body {
     padding: 0.5rem 1rem;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
     font-weight: 500;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     transition: all 0.3s ease;
     position: relative;
     text-decoration: none;
@@ -169,7 +166,6 @@ body {
     width: 70%;
 }
 
-/* Footer Stili */
 footer {
     background-color: #444;
     color: white;
@@ -188,7 +184,6 @@ footer {
     padding: 0 1rem;
 }
 
-/* Ana Grid Yap?s? */
 main {
     display: grid;
     grid-template-columns: minmax(0, 1fr) min(100%, 1280px) minmax(0, 1fr);
@@ -214,7 +209,6 @@ main {
     grid-column: 3;
 }
 
-/* Grid Layout - 3 kolonlu ana d?zen */
 .grid-layout {
     display: grid;
     grid-template-columns: 308px 632px 308px;
@@ -228,14 +222,14 @@ main {
     }
 }
 
-/* Field Section - Orta kolon */
+/* Field Section - Main section */
 .field-section {
     width: 100%;
     background-color: #f8f9fa;
     border-radius: 8px;
     position: relative;
     padding: 0;
-    height: 742px; /* Sabit y?kseklik */
+    height: 742px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -261,28 +255,27 @@ main {
 
 .lineup-section {
     width: 100%;
-    height: 95%; /* Sabit y?kseklik */
-    position: absolute; /* Mutlak konumland?rma */
+    height: 95%;
+    position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 21px; /* ?stten bo?luk */
+    top: 21px;
 }
 
 .lineup-list {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 s?tunlu grid layout */
+    grid-template-columns: repeat(5, 1fr);
     gap: 10px;
-    height: 600px; /* Sabit y?kseklik */
+    height: 600px;
     max-width: 600px;
     width: 100%;
-    overflow-y: auto; /* ??erik ta?arsa kayd?rma ?ubu?u ekle */
+    overflow-y: auto;
     padding: 10px;
     border-radius: 8px;
 }
 
-/* Oyuncu kartlar? i?in daire ve i?erik stillemeleri */
-.player-div {
+.field-slot {
     position: absolute;
     display: flex;
     justify-content: center;
@@ -290,191 +283,53 @@ main {
     pointer-events: auto;
 }
 
-.formation-1f {
-    top: 3.4%;
-    left: 0%;
-    height: 19.2%;
-    width: 100%;
-}
-
-.formation-3fl {
-    top: 3%;
-    left: 6.5%;
-    height: 20%;
-    width: 29%;
-}
-
-.formation-3fm {
-    top: 3%;
-    left: 35.5%;
-    height: 20%;
-    width: 29%;
-}
-
-.formation-3fr {
-    top: 3%;
-    left: 64.5%;
-    height: 20%;
-    width: 29%;
-}
-
-.formation-2fl {
-    top: 3%;
-    left: 10%;
-    height: 20%;
-    width: 40%;
-}
-
-.formation-2fr {
-    top: 3%;
-    left: 50%;
-    height: 20%;
-    width: 40%;
-}
-
-.formation-3aml {
-    top: 22.6%;
-    left: -0.05%;
-    height: 19.2%;
-    width: 32.5%;
-}
-
-.formation-3amm {
-    top: 22.6%;
-    left: 33.1%;
-    height: 19.2%;
-    width: 32.5%;
-}
-
-.formation-3amr {
-    top: 22.6%;
-    left: 67.45%;
-    height: 19.2%;
-    width: 32.5%;
-}
-
-.formation-3ml {
-    top: 28.7%;
-    left: 6.5%;
-    height: 20%;
-    width: 29%;
-}
-
-.formation-3mm {
-    top: 28.7%;
-    left: 35.5%;
-    height: 20%;
-    width: 29%;
-}
-
-.formation-3mr {
-    top: 28.7%;
-    left: 64.5%;
-    height: 20%;
-    width: 29%;
-}
-
-.formation-4ll {
-    top: 28.7%;
-    left: 0%;
-    height: 20%;
-    width: 25%;
-}
-
-.formation-4ml {
-    top: 28.7%;
-    left: 25%;
-    height: 20%;
-    width: 25%;
-}
-
-.formation-4mr {
-    top: 28.7%;
-    left: 50%;
-    height: 20%;
-    width: 25%;
-}
-
-.formation-4rr {
-    top: 28.7%;
-    left: 75%;
-    height: 20%;
-    width: 25%;
-}
-
-
-.formation-2dml {
-    top: 41.9%;
-    left: 10%;
-    height: 19.2%;
-    width: 40%;
-}
-
-.formation-2dmr {
-    top: 41.9%;
-    left: 50%;
-    height: 19.2%;
-    width: 40%;
-}
-
-.formation-4dll {
-    top: 61.1%;
-    left: 0%;
-    height: 19.2%;
-    width: 25%;
-}
-
-.formation-4dml {
-    top: 61.1%;
-    left: 25%;
-    height: 19.2%;
-    width: 25%;
-}
-
-.formation-4dmr {
-    top: 61.1%;
-    left: 50%;
-    height: 19.2%;
-    width: 25%;
-}
-
-.formation-4drr {
-    top: 61.1%;
-    left: 75%;
-    height: 19.2%;
-    width: 25%;
-}
-
-.formation-gk {
-    top: 80.4%;
-    left: 0%;
-    height: 19.2%;
-    width: 100%;
-}
-
-.player-container{
+.field-slot-content-wrapper,
+.field-player-content-wrapper,
+.field-profile-content-wrapper {
     cursor: grab;
     opacity: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.3s ease;
 }
 
-.player-select-btn {
+.field-slot-content-wrapper:hover {
+    transform: scale(1.05);
+}
+
+.field-slot-btn,
+.sub-slot-btn {
     text-decoration: none;
     outline: none;
     border: 0;
     background: 0;
     cursor: pointer;
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
-.placeholder-player {
+.field-slot-placeholder {
     display: flex;
     flex-direction: column;
     gap: 8px;
     padding-top: 27px;
     align-items: center;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    position: relative;
 }
 
-.player-icon {
+.field-slot-icon,
+.sub-slot-icon {
     width: 48px;
     height: 48px;
     background-color: #666666;
@@ -485,17 +340,54 @@ main {
     justify-content: center;
     align-items: end;
     border-radius: 50%;
+    overflow: hidden;
 }
 
-.add-player-svg {
+.field-slot-icon img {
+    width: 85%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.field-slot-add-icon {
     display: flex;
     height: 32px;
     justify-content: start;
     flex-direction: column;
     fill: #1a73e8;
+    width: 22px;
+    border-radius: 50%;
+    align-items: center;
 }
 
-/* Substitutes Section - Sol kolon */
+
+.formation-1f { top: 3.4%; left: 0; height: 19.2%; width: 100%; }
+.formation-3fl { top: 3%; left: 6.5%; height: 20%; width: 29%; }
+.formation-3fm { top: 3%; left: 35.5%; height: 20%; width: 29%; }
+.formation-3fr { top: 3%; left: 64.5%; height: 20%; width: 29%; }
+.formation-2fl { top: 3%; left: 10%; height: 20%; width: 40%; }
+.formation-2fr { top: 3%; left: 50%; height: 20%; width: 40%; }
+.formation-3aml { top: 22.6%; left: -0.05%; height: 19.2%; width: 32.5%; }
+.formation-3amm { top: 22.6%; left: 33.1%; height: 19.2%; width: 32.5%; }
+.formation-3amr { top: 22.6%; left: 67.45%; height: 19.2%; width: 32.5%; }
+.formation-3ml { top: 28.7%; left: 6.5%; height: 20%; width: 29%; }
+.formation-3mm { top: 28.7%; left: 35.5%; height: 20%; width: 29%; }
+.formation-3mr { top: 28.7%; left: 64.5%; height: 20%; width: 29%; }
+.formation-4ll { top: 28.7%; left: 0; height: 20%; width: 25%; }
+.formation-4ml { top: 28.7%; left: 25%; height: 20%; width: 25%; }
+.formation-4mr { top: 28.7%; left: 50%; height: 20%; width: 25%; }
+.formation-4rr { top: 28.7%; left: 75%; height: 20%; width: 25%; }
+.formation-2dml { top: 41.9%; left: 10%; height: 19.2%; width: 40%; }
+.formation-2dmr { top: 41.9%; left: 50%; height: 19.2%; width: 40%; }
+.formation-4dll { top: 61.1%; left: 0; height: 19.2%; width: 25%; }
+.formation-4dml { top: 61.1%; left: 25%; height: 19.2%; width: 25%; }
+.formation-4dmr { top: 61.1%; left: 50%; height: 19.2%; width: 25%; }
+.formation-4drr { top: 61.1%; left: 75%; height: 19.2%; width: 25%; }
+.formation-gk { top: 80.4%; left: 0; height: 19.2%; width: 100%; }
+
+
+/* Substitutes Section - Left section */
 .substitutes-section {
     background-color: #f5f5f5;
     border-radius: 8px;
@@ -515,22 +407,69 @@ main {
     flex: 1;
 }
 
-/* Modal Stil Ayarlar? */
+.sub-slot-content-wrapper,
+.sub-player-content-wrapper,
+.sub-profile-content-wrapper{
+    cursor: grab;
+    opacity: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.sub-slot-content-wrapper:hover {
+    transform: scale(1.05);
+}
+
+.sub-slot-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 27px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.sub-slot-icon img {
+    width: 85%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.sub-slot-add-icon {
+    display: flex;
+    height: 32px;
+    justify-content: start;
+    flex-direction: column;
+    fill: #1a73e8;
+    width: 22px;
+    border-radius: 50%;
+    align-items: center;
+}
+
+/* Modal Style Settings */
 .modal {
-    display: none; /* Ba?lang??ta gizli */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5); /* Arka plan karartma */
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-tabs {
     display: flex;
-    border-bottom: 2px solid #eee; /* Hafif alt ?izgi */
+    border-bottom: 2px solid #eee;
     margin-bottom: 15px;
 }
 
@@ -542,22 +481,20 @@ main {
     font-size: 16px;
     cursor: pointer;
     position: relative;
-    overflow: hidden; /* Animasyon i?in gerekli */
+    overflow: hidden;
     transition: color 0.3s ease;
 }
 
-/* Ortak ?izgi efekti */
 .modal-tab-btn::before {
     content: '';
     position: absolute;
     bottom: 0;
     width: 100%;
     height: 2px;
-    background-color: #007bff; /* Vurgu rengi */
+    background-color: #007bff;
     transition: transform 0.3s ease-in-out;
 }
 
-/* Oyuncular sekmesi i?in sa?dan sola dolma */
 #playersTabBtn::before {
     left: auto;
     right: 0;
@@ -570,7 +507,6 @@ main {
     transform: scaleX(1);
 }
 
-/* Profiller sekmesi i?in soldan sa?a dolma (varsay?lan) */
 #rolesTabBtn::before {
     left: 0;
     right: auto;
@@ -589,45 +525,201 @@ main {
 }
 
 .modal-tab-btn:focus {
-    outline: none; /* ?ste?e ba?l? */
+    outline: none;
 }
 
 .modal-content {
     background-color: #ffffff;
-    margin: 15% auto;
-    padding: 20px;
+    margin: 60px auto auto;
+    padding: 0;
     border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 12px;
     text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    transition: height 0.3s ease-out, max-height 0.3s ease-out;
+}
+
+.modal-content.short-content {
+    height: auto;
+    min-height: 250px;
+}
+
+.modal-content.full-content {
+    height: auto;
+    max-height: 90vh;
+}
+
+.modal-content h3 {
+    padding: 8px 0 8px;
+}
+
+.modal-header {
+    padding: 15px 20px 10px;
+    border-bottom: 1px solid #eee;
+    color: #555;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.modal-header .tab-header {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal-header .tab-btn {
+    background-color: #4a4a4a;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 0.95em;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.modal-header .tab-btn:hover {
+    background-color: #5a5a5a;
+    color: #ffffff;
+}
+
+.modal-header .tab-btn.active {
+    background-color: #4CAF50;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.modal-body-scroll-wrapper {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px 20px;
+    overflow-x: hidden;
 }
 
 .close-btn {
+    position: absolute;
+    top: 2px;
+    right: 15px;
     color: #aaa;
-    float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    transition: color 0.2s ease;
 }
 
 .close-btn:hover,
 .close-btn:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
+    color: #007bff;
 }
 
-.position-list {
+.modal-player-list,
+.modal-profile-list {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     margin-bottom: 10px;
 }
 
-/* Modal i?indeki Oyuncu arama b?l?m? */
+.modal-profile-category {
+    margin-bottom: 10px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.profile-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 18px;
+    background-color: #e8f0fe;
+    font-size: 1.08em;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    user-select: none;
+}
+
+.profile-section-header:hover {
+    background-color: #f4f4f4;
+    color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.4);
+}
+
+.profile-section-header .toggle-icon {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-left: 12px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.profile-section-header:hover .toggle-icon,
+.modal-profile-list.active-list + .profile-section-header .toggle-icon {
+    color: #007bff;
+}
+
+.modal-profile-list {
+    padding: 0 15px 10px 15px;
+}
+
+.modal-profile-list:not(.active-list) {
+    display: none;
+}
+
+.modal-player-item-btn {
+    text-decoration: none;
+    outline: none;
+    border: 0;
+    background: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 27px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.modal-player-item-icon {
+    width: 48px;
+    height: 48px;
+    background-color: #666666;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.modal-player-item-icon img {
+    width: 70%;
+    height: 95%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.modal-player-item-name {
+    flex-grow: 1;
+    font-weight: 500;
+}
+
 .search-container {
-    margin-bottom: 15px;
+    margin: 5px 31px 10px 20px;
     position: relative;
 }
 
@@ -654,19 +746,19 @@ main {
     max-height: 400px;
     overflow-y: auto;
     display: none;
-    padding: 5px 0; /* Liste g?r?n?m? i?in ?st ve alt bo?luk */
+    padding: 5px 0;
 }
 
 .search-result-item {
-    padding: 8px 10px; /* ?st/alt ve sa?/sol bo?luk */
+    padding: 8px 10px;
     cursor: pointer;
     border-bottom: 1px solid #eee;
-    display: flex; /* ??eleri yan yana s?ralamak i?in */
-    align-items: center; /* Dikeyde ortalamak i?in */
+    display: flex;
+    align-items: center;
 }
 
 .search-result-item:last-child {
-    border-bottom: none; /* Son ??enin alt ?izgisini kald?r */
+    border-bottom: none;
 }
 
 .search-result-item:hover {
@@ -687,7 +779,7 @@ main {
 }
 
 .search-result-item-info {
-    flex-grow: 1; /* Kalan alan? kapla */
+    flex-grow: 1;
     font-size: 16px;
 }
 
@@ -701,7 +793,7 @@ main {
     margin-left: 5px;
 }
 
-/* Control Panel - Sa? kolon */
+/* Control Panel - Right section */
 .control-panel {
     background-color: white;
     border-radius: 8px;
@@ -732,7 +824,7 @@ main {
     position: relative;
     color: #666;
     font-weight: 500;
-    overflow: hidden; /* Animasyon i?in gerekli */
+    overflow: hidden;
     transition: color 0.3s ease;
 }
 
@@ -765,7 +857,6 @@ main {
     transform: scaleX(1);
 }
 
-/* "Style" sekmesi i?in sa?dan sola dolma */
 .tab-btn[data-tab="style"]::before {
     left: auto;
     right: 0;
@@ -778,7 +869,6 @@ main {
     transform: scaleX(1);
 }
 
-/* "Players" sekmesi i?in soldan sa?a dolma (varsay?lan) */
 .tab-btn[data-tab="players"]::before {
     left: 0;
     right: auto;
@@ -791,16 +881,11 @@ main {
     transform: scaleX(1);
 }
 
-.tab-pane {
+.tab-panel {
     display: none;
-    min-height: auto;
-    max-height: 600px;
-    width: 100%;
-    margin-top: 10px;
-    overflow-y: auto;
 }
 
-.tab-pane.active {
+.tab-panel.active {
     display: block;
     animation: fadeIn 0.3s ease-in-out;
 }
@@ -822,11 +907,6 @@ main {
     to { opacity: 1; }
 }
 
-/* Players tab styles */
-.search-container {
-    margin-bottom: 20px;
-}
-
 #player-search {
     width: 100%;
     padding: 12px;
@@ -842,7 +922,7 @@ main {
     box-shadow: 0 1px 3px rgba(26,115,232,0.3);
 }
 
-.player-list {
+.control-player-list {
     max-height: calc(100vh - 250px);
     overflow-y: auto;
     margin-bottom: 10px;
@@ -851,7 +931,7 @@ main {
     flex: 1;
 }
 
-.player-list-section {
+.control-player-list-section {
     margin-bottom: 25px;
     background-color: #fff;
     border-radius: 6px;
@@ -859,7 +939,7 @@ main {
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.player-list-section h3 {
+.control-player-list-section h3 {
     margin-bottom: 15px;
     color: #333;
     font-size: 16px;
@@ -868,13 +948,13 @@ main {
     border-bottom: 2px solid #f0f0f0;
 }
 
-.starting-players,
-.substitute-players {
+.control-starting-players,
+.control-substitute-players {
     list-style: none;
     padding: 0;
 }
 
-.player-item {
+.control-player-item {
     display: flex;
     align-items: center;
     padding: 12px;
@@ -885,14 +965,14 @@ main {
     transition: all 0.2s ease;
 }
 
-.player-item.empty-slot {
+.control-player-item.empty-slot {
     background-color: #eef1f5;
     color: #333;
     border: 1px solid #e0e0e0;
 }
-    
-    .tab-btn:not(.active) {
-        border: none;
+
+.tab-btn:not(.active) {
+    border: none;
 }
 
 .player-select {
@@ -910,18 +990,18 @@ main {
     background-color: #1565c0;
 }
 
-.player-item:hover {
+.control-player-item:hover {
     background-color: #e9ecef;
     transform: translateY(-2px);
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.player-item.selected {
+.control-player-item.selected {
     border: 2px solid #1a73e8;
     background-color: #e8f0fe;
 }
 
-.player-number {
+.control-player-number {
     width: 32px;
     height: 32px;
     background-color: #1a73e8;
@@ -935,34 +1015,32 @@ main {
     font-size: 14px;
 }
 
-.player-name {
+.control-player-name {
     flex-grow: 1;
     font-weight: 500;
 }
 
-.player-position {
+.control-player-position {
     display: none;
 }
 
-/* Saha ?zerindeki oyuncu daireleri - ?u an i?in gizli */
 .field-player {
-    display: none; /* Oyuncu dairelerini gizle */
+    display: none;
 }
 
-/* Formasyon pozisyonlar? - oyuncu daireleri gizlendi?i i?in ?imdilik yok */
 
-.player-controls {
+.control-player-controls {
     display: flex;
     gap: 8px;
     opacity: 0.7;
     transition: opacity 0.2s;
 }
 
-.player-item:hover .player-controls {
+.control-player-item:hover .control-player-controls {
     opacity: 1;
 }
 
-.player-controls button {
+.control-player-controls button {
     padding: 6px 12px;
     border: none;
     border-radius: 4px;
@@ -971,55 +1049,33 @@ main {
     transition: background-color 0.2s;
 }
 
-.player-edit {
+.control-player-edit-btn {
     background-color: #1a73e8;
     color: white;
 }
 
-.player-edit:hover {
+.control-player-edit-btn:hover {
     background-color: #1565c0;
 }
 
-.add-player-section {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.add-player-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-}
-
-.add-player-btn:hover {
-    background-color: #218838;
-}
-
-/* Scrollbar stillemesi */
-.player-list::-webkit-scrollbar {
+.control-player-list::-webkit-scrollbar {
     width: 8px;
 }
 
-.player-list::-webkit-scrollbar-track {
+.control-player-list::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 4px;
 }
 
-.player-list::-webkit-scrollbar-thumb {
+.control-player-list::-webkit-scrollbar-thumb {
     background: #bbb;
     border-radius: 4px;
 }
 
-.player-list::-webkit-scrollbar-thumb:hover {
+.control-player-list::-webkit-scrollbar-thumb:hover {
     background: #888;
 }
 
-/* Oyuncu bulunamad? durumu i?in stil */
 .no-results {
     text-align: center;
     padding: 20px;
@@ -1073,26 +1129,20 @@ select, input {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
     }
-    
+
     .nav-links {
         gap: 1rem;
     }
 }
 
 @media (max-width: 768px) {
-    .top-nav {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-    }
-    
     .nav-links {
         flex-wrap: wrap;
         justify-content: center;
         margin-top: 0.5rem;
     }
-    
+
     .main-container {
-        margin-top: 120px; /* Mobil g?r?n?mde daha fazla bo?luk */
+        margin-top: 120px;
     }
 }

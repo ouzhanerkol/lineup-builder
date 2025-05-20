@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Kontrol paneli sekme ge?i?i (tek bir yerde tan?mland?)
     const controlPanelTabBtns = document.querySelectorAll('.tab-header .tab-btn');
     const tabPanes = document.querySelectorAll('.tab-panel');
 
@@ -8,30 +7,56 @@ document.addEventListener('DOMContentLoaded', function () {
             controlPanelTabBtns.forEach(b => b.classList.remove('active'));
             tabPanes.forEach(p => p.classList.remove('active'));
             this.classList.add('active');
-            const targetPane = document.getElementById(this.dataset.tab);
-            if (targetPane) {
-                targetPane.classList.add('active');
+            const targetPanel = document.getElementById(this.dataset.tab);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
             } else {
-                console.error("Hedef panel bulunamad?:", this.dataset.tab);
+                console.error("Target panel not found:", this.dataset.tab);
             }
         });
     });
 
-    // Formasyon se?im elementini al
+    const profileSectionHeaders = document.querySelectorAll('.profile-section-header');
+    profileSectionHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const targetList = document.getElementById(targetId);
+            const toggleIcon = this.querySelector('.toggle-icon');
+
+            if (targetList) {
+                // Show/hide list
+                targetList.classList.toggle('active-list');
+
+                // change icon
+                if (targetList.classList.contains('active-list')) {
+                    toggleIcon.textContent = '-';
+                } else {
+                    toggleIcon.textContent = '+';
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.modal-profile-category .toggle-icon').forEach(icon => {
+        if (icon.closest('.modal-profile-category')
+            .querySelector('.modal-profile-list').classList.contains('active-list')) {
+            icon.textContent = '-';
+        } else {
+            icon.textContent = '+';
+        }
+    });
+
     const formationSelect = document.getElementById("formation-select");
 
-    // Sayfa y?klendi?inde formasyonu 4-2-3-1'e ayarla (e?er farkl? bir ba?lang?? formasyonu yoksa)
     const defaultFormation = "4-2-3-1";
-    changeFormation(currentFormation, defaultFormation);
+    changeFormation(null, defaultFormation);
     currentFormation = defaultFormation;
 
-    // Formasyon se?im dropdown'?n? 4-2-3-1 olarak ayarla
     formationSelect.value = defaultFormation;
 
-    // Modal sekme olay dinleyicileri
     const playersTabBtn = document.getElementById('playersTabBtn');
     const rolesTabBtn = document.getElementById('rolesTabBtn');
-    const substitutesTabBtn = document.querySelector('.control-panel .tab-header .tab-btn[data-tab="substitutes"]'); // Yedekler sekme butonu
+    const controlPanelPlayersTabBtn = document.querySelector('.control-panel .tab-btn[data-tab="players"]');
 
     if (playersTabBtn) {
         playersTabBtn.addEventListener('click', showPlayersTab);
@@ -39,10 +64,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (rolesTabBtn) {
         rolesTabBtn.addEventListener('click', showRolesTab);
     }
-    if (substitutesTabBtn) {
-        substitutesTabBtn.addEventListener('click', () => {
-            // Yedekler sekmesine ge?ildi?inde (kontrol panelinde)
-            if (modal.style.display === "block" && document.getElementById('rolesTabBtn').classList.contains('active')) {
+    if (controlPanelPlayersTabBtn) {
+        controlPanelPlayersTabBtn.addEventListener('click', () => {
+            if (modal.style.display === "block" && rolesTabBtn.classList.contains('active')) {
                 fetchAllPlayerProfiles();
             }
         });
@@ -61,38 +85,50 @@ document.addEventListener('DOMContentLoaded', function () {
                         fetchPlayers(firstTeam.id);
                     }
                 } else {
-                    console.warn("Tak?m verisi al?namad? veya bo?.");
+                    console.warn("Team data is not found or empty.");
                 }
             });
         }
     });
 });
 
-// GLOBAL DE???KEN
+// Global variables
 let selectedFieldSlot = null;
 let searchInputListener = null;
 let isSubstituteSlotSelected = false;
 let currentFormation = "4-2-3-1";
 const modal = document.getElementById('playerModal');
 const closeModalButton = document.querySelector('.close-btn');
+const playerListSection = document.getElementById('playerListSection');
 const playerRolesSection = document.getElementById("playerRolesSection");
-const goalkeepersSection = document.querySelector(".position-list.goalkeepers");
-const defendersSection = document.querySelector(".position-list.defenders");
-const midfieldersSection = document.querySelector(".position-list.midfielders");
-const forwardsSection = document.querySelector(".position-list.forwards");
+const goalkeepersSection = document.querySelector(".modal-player-list.goalkeepers");
+const defendersSection = document.querySelector(".modal-player-list.defenders");
+const midfieldersSection = document.querySelector(".modal-player-list.midfielders");
+const forwardsSection = document.querySelector(".modal-player-list.forwards");
 const playerSearchInput = document.getElementById('playerSearchInput');
 const playerSearchResults = document.getElementById('playerSearchResults');
+const profileGoalkeepersSection = document.querySelector(".modal-profile-list.profile-goalkeepers");
+const profileCenterBacksSection = document.querySelector(".modal-profile-list.profile-center-backs");
+const profileFullBacksSection = document.querySelector(".modal-profile-list.profile-full-backs");
+const profileMidfieldersSection = document.querySelector(".modal-profile-list.profile-midfielders");
+const profileWingersSection = document.querySelector(".modal-profile-list.profile-wingers");
+const profileForwardsSection = document.querySelector(".modal-profile-list.profile-forwards");
 
 function openModal() {
-    modal.style.display = "block";
+    modal.style.display = "flex";
     playerRolesSection.style.display = "none";
-    goalkeepersSection.style.display = "grid";
-    defendersSection.style.display = "grid";
-    midfieldersSection.style.display = "grid";
-    forwardsSection.style.display = "grid";
+    playerListSection.style.display = "block";
+
+    goalkeepersSection.parentElement.style.display = "block";
+    defendersSection.parentElement.style.display = "block";
+    midfieldersSection.parentElement.style.display = "block";
+    forwardsSection.parentElement.style.display = "block";
 
     playerSearchInput.value = '';
     playerSearchResults.style.display = 'none';
+
+    document.getElementById('playersTabBtn').classList.add('active');
+    document.getElementById('rolesTabBtn').classList.remove('active');
 
     setupPlayerSearch();
 }
@@ -100,48 +136,116 @@ function openModal() {
 function closeModal() {
     modal.style.display = "none";
     selectedFieldSlot = null;
+
+    playerListSection.style.display = "none";
     playerRolesSection.style.display = "none";
-    goalkeepersSection.style.display = "none";
-    defendersSection.style.display = "none";
-    midfieldersSection.style.display = "none";
-    forwardsSection.style.display = "none";
 
-    playerSearchInput.removeEventListener('input', searchInputListener);
-    searchInputListener = null;
-}
-
-function showPlayersTab() {
-    document.getElementById('playerListSection').style.display = 'block';
-    document.getElementById('playerRolesSection').style.display = 'none';
-    document.getElementById('playersTabBtn').classList.add('active');
-    document.getElementById('rolesTabBtn').classList.remove('active');
-
-    // T?m oyuncu pozisyon listelerini g?r?n?r yap
-    goalkeepersSection.style.display = 'grid';
-    defendersSection.style.display = 'grid';
-    midfieldersSection.style.display = 'grid';
-    forwardsSection.style.display = 'grid';
-}
-
-function showRolesTab() {
-    document.getElementById('playerListSection').style.display = 'none';
-    document.getElementById('playerRolesSection').style.display = 'grid';
-    document.getElementById('playersTabBtn').classList.remove('active');
-    document.getElementById('rolesTabBtn').classList.add('active');
-
-    if (isSubstituteSlotSelected) {
-        fetchAllPlayerProfiles(); // Yedek slotundan geliyorsak t?m profilleri getir
-    } else if (selectedFieldSlot) {
-        const formationClass = Array.from(selectedFieldSlot.classList).find(cls => cls.startsWith('formation-'));
-        const positionCode = mapFormationToPositionCode(formationClass);
-        fetchPlayerProfilesByPosition(positionCode); // Saha slotundan geliyorsak pozisyona g?re filtrele
-    } else {
-        playerRolesSection.innerHTML = ""; // ?lk a??l??ta veya bilinmeyen durumda temizle
+    if (searchInputListener) {
+        playerSearchInput.removeEventListener('input', searchInputListener);
+        searchInputListener = null;
     }
 }
 
-// Modal kapatma olay dinleyicileri (tek bir yerde tan?mland?)
+function showPlayersTab() {
+    playerListSection.style.display = 'block';
+    playerRolesSection.style.display = 'none';
+    document.getElementById('playersTabBtn').classList.add('active');
+    document.getElementById('rolesTabBtn').classList.remove('active');
+
+    document.querySelectorAll('#playerListSection .modal-player-category').forEach(section => {
+        section.style.display = 'block';
+    });
+}
+
+function showRolesTab() {
+    playerListSection.style.display = 'none';
+    playerRolesSection.style.display = 'grid';
+    document.getElementById('playersTabBtn').classList.remove('active');
+    document.getElementById('rolesTabBtn').classList.add('active');
+
+    clearProfileLists();
+
+    if (isSubstituteSlotSelected) {
+        fetchAllPlayerProfiles();
+        showAllProfilePositionSections();
+    } else if (selectedFieldSlot) {
+        const formationClass = Array.from(selectedFieldSlot.classList).find(cls => cls.startsWith('formation-'));
+        const positionCode = mapFormationToPositionCode(formationClass);
+
+        hideAllProfilePositionSections();
+
+        fetchPlayerProfilesByPosition(positionCode)
+            .then(() => {
+                showProfilePositionSection(positionCode);
+            });
+    } else {
+        clearProfileLists();
+        hideAllProfilePositionSections();
+    }
+}
+
+function hideAllProfilePositionSections() {
+    document.querySelectorAll('#playerRolesSection .modal-profile-category').forEach(section => {
+        section.style.display = "none";
+    });
+
+    document.querySelectorAll('.modal-profile-list').forEach(list => {
+        list.classList.remove('active-list');
+    });
+    document.querySelectorAll('.profile-section-header .toggle-icon').forEach(icon => {
+        icon.textContent = '+';
+    });
+}
+
+function showAllProfilePositionSections() {
+    document.querySelectorAll('#playerRolesSection .modal-profile-category').forEach(section => {
+        section.style.display = "block";
+    });
+    // TODO: check this section
+    const list = section.querySelector('.modal-profile-list');
+    if (list) {
+        list.classList.add('active-list');
+    }
+
+    const toggleIcon = section.querySelector('.toggle-icon');
+    if (toggleIcon) {
+        toggleIcon.textContent = '-';
+    }
+}
+
+function showProfilePositionSection(positionCode) {
+    let sectionToShow;
+    const posCode = positionCode.toUpperCase();
+
+    if (posCode === "GK") {
+        sectionToShow = profileGoalkeepersSection.closest('.modal-profile-category');
+    } else if (posCode === "CB") {
+        sectionToShow = profileCenterBacksSection.closest('.modal-profile-category');
+    } else if (posCode === "FB") {
+        sectionToShow = profileFullBacksSection.closest('.modal-profile-category');
+    } else if (posCode === "DM" || posCode === "CM" || posCode === "AM") {
+        sectionToShow = profileMidfieldersSection.closest('.modal-profile-category');
+    } else if (posCode === "FW") {
+        sectionToShow = profileWingersSection.closest('.modal-profile-category');
+    } else if (posCode === "ST") {
+        sectionToShow = profileForwardsSection.closest('.modal-profile-category');
+    }
+
+    if (sectionToShow) {
+        sectionToShow.style.display = "block";
+        const list = sectionToShow.querySelector('.modal-profile-list');
+        if (list) {
+            list.classList.add('active-list');
+        }
+        const toggleIcon = sectionToShow.querySelector('.toggle-icon');
+        if (toggleIcon) {
+            toggleIcon.textContent = '-';
+        }
+    }
+}
+
 closeModalButton.addEventListener('click', closeModal);
+
 window.addEventListener('click', function (event) {
     if (event.target === modal) {
         closeModal();
@@ -149,31 +253,31 @@ window.addEventListener('click', function (event) {
 });
 
 function handleFieldPlayerClick(event) {
-    selectedFieldSlot = event.target.closest('.player-div');
-    isSubstituteSlotSelected = false; // Saha slotu se?ildi
+    selectedFieldSlot = event.target.closest('.field-slot');
+    isSubstituteSlotSelected = false;
     openModal();
     showPlayersTab();
 }
 
 function handleSubstitutePlayerClick(event) {
-    selectedFieldSlot = event.target.closest('.sub-player-div');
-    isSubstituteSlotSelected = true; // Yedek slotu se?ildi
+    selectedFieldSlot = event.target.closest('.sub-slot');
+    isSubstituteSlotSelected = true;
     openModal();
     showPlayersTab();
 }
 
 function setupFieldClickListeners() {
-    // Saha oyuncular? i?in olay dinleyicileri
-    const fieldPlayerButtons = document.querySelectorAll('.field-section .player-div .player-select-btn');
+    // Event listener for field players
+    const fieldPlayerButtons = document.querySelectorAll('.field-slot .field-slot-btn');
     fieldPlayerButtons.forEach(button => {
-        button.removeEventListener('click', handleFieldPlayerClick); // ?nceki dinleyicileri kald?r
+        button.removeEventListener('click', handleFieldPlayerClick);
         button.addEventListener('click', handleFieldPlayerClick);
     });
 
-    // Yedek oyuncular i?in olay dinleyicileri
-    const substituteButtons = document.querySelectorAll('.substitutes-section .sub-player-div .player-select-btn');
+    // Event listener for sub players
+    const substituteButtons = document.querySelectorAll('.sub-slot .sub-slot-btn');
     substituteButtons.forEach(button => {
-        button.removeEventListener('click', handleSubstitutePlayerClick); // ?nceki dinleyicileri kald?r
+        button.removeEventListener('click', handleSubstitutePlayerClick);
         button.addEventListener('click', handleSubstitutePlayerClick);
     });
 }
@@ -196,63 +300,83 @@ function mapFormationToPositionCode(formationClass) {
         "formation-3fr": "FW",
         "formation-3ml": "CM",
         "formation-3mm": "CM",
-        "formation-3mr": "CM"
+        "formation-3mr": "CM",
+        "formation-4ll": "FW",
+        "formation-4ml": "CM",
+        "formation-4mr": "CM",
+        "formation-4rr": "FW"
     };
-    return map[formationClass] || "CM";
+    return map[formationClass] || "UNKNOWN";
 }
 
 async function fetchPlayerProfilesByPosition(positionCode) {
     try {
         const response = await fetch(`http://localhost:8080/api/player-profiles/search/${positionCode}`);
         if (!response.ok) {
-            throw new Error("Roller y?klenemedi!");
+            throw new Error(`HTTP Error: ${response.status}`);
         }
         const profiles = await response.json();
         renderPlayerProfiles(profiles);
     } catch (error) {
-        console.error("Hata (roller):", error.message);
+        console.error("Error (roles):", error);
     }
 }
 
 async function fetchAllPlayerProfiles() {
-    console.log("fetchAllPlayerProfiles fonksiyonu ?a?r?ld?.");
     try {
-        const response = await fetch(`http://localhost:8080/api/player-profiles`); // T?m profilleri getiren endpoint
+        const response = await fetch(`http://localhost:8080/api/player-profiles`);
         if (!response.ok) {
-            throw new Error(`T?m roller y?klenemedi! HTTP Hatas?: ${response.status}`);
+            throw new Error(`HTTP error: ${response.status}`);
         }
         const profiles = await response.json();
-        console.log("Gelen profiller:", profiles);
         renderPlayerProfiles(profiles);
     } catch (error) {
-        console.error("Hata (t?m roller):", error.message);
+        console.error("Error (roles):", error);
     }
 }
 
 function renderPlayerProfiles(profiles) {
-    console.log("renderPlayerProfiles fonksiyonuna gelen profiller:", profiles);
-    playerRolesSection.innerHTML = "";
-    playerRolesSection.style.display = "grid";
+    clearProfileLists();
 
     profiles.forEach(profile => {
-        const div = document.createElement("div");
-        div.className = "player-container";
-        div.innerHTML = `
-            <button class="player-select-btn profile-btn">
-                <div class="placeholder-player">
-                    <div class="player-icon">
+        let section;
+        // TODO: check this
+        const profilePosCode = profile.positionCode.toUpperCase();
+
+        if (profilePosCode === "GK") {
+            section = profileGoalkeepersSection;
+        } else if (profilePosCode === "CB") {
+            section = profileCenterBacksSection;
+        } else if (profilePosCode === "FB") {
+            section = profileFullBacksSection;
+        } else if (profilePosCode === "DM" || profilePosCode === "CM" || profilePosCode === "AM") {
+            section = profileMidfieldersSection;
+        } else if (profilePosCode === "FW") {
+            section = profileWingersSection;
+        } else if (profilePosCode === "ST") {
+            section = profileForwardsSection;
+        }
+
+        if (section) {
+            const div = document.createElement("div");
+            div.className = "modal-player-item";
+            div.innerHTML = `
+                <button class="modal-player-item-btn profile-btn">
+                    <div class="modal-player-item-icon">
                         <img src="assets/images/player-icon.png" alt="Profile Icon" width="50" height="50">
                     </div>
-                    <div class="player-name">
+                    <div class="modal-player-item-name">
                         <span>${profile.name}</span>
                     </div>
-                </div>
-            </button>
-        `;
-        div.querySelector(".profile-btn").addEventListener("click", () => {
-            selectProfile(profile);
-        });
-        playerRolesSection.appendChild(div);
+                </button>
+            `;
+            div.querySelector(".modal-player-item-btn").addEventListener("click", () => {
+                selectProfile(profile);
+            });
+            section.appendChild(div);
+        } else {
+            console.warn(`Section is not found for profile: ${profile.name} (Position Code: ${profile.positionCode})`);
+        }
     });
 }
 
@@ -261,22 +385,21 @@ async function loadLeagues() {
         const response = await fetch("http://localhost:8080/api/leagues");
         if (!response.ok) {
             const errorText = await response.text();
-            console.error("Ligler al?n?rken HTTP hatas?:", response.status, errorText);
-            return []; // Hata durumunda bo? bir dizi d?nd?r veya hatay? yeniden f?rlat
+            console.error("HTTP error when fetching leagues:", response.status, errorText);
+            return [];
         }
         const leagues = await response.json();
         const leagueSelect = document.getElementById("league-select");
-        //leagueSelect.innerHTML = '<option value="">Ligi se?iniz</option>';
         leagues.forEach(league => {
             const option = document.createElement("option");
             option.value = league.id;
             option.textContent = league.name;
             leagueSelect.appendChild(option);
         });
-        return leagues; // Ba?ar?l? durumda ligleri d?nd?r
+        return leagues;
     } catch (error) {
-        console.error("Ligler al?n?rken a? hatas?:", error);
-        return []; // A? hatas? durumunda bo? bir dizi d?nd?r veya hatay? yeniden f?rlat
+        console.error("Error:", error);
+        return [];
     }
 }
 
@@ -285,8 +408,8 @@ async function loadTeams(leagueId) {
         const response = await fetch(`http://localhost:8080/api/teams/search/${leagueId}`);
         if (!response.ok) {
             const errorText = await response.text();
-            console.error("Tak?mlar al?n?rken HTTP hatas?:", response.status, errorText);
-            return []; // Hata durumunda bo? bir dizi d?nd?r
+            console.error("HTTP error when fetching teams:", response.status, errorText);
+            return [];
         }
         const teams = await response.json();
         const teamSelect = document.getElementById("team-select");
@@ -297,22 +420,21 @@ async function loadTeams(leagueId) {
             option.textContent = team.name;
             teamSelect.appendChild(option);
         });
-        return teams; // Ba?ar?l? durumda tak?mlar? d?nd?r
+        return teams;
     } catch (error) {
-        console.error("Tak?mlar al?n?rken a? hatas?:", error);
-        return []; // A? hatas? durumunda bo? bir dizi d?nd?r
+        console.error("Error:", error);
+        return [];
     }
 }
 
 async function fetchPlayers(teamId) {
     try {
         const response = await fetch(`http://localhost:8080/api/players/search/${teamId}`);
-        if (!response.ok) throw new Error("Oyuncular al?namad?");
+        if (!response.ok) throw new Error("Didn't fetch players");
         const players = await response.json();
-        console.log("Oyuncular:", players);
         renderPlayers(players);
     } catch (error) {
-        console.error("Hata:", error.message);
+        console.error("Error:", error.message);
     }
 }
 
@@ -323,16 +445,29 @@ function clearPlayerLists() {
     forwardsSection.innerHTML = "";
 }
 
+function clearProfileLists() {
+    profileGoalkeepersSection.innerHTML = "";
+    profileCenterBacksSection.innerHTML = "";
+    profileFullBacksSection.innerHTML = "";
+    profileMidfieldersSection.innerHTML = "";
+    profileWingersSection.innerHTML = "";
+    profileForwardsSection.innerHTML = "";
+}
+
 function selectPlayer(player) {
     if (selectedFieldSlot) {
         const content = `
-            <div class="placeholder-player">
-                <div class="player-icon">
-                    <img src="${player.photoUrl}" alt="${player.name}" width="50" height="50" loading="lazy">
-                </div>
-                <div class="player-name">
-                    <span>${player.name}</span>
-                </div>
+            <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-player-content-wrapper' : 'sub-player-content-wrapper'}">
+                <button class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-btn' : 'sub-slot-btn'}">
+                    <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-placeholder' : 'sub-slot-placeholder'}">
+                        <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-icon' : 'sub-slot-icon'}">
+                            <img src="${player.photoUrl}" alt="${player.name}" width="50" height="50" loading="lazy">
+                        </div>
+                        <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-name' : 'sub-slot-name'}">
+                            <span>${player.name}</span>
+                        </div>
+                    </div>
+                </button>
             </div>
         `;
         updateFieldSlot(content);
@@ -343,13 +478,17 @@ function selectPlayer(player) {
 function selectProfile(profile) {
     if (selectedFieldSlot) {
         const content = `
-            <div class="placeholder-player">
-                <div class="player-icon">
-                    <img src="assets/images/player-icon.png" alt="Profile Icon" width="50" height="50">
-                </div>
-                <div class="player-name">
-                    <span>${profile.name}</span>
-                </div>
+            <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-profile-content-wrapper' : 'sub-profile-content-wrapper'}">
+                <button class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-btn' : 'sub-slot-btn'}">
+                    <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-placeholder' : 'sub-slot-placeholder'}">
+                        <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-icon' : 'sub-slot-icon'}">
+                            <img src="assets/images/player-icon.png" alt="Profile Icon" width="50" height="50">
+                        </div>
+                        <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-name' : 'sub-slot-name'}">
+                            <span>${profile.name}</span>
+                        </div>
+                    </div>
+                </button>
             </div>
         `;
         updateFieldSlot(content);
@@ -369,20 +508,18 @@ function renderPlayers(players) {
 
         if (section) {
             const container = document.createElement("div");
-            container.className = "player-container";
+            container.className = "modal-player-item";
             container.innerHTML = `
-                <button class="player-select-btn player-item-btn">
-                    <div class="placeholder-player">
-                        <div class="player-icon">
-                            <img src="${player.photoUrl}" alt="${player.name}" width="50" height="50" loading="lazy">
-                        </div>
-                        <div class="player-name">
-                            <span>${player.name}</span>
-                        </div>
+                <button class="modal-player-item-btn player-item-btn">
+                    <div class="modal-player-item-icon">
+                        <img src="${player.photoUrl}" alt="${player.name}" width="50" height="50" loading="lazy">
+                    </div>
+                    <div class="modal-player-item-name">
+                        <span>${player.name}</span>
                     </div>
                 </button>
             `;
-            container.querySelector(".player-item-btn").addEventListener("click", () => {
+            container.querySelector(".modal-player-item-btn").addEventListener("click", () => {
                 selectPlayer(player);
             });
             section.appendChild(container);
@@ -393,15 +530,20 @@ function renderPlayers(players) {
 function updateFieldSlot(content) {
     if (selectedFieldSlot) {
         selectedFieldSlot.innerHTML = content;
-        selectedFieldSlot.onclick = function () {
-            selectedFieldSlot = this;
-            openModal();
-            showPlayersTab(); // Varsay?lan olarak oyuncular sekmesini a?
-        };
+        const newButton = selectedFieldSlot.querySelector('.field-slot-btn, .sub-slot-btn');
+        if (newButton) {
+            newButton.removeEventListener('click', handleFieldPlayerClick);
+            newButton.removeEventListener('click', handleSubstitutePlayerClick);
+
+            if (selectedFieldSlot.classList.contains('field-slot')) {
+                newButton.addEventListener('click', handleFieldPlayerClick);
+            } else if (selectedFieldSlot.classList.contains('sub-slot')) {
+                newButton.addEventListener('click', handleSubstitutePlayerClick);
+            }
+        }
     }
 }
 
-// Arama terimini al ve backend'e istek g?nder
 async function fetchSearchResults(searchTerm) {
     try {
         const response = await fetch(`http://localhost:8080/api/players/search?query=${searchTerm}`);
@@ -410,12 +552,11 @@ async function fetchSearchResults(searchTerm) {
         }
         return await response.json();
     } catch (error) {
-        console.error("Arama s?ras?nda hata:", error);
-        return null; // Hata durumunda null veya bo? bir dizi d?nd?r?lebilir
+        console.error("Error when fetching search result:", error);
+        return null;
     }
 }
 
-// Arama sonu?lar?n? ekranda g?ster
 function displaySearchResults(results) {
     playerSearchResults.innerHTML = '';
     playerSearchResults.style.display = 'none';
@@ -426,10 +567,15 @@ function displaySearchResults(results) {
             const resultItem = createSearchResultItem(player);
             playerSearchResults.appendChild(resultItem);
         });
+    } else {
+        const noResultsDiv = document.createElement('div');
+        noResultsDiv.classList.add('no-results');
+        noResultsDiv.textContent = 'Did not find player.';
+        playerSearchResults.appendChild(noResultsDiv);
+        playerSearchResults.style.display = 'block';
     }
 }
 
-// Bir arama sonucu ??esi olu?tur
 function createSearchResultItem(player) {
     const resultItem = document.createElement('div');
     resultItem.classList.add('search-result-item');
@@ -466,6 +612,10 @@ function createSearchResultItem(player) {
 }
 
 function setupPlayerSearch() {
+    if (searchInputListener) {
+        playerSearchInput.removeEventListener('input', searchInputListener);
+    }
+
     searchInputListener = function () {
         const searchTerm = this.value.toLowerCase().trim();
         playerSearchResults.innerHTML = '';
@@ -482,14 +632,6 @@ function setupPlayerSearch() {
     };
     playerSearchInput.addEventListener('input', searchInputListener);
 }
-
-document.getElementById("rolesTabBtn").addEventListener("click", () => {
-    goalkeepersSection.style.display = "none";
-    defendersSection.style.display = "none";
-    midfieldersSection.style.display = "none";
-    forwardsSection.style.display = "none";
-    playerRolesSection.style.display = "grid";
-});
 
 document.getElementById("formation-select").addEventListener("change", function () {
     const newFormation = this.value;
@@ -516,22 +658,31 @@ const formations = {
 };
 
 function changeFormation(fromFormation, toFormation) {
-    const fromClasses = formations[fromFormation];
+    const fromClasses = fromFormation ? formations[fromFormation] : [];
     const toClasses = formations[toFormation];
 
-    if (!fromClasses || !toClasses || fromClasses.length !== toClasses.length) {
-        console.error("Formasyon d?n???m? hatal?.");
+    if (!toClasses) {
+        console.error("Not find formation:", toFormation);
         return;
     }
 
-    fromClasses.forEach((fromClass, index) => {
-        const playerDiv = document.querySelector(`.player-div.${fromClass}`);
-        if (playerDiv) {
-            playerDiv.classList.remove(fromClass);
-            playerDiv.classList.add(toClasses[index]);
-        }
-    });
-    setupFieldClickListeners(); // Formasyon de?i?ince olay dinleyicilerini yeniden ayarla
+    if (fromClasses.length > 0) {
+        fromClasses.forEach((fromClass, index) => {
+            const playerDiv = document.querySelector(`.field-slot.${fromClass}`);
+            if (playerDiv) {
+                playerDiv.classList.remove(fromClass);
+                playerDiv.classList.add(toClasses[index]);
+            }
+        });
+    } else {
+        toClasses.forEach((toClass, index) => {
+            const playerDiv = document.querySelectorAll('.field-slot')[index];
+            if (playerDiv) {
+                playerDiv.classList.add(toClass);
+            }
+        });
+    }
+    setupFieldClickListeners();
 }
 
 document.getElementById("league-select").addEventListener("change", function () {
@@ -539,7 +690,7 @@ document.getElementById("league-select").addEventListener("change", function () 
     if (leagueId) {
         loadTeams(leagueId);
     } else {
-        document.getElementById("team-select").innerHTML = '<option value="">Tak?m? se?iniz</option>';
+        document.getElementById("team-select").innerHTML = '';
         clearPlayerLists();
     }
 });
