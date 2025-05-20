@@ -528,6 +528,70 @@ main {
     background-color: rgba(0, 0, 0, 0.5); /* Arka plan karartma */
 }
 
+.modal-tabs {
+    display: flex;
+    border-bottom: 2px solid #eee; /* Hafif alt ?izgi */
+    margin-bottom: 15px;
+}
+
+.modal-tab-btn {
+    background: none;
+    color: #555;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden; /* Animasyon i?in gerekli */
+    transition: color 0.3s ease;
+}
+
+/* Ortak ?izgi efekti */
+.modal-tab-btn::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #007bff; /* Vurgu rengi */
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Oyuncular sekmesi i?in sa?dan sola dolma */
+#playersTabBtn::before {
+    left: auto;
+    right: 0;
+    transform-origin: bottom right;
+    transform: scaleX(0);
+}
+
+#playersTabBtn:hover::before,
+#playersTabBtn.active::before {
+    transform: scaleX(1);
+}
+
+/* Profiller sekmesi i?in soldan sa?a dolma (varsay?lan) */
+#rolesTabBtn::before {
+    left: 0;
+    right: auto;
+    transform-origin: bottom left;
+    transform: scaleX(0);
+}
+
+#rolesTabBtn:hover::before,
+#rolesTabBtn.active::before {
+    transform: scaleX(1);
+}
+
+.modal-tab-btn:hover,
+.modal-tab-btn.active {
+    color: #007bff;
+}
+
+.modal-tab-btn:focus {
+    outline: none; /* ?ste?e ba?l? */
+}
+
 .modal-content {
     background-color: #ffffff;
     margin: 15% auto;
@@ -561,6 +625,82 @@ main {
     margin-bottom: 10px;
 }
 
+/* Modal i?indeki Oyuncu arama b?l?m? */
+.search-container {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+#playerSearchInput {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#playerSearchResults {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+    padding: 5px 0; /* Liste g?r?n?m? i?in ?st ve alt bo?luk */
+}
+
+.search-result-item {
+    padding: 8px 10px; /* ?st/alt ve sa?/sol bo?luk */
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    display: flex; /* ??eleri yan yana s?ralamak i?in */
+    align-items: center; /* Dikeyde ortalamak i?in */
+}
+
+.search-result-item:last-child {
+    border-bottom: none; /* Son ??enin alt ?izgisini kald?r */
+}
+
+.search-result-item:hover {
+    background-color: #f9f9f9;
+}
+
+.search-result-item-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.search-result-item-icon img {
+    width: 85%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.search-result-item-info {
+    flex-grow: 1; /* Kalan alan? kapla */
+    font-size: 16px;
+}
+
+.search-result-item-info .player-name {
+    font-weight: bold;
+}
+
+.search-result-item-info .player-position {
+    color: #777;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
 /* Control Panel - Sa? kolon */
 .control-panel {
     background-color: white;
@@ -592,6 +732,8 @@ main {
     position: relative;
     color: #666;
     font-weight: 500;
+    overflow: hidden; /* Animasyon i?in gerekli */
+    transition: color 0.3s ease;
 }
 
 .tab-btn span {
@@ -600,12 +742,7 @@ main {
     color: inherit;
 }
 
-.tab-btn.active {
-    color: #1a73e8;
-    font-weight: 600;
-}
-
-.tab-btn.active::after {
+.tab-btn::before {
     content: '';
     position: absolute;
     bottom: -2px;
@@ -613,7 +750,45 @@ main {
     width: 100%;
     height: 3px;
     background-color: #1a73e8;
-    box-shadow: 0 0 4px rgba(26, 115, 232, 0.5);
+    transform: scaleX(0);
+    transform-origin: bottom left;
+    transition: transform 0.3s ease-in-out;
+}
+
+.tab-btn:hover,
+.tab-btn.active {
+    color: #1a73e8;
+}
+
+.tab-btn:hover::before,
+.tab-btn.active::before {
+    transform: scaleX(1);
+}
+
+/* "Style" sekmesi i?in sa?dan sola dolma */
+.tab-btn[data-tab="style"]::before {
+    left: auto;
+    right: 0;
+    transform-origin: bottom right;
+    transform: scaleX(0);
+}
+
+.tab-btn[data-tab="style"]:hover::before,
+.tab-btn[data-tab="style"].active::before {
+    transform: scaleX(1);
+}
+
+/* "Players" sekmesi i?in soldan sa?a dolma (varsay?lan) */
+.tab-btn[data-tab="players"]::before {
+    left: 0;
+    right: auto;
+    transform-origin: bottom left;
+    transform: scaleX(0);
+}
+
+.tab-btn[data-tab="players"]:hover::before,
+.tab-btn[data-tab="players"].active::before {
+    transform: scaleX(1);
 }
 
 .tab-pane {
