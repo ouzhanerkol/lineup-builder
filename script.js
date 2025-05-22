@@ -68,14 +68,19 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    const defaultFormation = "4-2-3-1";
-    applyFormation(defaultFormation);
-    currentFormation = defaultFormation;
+    populateFormationSelect();
+
+    setupDragAndDropListeners();
+
     if (formationSelect) {
+        const defaultFormation = Object.keys(FORMATION_SLOTS)[0] || '4-2-3-1';
         formationSelect.value = defaultFormation;
+        applyFormation(formationSelect.value);
         formationSelect.addEventListener('change', (event) => {
             applyFormation(event.target.value);
         });
+    } else {
+        applyFormation('4-2-3-1');
     }
 
     loadLeagues().then(leagues => {
@@ -96,7 +101,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    setupDragAndDropListeners();
 });
 
 // Global variables
@@ -557,7 +561,6 @@ function setupPlayerSearch() {
 
 document.getElementById("formation-select").addEventListener("change", function () {
     const newFormation = this.value;
-    changeFormation(currentFormation, newFormation);
     currentFormation = newFormation;
 });
 
@@ -569,20 +572,70 @@ const FORMATION_SLOTS = {
         'position-4-1', 'position-4-3', 'position-4-5',
         'position-5-3'
     ],
+    '4-3-2-1': [
+        'position-gk',
+        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
+        'position-2-3',
+        'position-3-2', 'position-3-4',
+        'position-4-2', 'position-4-4',
+        'position-5-3'
+    ],
+    '4-3-3': [
+        'position-gk',
+        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
+        'position-2-3',
+        'position-3-2', 'position-3-4',
+        'position-4-1', 'position-4-5',
+        'position-5-3'
+    ],
     '4-4-2': [
         'position-gk',
         'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
         'position-3-1', 'position-3-2', 'position-3-4', 'position-3-5',
         'position-5-2', 'position-5-4'
     ],
+    '4-2-2-2': [
+        'position-gk',
+        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
+        'position-2-2', 'position-2-4',
+        'position-4-2', 'position-4-4',
+        'position-5-2', 'position-5-4'
+    ],
+    '4-2-4': [
+        'position-gk',
+        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
+        'position-2-2', 'position-2-4',
+        'position-4-1', 'position-4-5',
+        'position-5-2', 'position-5-4'
+    ],
     '5-3-2': [
         'position-gk',
         'position-1-1', 'position-1-2', 'position-1-3', 'position-1-4', 'position-1-5',
         'position-2-3',
-        'position-4-2', 'position-4-4',
+        'position-3-2', 'position-3-4',
         'position-5-2', 'position-5-4'
+    ],
+    '3-4-1-2': [
+        'position-gk',
+        'position-1-2', 'position-1-3', 'position-1-4',
+        'position-2-1', 'position-2-2', 'position-2-4', 'position-2-5',
+        'position-4-3',
+        'position-5-2', 'position-5-4'
+    ],
+    '3-4-3': [
+        'position-gk',
+        'position-1-2', 'position-1-3', 'position-1-4',
+        'position-2-1', 'position-2-2', 'position-2-4', 'position-2-5',
+        'position-4-1', 'position-4-5',
+        'position-5-3'
+    ],
+    '3-4-2-1': [
+        'position-gk',
+        'position-1-2', 'position-1-3', 'position-1-4',
+        'position-2-1', 'position-2-2', 'position-2-4', 'position-2-5',
+        'position-4-2', 'position-4-4',
+        'position-5-3'
     ]
-    // ... Other formations will add here ...
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -721,6 +774,24 @@ function handleDragEnd(event) {
     if (draggedElement) {
         draggedElement.style.opacity = '1';
         draggedElement = null;
+    }
+}
+
+function populateFormationSelect() {
+    if (!formationSelect) {
+        console.error("Formation select element not found!");
+        return;
+    }
+
+    formationSelect.innerHTML = '';
+
+    for (const formationName in FORMATION_SLOTS) {
+        if (FORMATION_SLOTS.hasOwnProperty(formationName)) {
+            const option = document.createElement('option');
+            option.value = formationName;
+            option.textContent = formationName;
+            formationSelect.appendChild(option);
+        }
     }
 }
 
