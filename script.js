@@ -73,8 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setupDragAndDropListeners();
 
     if (formationSelect) {
-        const defaultFormation = Object.keys(FORMATION_SLOTS)[0] || '4-2-3-1';
-        formationSelect.value = defaultFormation;
+        formationSelect.value = Object.keys(FORMATION_SLOTS)[0] || '4-2-3-1';
         applyFormation(formationSelect.value);
         formationSelect.addEventListener('change', (event) => {
             applyFormation(event.target.value);
@@ -82,6 +81,8 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         applyFormation('4-2-3-1');
     }
+
+    updateMiddleSlotLayouts();
 
     loadLeagues().then(leagues => {
         const firstLeague = leagues[0];
@@ -123,10 +124,8 @@ const profileFullBacksSection = document.querySelector(".modal-profile-list.prof
 const profileMidfieldersSection = document.querySelector(".modal-profile-list.profile-midfielders");
 const profileWingersSection = document.querySelector(".modal-profile-list.profile-wingers");
 const profileForwardsSection = document.querySelector(".modal-profile-list.profile-forwards");
-const pitchContainer = document.getElementById('pitch-container');
 const formationSelect = document.getElementById('formation-select');
 const allPositionSlots = document.querySelectorAll('.position-slot');
-const goalkeeperSlot = document.getElementById('position-gk');
 let draggedElement = null;
 
 function openModal() {
@@ -304,6 +303,14 @@ async function fetchAllPlayerProfiles() {
     }
 }
 
+function selectProfile(profile) {
+    console.log("selectProfile called :", selectedSlotForModal ? selectedSlotForModal.id : 'Yok');
+    if (selectedSlotForModal) {
+        updateSlotContent(selectedSlotForModal, profile.id, profile.name, "assets/images/player-icon.png", 'profile');
+        closeModal();
+    }
+}
+
 function renderPlayerProfiles(profiles) {
     clearProfileLists();
 
@@ -431,14 +438,6 @@ function selectPlayer(player) {
     }
 }
 
-function selectProfile(profile) {
-    console.log("selectProfile called :", selectedSlotForModal ? selectedSlotForModal.id : 'Yok');
-    if (selectedSlotForModal) {
-        updateSlotContent(selectedSlotForModal, profile.id, profile.name, "assets/images/player-icon.png", 'profile');
-        closeModal();
-    }
-}
-
 function renderPlayers(players) {
     clearPlayerLists();
     players.forEach(player => {
@@ -560,9 +559,17 @@ function setupPlayerSearch() {
 }
 
 document.getElementById("formation-select").addEventListener("change", function () {
-    const newFormation = this.value;
-    currentFormation = newFormation;
+    currentFormation = this.value;
 });
+
+const ZONE_SLOT_MAP = {
+    'goalkeeper-zone': ['position-gk'],
+    'zone-row-1': ['position-1-1', 'position-1-2', 'position-1-3', 'position-1-4', 'position-1-5'],
+    'zone-row-2': ['position-2-1', 'position-2-2', 'position-2-3', 'position-2-4', 'position-2-5'],
+    'zone-row-3': ['position-3-1', 'position-3-2', 'position-3-3', 'position-3-4', 'position-3-5'],
+    'zone-row-4': ['position-4-1', 'position-4-2', 'position-4-3', 'position-4-4', 'position-4-5'],
+    'zone-row-5': ['position-5-1', 'position-5-2', 'position-5-3', 'position-5-4', 'position-5-5']
+};
 
 const FORMATION_SLOTS = {
     '4-2-3-1': [
@@ -650,6 +657,223 @@ document.addEventListener('DOMContentLoaded', () => {
         applyFormation('4-2-3-1');
     }
 });
+
+function applyFormation(formationName) {
+    const formationSlotsToFill = FORMATION_SLOTS[formationName];
+
+    allPositionSlots.forEach(slot => {
+        const slotId = slot.id;
+        const hasContent = slot.querySelector('.player-content-wrapper, .profile-content-wrapper');
+
+        if (formationSlotsToFill.includes(slotId)) {
+            if (!hasContent) {
+                updateSlotContent(slot, null, null, null, 'placeholder');
+            }
+        } else {
+            slot.innerHTML = '';
+            slot.classList.remove('has-content');
+
+        }
+    });
+
+    updateSlotClickListeners();
+    updateDraggableElements();
+    updateMiddleSlotLayouts();
+}
+
+function populateFormationSelect() {
+    if (!formationSelect) {
+        console.error("Formation select element not found!");
+        return;
+    }
+
+    formationSelect.innerHTML = '';
+
+    for (const formationName in FORMATION_SLOTS) {
+        if (FORMATION_SLOTS.hasOwnProperty(formationName)) {
+            const option = document.createElement('option');
+            option.value = formationName;
+            option.textContent = formationName;
+            formationSelect.appendChild(option);
+        }
+    }
+}
+
+function updateMiddleSlotLayouts() {
+    for (const zoneId in ZONE_SLOT_MAP) {
+        if (!ZONE_SLOT_MAP.hasOwnProperty(zoneId) || zoneId === 'goalkeeper-zone') {
+            continue;
+        }
+
+        const pitchZone = document.getElementById(zoneId);
+        if (!pitchZone) {
+            console.warn(`Pitch zone not found: ${zoneId}`);
+            continue;
+        }
+
+        const middleSlotId = `${zoneId.replace('zone-row-', 'position-')}-3`;
+        const middleSlot = document.getElementById(middleSlotId);
+
+        if (!middleSlot) {
+            console.warn(`Middle slot not found for zone: ${zoneId}`);
+            continue;
+        }
+
+        const isMiddleSlotFull = middleSlot.classList.contains('has-content');
+
+        if (!isMiddleSlotFull) {
+            middleSlot.classList.add('is-middle-empty');
+            middleSlot.classList.remove('is-middle-full');
+            pitchZone.classList.add('middle-slot-empty');
+        } else {
+            middleSlot.classList.remove('is-middle-empty');
+            middleSlot.classList.add('is-middle-full');
+            pitchZone.classList.remove('middle-slot-empty');
+        }
+    }
+}
+
+function updateSlotContent(slotElement, id, name, icon, type) {
+    slotElement.innerHTML = '';
+
+    const isFieldSlot = slotElement.classList.contains('position-slot');
+    const isSubSlot = slotElement.classList.contains('sub-slot');
+
+    if (!isFieldSlot && !isSubSlot) {
+        console.error("Slot element is not a field slot or a sub slot:", slotElement);
+        return;
+    }
+
+    let innerHTMLContent = '';
+
+    if (id && name && icon && (type === 'player' || type === 'profile')) {
+        const actualIcon = (type === 'player' && icon) ? icon : "assets/images/player-icon.png";
+
+        const dataAttrId = `data-${type}-id="${id}"`;
+        const dataAttrName = `data-${type}-name="${name}"`;
+        const dataAttrIcon = `data-${type}-icon="${actualIcon}"`;
+        const dataAttrType = `data-item-type="${type}"`;
+
+        let contentWrapperClass, buttonClass, iconClass, nameClass;
+
+        if (isFieldSlot) {
+            contentWrapperClass = type === 'player' ? 'field-player-wrapper' : 'field-profile-wrapper';
+            buttonClass = 'field-slot-btn';
+            iconClass = 'field-slot-icon';
+            nameClass = 'field-slot-name';
+        } else if (isSubSlot) {
+            contentWrapperClass = type === 'player' ? 'sub-player-wrapper' : 'sub-profile-wrapper';
+            buttonClass = 'sub-slot-btn';
+            iconClass = 'sub-slot-icon';
+            nameClass = 'sub-slot-name';
+        }
+
+        innerHTMLContent = `
+            <div class="${contentWrapperClass}" ${dataAttrId} ${dataAttrName} ${dataAttrIcon} ${dataAttrType} draggable="true">
+                <button class="${buttonClass}">
+                    <div class="slot-content-inner">
+                        <div class="${iconClass}">
+                            <img src="${actualIcon}" alt="${name}" loading="lazy">
+                        </div>
+                        <div class="${nameClass}">
+                            <span>${name}</span>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        `;
+
+        slotElement.classList.add('has-content');
+        slotElement.innerHTML = innerHTMLContent;
+
+        const newButton = slotElement.querySelector(`.${buttonClass}`);
+        if (newButton) {
+            newButton.addEventListener('click', handleSlotClick);
+        }
+    } else if (type === 'placeholder') {
+        const uniqueClipId = `clip${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+        let placeholderButtonClass, placeholderContentInnerClass, placeholderIconClass, placeholderAddIconWrapperClass;
+
+        if (isFieldSlot) {
+            placeholderButtonClass = 'field-slot-btn';
+            placeholderContentInnerClass = 'field-slot-placeholder-content';
+            placeholderIconClass = 'field-slot-icon';
+            placeholderAddIconWrapperClass = 'field-slot-add-icon-wrapper';
+        } else if (isSubSlot) {
+            placeholderButtonClass = 'sub-slot-btn';
+            placeholderContentInnerClass = 'sub-slot-placeholder-content';
+            placeholderIconClass = 'sub-slot-icon';
+            placeholderAddIconWrapperClass = 'sub-slot-add-icon-wrapper';
+        }
+
+        innerHTMLContent = `
+            <div class="${isSubSlot ? 'sub-slot-placeholder' : 'field-slot-placeholder'}" draggable="true">
+                <button class="${placeholderButtonClass}">
+                    <div class="${placeholderContentInnerClass}">
+                        <div class="${placeholderIconClass}">
+                            <img src="assets/images/player-icon.png" alt="Add Player Icon" loading="lazy">
+                        </div>
+                        <div class="${placeholderAddIconWrapperClass}">
+                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#${uniqueClipId})">
+                                    <path d="M11 22C16.5228 22 22 16.5228 22 11C22 5.47715 16.5228 0 11 0C5.47715 0 0 5.47715 0 11C0 16.5228 5.47715 22 11 22Z"
+                                          fill="#000000"/>
+                                    <path d="M17 11H5M11 5V17" stroke="white" stroke-width="2"
+                                          stroke-linecap="round"/>
+                                </g>
+                                <defs>
+                                    <clipPath id="${uniqueClipId}">
+                                        <rect width="22" height="22" fill="white"/>
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        `;
+
+        slotElement.classList.add('has-content');
+        slotElement.innerHTML = innerHTMLContent;
+
+        const newButton = slotElement.querySelector(`.${placeholderButtonClass}`);
+        if (newButton) {
+            newButton.addEventListener('click', handleSlotClick);
+        }
+    } else {
+        slotElement.innerHTML = '';
+        slotElement.classList.remove('has-content');
+    }
+    updateDraggableElements();
+    updateMiddleSlotLayouts();
+}
+
+function handleSlotClick(event) {
+    const clickedSlot = event.target.closest('.position-slot, .sub-slot');
+
+    if (clickedSlot) {
+        selectedSlotForModal = clickedSlot;
+        isSubstituteSlotSelected = clickedSlot.classList.contains('sub-slot');
+        openModal();
+        console.log(`Slot clicked: ${clickedSlot.id || clickedSlot.className}. Is substitute: ${isSubstituteSlotSelected}`);
+    }
+}
+
+function updateSlotClickListeners() {
+    const fieldSlotButtons = document.querySelectorAll('.position-slot .field-slot-btn');
+    fieldSlotButtons.forEach(button => {
+        button.removeEventListener('click', handleSlotClick);
+        button.addEventListener('click', handleSlotClick);
+    });
+
+    const subSlotButtons = document.querySelectorAll('.sub-slot .sub-slot-btn');
+    subSlotButtons.forEach(button => {
+        button.removeEventListener('click', handleSlotClick);
+        button.addEventListener('click', handleSlotClick);
+    });
+}
 
 function setupDragAndDropListeners() {
     allPositionSlots.forEach(slot => {
@@ -768,194 +992,14 @@ async function handleDrop(event) {
     updateDraggableElements();
     if (draggedElement) draggedElement.style.opacity = '1';
     draggedElement = null;
+    updateMiddleSlotLayouts();
 }
 
-function handleDragEnd(event) {
+function handleDragEnd() {
     if (draggedElement) {
         draggedElement.style.opacity = '1';
         draggedElement = null;
     }
-}
-
-function populateFormationSelect() {
-    if (!formationSelect) {
-        console.error("Formation select element not found!");
-        return;
-    }
-
-    formationSelect.innerHTML = '';
-
-    for (const formationName in FORMATION_SLOTS) {
-        if (FORMATION_SLOTS.hasOwnProperty(formationName)) {
-            const option = document.createElement('option');
-            option.value = formationName;
-            option.textContent = formationName;
-            formationSelect.appendChild(option);
-        }
-    }
-}
-
-function applyFormation(formationName) {
-    const formationSlotsToFill = FORMATION_SLOTS[formationName];
-
-    allPositionSlots.forEach(slot => {
-        const slotId = slot.id;
-        const hasContent = slot.querySelector('.player-content-wrapper, .profile-content-wrapper');
-
-        if (formationSlotsToFill.includes(slotId)) {
-            if (!hasContent) {
-                updateSlotContent(slot, null, null, null, 'placeholder');
-            }
-        } else {
-            slot.innerHTML = '';
-            slot.classList.remove('has-content');
-
-        }
-    });
-
-    updateSlotClickListeners();
-    updateDraggableElements();
-}
-
-function updateSlotContent(slotElement, id, name, icon, type) {
-    slotElement.innerHTML = '';
-
-    const isFieldSlot = slotElement.classList.contains('position-slot');
-    const isSubSlot = slotElement.classList.contains('sub-slot');
-
-    if (!isFieldSlot && !isSubSlot) {
-        console.error("Slot element is not a field slot or a sub slot:", slotElement);
-        return;
-    }
-
-    let innerHTMLContent = '';
-
-    if (id && name && icon && (type === 'player' || type === 'profile')) {
-        const actualIcon = (type === 'player' && icon) ? icon : "assets/images/player-icon.png";
-
-        const dataAttrId = `data-${type}-id="${id}"`;
-        const dataAttrName = `data-${type}-name="${name}"`;
-        const dataAttrIcon = `data-${type}-icon="${actualIcon}"`;
-        const dataAttrType = `data-item-type="${type}"`;
-
-        let contentWrapperClass, buttonClass, iconClass, nameClass;
-
-        if (isFieldSlot) {
-            contentWrapperClass = type === 'player' ? 'field-player-wrapper' : 'field-profile-wrapper';
-            buttonClass = 'field-slot-btn';
-            iconClass = 'field-slot-icon';
-            nameClass = 'field-slot-name';
-        } else if (isSubSlot) {
-            contentWrapperClass = type === 'player' ? 'sub-player-wrapper' : 'sub-profile-wrapper';
-            buttonClass = 'sub-slot-btn';
-            iconClass = 'sub-slot-icon';
-            nameClass = 'sub-slot-name';
-        }
-
-        innerHTMLContent = `
-            <div class="${contentWrapperClass}" ${dataAttrId} ${dataAttrName} ${dataAttrIcon} ${dataAttrType} draggable="true">
-                <button class="${buttonClass}">
-                    <div class="slot-content-inner">
-                        <div class="${iconClass}">
-                            <img src="${actualIcon}" alt="${name}" loading="lazy">
-                        </div>
-                        <div class="${nameClass}">
-                            <span>${name}</span>
-                        </div>
-                    </div>
-                </button>
-            </div>
-        `;
-
-        slotElement.classList.add('has-content');
-        slotElement.innerHTML = innerHTMLContent;
-
-        const newButton = slotElement.querySelector(`.${buttonClass}`);
-        if (newButton) {
-            newButton.addEventListener('click', handleSlotClick);
-        }
-    } else if (type === 'placeholder') {
-        const uniqueClipId = `clip${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-        let placeholderButtonClass, placeholderContentInnerClass, placeholderIconClass, placeholderAddIconWrapperClass;
-
-        if (isFieldSlot) {
-            placeholderButtonClass = 'field-slot-btn';
-            placeholderContentInnerClass = 'field-slot-placeholder-content';
-            placeholderIconClass = 'field-slot-icon';
-            placeholderAddIconWrapperClass = 'field-slot-add-icon-wrapper';
-        } else if (isSubSlot) {
-            placeholderButtonClass = 'sub-slot-btn';
-            placeholderContentInnerClass = 'sub-slot-placeholder-content';
-            placeholderIconClass = 'sub-slot-icon';
-            placeholderAddIconWrapperClass = 'sub-slot-add-icon-wrapper';
-        }
-
-        innerHTMLContent = `
-            <div class="${isSubSlot ? 'sub-slot-placeholder' : 'field-slot-placeholder'}" draggable="true">
-                <button class="${placeholderButtonClass}">
-                    <div class="${placeholderContentInnerClass}">
-                        <div class="${placeholderIconClass}">
-                            <img src="assets/images/player-icon.png" alt="Add Player Icon" loading="lazy">
-                        </div>
-                        <div class="${placeholderAddIconWrapperClass}">
-                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#${uniqueClipId})">
-                                    <path d="M11 22C16.5228 22 22 16.5228 22 11C22 5.47715 16.5228 0 11 0C5.47715 0 0 5.47715 0 11C0 16.5228 5.47715 22 11 22Z"
-                                          fill="#000000"/>
-                                    <path d="M17 11H5M11 5V17" stroke="white" stroke-width="2"
-                                          stroke-linecap="round"/>
-                                </g>
-                                <defs>
-                                    <clipPath id="${uniqueClipId}">
-                                        <rect width="22" height="22" fill="white"/>
-                                    </clipPath>
-                                </defs>
-                            </svg>
-                        </div>
-                    </div>
-                </button>
-            </div>
-        `;
-
-        slotElement.classList.remove('has-content');
-        slotElement.innerHTML = innerHTMLContent;
-
-        const newButton = slotElement.querySelector(`.${placeholderButtonClass}`);
-        if (newButton) {
-            newButton.addEventListener('click', handleSlotClick);
-        }
-    } else {
-        slotElement.innerHTML = '';
-        slotElement.classList.remove('has-content');
-    }
-    updateDraggableElements();
-}
-
-function handleSlotClick(event) {
-    const clickedSlot = event.target.closest('.position-slot, .sub-slot');
-
-    if (clickedSlot) {
-        selectedSlotForModal = clickedSlot;
-        isSubstituteSlotSelected = clickedSlot.classList.contains('sub-slot');
-        openModal();
-        console.log(`Slot clicked: ${clickedSlot.id || clickedSlot.className}. Is substitute: ${isSubstituteSlotSelected}`);
-    }
-}
-
-function updateSlotClickListeners() {
-    const fieldSlotButtons = document.querySelectorAll('.position-slot .field-slot-btn');
-    fieldSlotButtons.forEach(button => {
-        button.removeEventListener('click', handleSlotClick);
-        button.addEventListener('click', handleSlotClick);
-    });
-
-    const subSlotButtons = document.querySelectorAll('.sub-slot .sub-slot-btn');
-    subSlotButtons.forEach(button => {
-        button.removeEventListener('click', handleSlotClick);
-        button.addEventListener('click', handleSlotClick);
-    });
 }
 
 document.getElementById("league-select").addEventListener("change", function () {

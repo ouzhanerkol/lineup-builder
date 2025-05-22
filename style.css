@@ -229,10 +229,8 @@ main {
 
 .pitch-zone {
     flex-grow: 1;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    justify-items: center;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 5px 0;
     border-top: 1px dashed rgba(255, 255, 255, 0.1);
@@ -259,7 +257,6 @@ main {
 
 .position-slot {
     flex-shrink: 0;
-    flex-basis: 90px;
     width: 90px;
     height: 90px;
     border: 2px dashed #555;
@@ -272,6 +269,21 @@ main {
     align-items: center;
     position: relative;
     overflow: hidden;
+    margin: 0 5px;
+}
+
+.pitch-zone.middle-slot-empty {
+    justify-content: center;
+}
+
+.position-slot.is-middle-empty {
+    width: 30px;
+    margin: 0 10px;
+}
+
+.position-slot.is-middle-full {
+    width: 90px;
+    margin: 0 5px;
 }
 
 .position-slot.drag-over {
