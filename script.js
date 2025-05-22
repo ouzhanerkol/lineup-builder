@@ -661,6 +661,14 @@ document.addEventListener('DOMContentLoaded', () => {
 function applyFormation(formationName) {
     const formationSlotsToFill = FORMATION_SLOTS[formationName];
 
+    const customOption = formationSelect.querySelector('option[value="Custom"]');
+    if (customOption) {
+        customOption.remove();
+    }
+
+    formationSelect.value = formationName;
+    currentFormation = formationName;
+
     allPositionSlots.forEach(slot => {
         const slotId = slot.id;
         const hasContent = slot.querySelector('.player-content-wrapper, .profile-content-wrapper');
@@ -696,6 +704,20 @@ function populateFormationSelect() {
             option.textContent = formationName;
             formationSelect.appendChild(option);
         }
+    }
+}
+
+function setFormationToCustom() {
+    if (formationSelect) {
+        formationSelect.value = 'Custom';
+        let customOption = formationSelect.querySelector('option[value="Custom"]');
+        if (!customOption) {
+            customOption = document.createElement('option');
+            customOption.value = 'Custom';
+            customOption.textContent = 'Custom';
+            formationSelect.prepend(customOption);
+        }
+        formationSelect.value = 'Custom';
     }
 }
 
@@ -993,6 +1015,7 @@ async function handleDrop(event) {
     if (draggedElement) draggedElement.style.opacity = '1';
     draggedElement = null;
     updateMiddleSlotLayouts();
+    setFormationToCustom();
 }
 
 function handleDragEnd() {

@@ -259,7 +259,7 @@ main {
     flex-shrink: 0;
     width: 90px;
     height: 90px;
-    border: 2px dashed #555;
+    border: 1px dashed #555;
     border-radius: 25%;
     background-color: rgba(255, 255, 255, 0.05);
     display: flex;
@@ -269,7 +269,7 @@ main {
     align-items: center;
     position: relative;
     overflow: hidden;
-    margin: 0 5px;
+    margin: 0 15px;
 }
 
 .pitch-zone.middle-slot-empty {
