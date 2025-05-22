@@ -11,7 +11,9 @@
 <header class="header-container">
   <section class="header-section">
     <div class="header-content">
-      <div class="logo">Logo</div>
+      <div class="logo">
+        <img src="assets/images/logo.png" alt="Logo" loading="lazy">
+      </div>
       <div class="nav-links">
         <a href="#" class="nav-link">Ana Sayfa</a>
         <a href="#" class="nav-link">Kadro Planlaması</a>
@@ -447,6 +449,25 @@
           </div>
         </div>
       </div>
+
+      <!-- Share Modal -->
+      <div id="shareModal" class="modal">
+        <div class="modal-content share-modal-content">
+          <span class="close-btn">&times;</span>
+          <h2>Share Your Formation</h2>
+          <div class="share-options-container">
+            <div id="generatedImageView" class="generated-image-preview">
+              <img src="" alt="Generated Formation Image" style="max-width: 100%; height: auto; display: block;">
+            </div>
+            <div class="share-buttons-wrapper">
+              <button id="downloadImageBtn" class="btn share-action-btn">Download Image</button>
+              <button id="twitterShareBtn" class="btn share-action-btn">Share on Twitter</button>
+              <button id="facebookShareBtn" class="btn share-action-btn">Share on Facebook</button>
+              <button id="copyImageLinkBtn" class="btn share-action-btn">Copy Image Link</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <aside class="right-sidebar"></aside>
@@ -458,7 +479,7 @@
     <!-- Footer içeriği buraya gelecek -->
   </div>
 </footer>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

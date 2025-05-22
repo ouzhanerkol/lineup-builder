@@ -68,6 +68,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    if (shareButton) {
+        shareButton.addEventListener('click', openShareModal);
+    }
+    if (closeShareModalButton) {
+        closeShareModalButton.addEventListener('click', closeShareModal);
+    }
+    if (downloadImageBtn) {
+        downloadImageBtn.addEventListener('click', downloadImage);
+    }
+    if (twitterShareBtn) {
+        twitterShareBtn.addEventListener('click', shareToTwitter);
+    }
+    if (facebookShareBtn) {
+        facebookShareBtn.addEventListener('click', shareToFacebook);
+    }
+    if (copyImageLinkBtn) {
+        copyImageLinkBtn.addEventListener('click', copyImageToClipboard);
+    }
+
     populateFormationSelect();
 
     setupDragAndDropListeners();
@@ -105,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Global variables
+const BASE_URL = "http://localhost:8080";
 let selectedSlotForModal = null;
 let searchInputListener = null;
 let isSubstituteSlotSelected = false;
@@ -127,6 +147,15 @@ const profileForwardsSection = document.querySelector(".modal-profile-list.profi
 const formationSelect = document.getElementById('formation-select');
 const allPositionSlots = document.querySelectorAll('.position-slot');
 let draggedElement = null;
+const teamNameInput = document.getElementById('team-name');
+const shareButton = document.querySelector('.share-btn');
+const shareModal = document.getElementById('shareModal');
+const closeShareModalButton = document.querySelector('#shareModal .close-btn');
+const downloadImageBtn = document.getElementById('downloadImageBtn');
+const twitterShareBtn = document.getElementById('twitterShareBtn');
+const facebookShareBtn = document.getElementById('facebookShareBtn');
+const copyImageLinkBtn = document.getElementById('copyImageLinkBtn');
+const generatedImageView = document.getElementById('generatedImageView');
 
 function openModal() {
     modal.style.display = "flex";
@@ -211,6 +240,253 @@ function showRolesTab() {
     }
 }
 
+function openShareModal() {
+    shareModal.style.display = "flex";
+    generateShareImage();
+}
+
+function closeShareModal() {
+    shareModal.style.display = "none";
+    const imgElement = generatedImageView.querySelector('img');
+    if (imgElement) {
+        imgElement.src = '';
+    }
+    const tempContainer = document.getElementById('image-generation-container');
+    if (tempContainer) {
+        tempContainer.remove();
+    }
+}
+
+async function generateShareImage() {
+    const teamName = teamNameInput.value || "My Team";
+    const formationName = currentFormation;
+
+    const selectedTeamId = document.getElementById("team-select").value;
+    let teamLogoUrl = 'assets/images/default-team-logo.png';
+    const selectedTeamOption = document.querySelector(`#team-select option[value="${selectedTeamId}"]`);
+    if (selectedTeamOption && selectedTeamOption.dataset.logoUrl) {
+        const originalLogoUrl = selectedTeamOption.dataset.logoUrl;
+        teamLogoUrl = `${BASE_URL}/api/proxy/image?imageUrl=${originalLogoUrl}`;
+    }
+
+    const siteLogoUrl = 'assets/images/logo.png';
+
+    let imageGenerationContainer = document.getElementById('image-generation-container');
+    if (imageGenerationContainer) {
+        imageGenerationContainer.remove();
+    }
+    imageGenerationContainer = document.createElement('div');
+    imageGenerationContainer.id = 'image-generation-container';
+    document.body.appendChild(imageGenerationContainer);
+
+    const leftColumnHtml = `
+        <div id="left-column-content">
+            <div class="site-logo-area">
+                <img src="${siteLogoUrl}" alt="MyTeamFormation Logo">
+            </div>
+            <div id="image-substitutes-area">
+                </div>
+            <div class="team-info-area">
+                <img src="${teamLogoUrl}" alt="Team Logo">
+                <span class="team-name">${teamName}</span>
+                <span class="formation-name">${formationName}</span>
+            </div>
+        </div>
+    `;
+
+    const pitchAreaHtml = `
+    <div id="image-pitch-container">
+        </div>
+`;
+
+    imageGenerationContainer.innerHTML = leftColumnHtml + pitchAreaHtml;
+
+    const imagePitchContainer = imageGenerationContainer.querySelector('#image-pitch-container');
+    const imageSubstitutesArea = imageGenerationContainer.querySelector('#image-substitutes-area');
+
+    allPositionSlots.forEach(slot => {
+        const slotContent = slot.querySelector('.field-player-wrapper, .field-profile-wrapper, .field-slot-placeholder');
+        if (slotContent) {
+            const newSlotDiv = document.createElement('div');
+            newSlotDiv.className = 'image-position-slot';
+            newSlotDiv.style.position = 'absolute';
+
+            const pitchContainer = document.getElementById('pitch-container');
+            const pitchRect = pitchContainer.getBoundingClientRect();
+            const slotRect = slot.getBoundingClientRect();
+
+            const originalPitchPaddingLeft = 10;
+            const originalPitchPaddingTop = 10;
+
+            const xRatio = (slotRect.left - pitchRect.left - originalPitchPaddingLeft) / (pitchRect.width - (originalPitchPaddingLeft * 2));
+            const yRatio = (slotRect.top - pitchRect.top - originalPitchPaddingTop) / (pitchRect.height - (originalPitchPaddingTop * 2));
+
+            const newPitchWidth = imagePitchContainer.offsetWidth;
+            const newPitchHeight = imagePitchContainer.offsetHeight;
+
+            const slotWidth = 90;
+            const slotHeight = 90;
+
+            newSlotDiv.style.left = `${(xRatio * newPitchWidth) - (slotWidth / 2) + 47}px`;
+            newSlotDiv.style.top = `${(yRatio * newPitchHeight) - (slotHeight / 2) + 50}px`;
+
+            let contentHtml = '';
+            if (slotContent.classList.contains('field-player-wrapper') || slotContent.classList.contains('field-profile-wrapper')) {
+                const type = slotContent.dataset.itemType;
+                const name = slotContent.dataset[`${type}Name`];
+                let icon = slotContent.dataset[`${type}Icon`];
+
+                if (icon && !icon.startsWith('assets/images/')) {
+                    icon = `${BASE_URL}/api/proxy/image?imageUrl=${icon}`;
+                }
+
+                contentHtml = `
+                    <div class="image-player-content">
+                        <img src="${icon}" alt="${name}">
+                        <span>${name}</span>
+                    </div>
+                `;
+            } else if (slotContent.classList.contains('field-slot-placeholder')) {
+                contentHtml = `
+                    <div class="image-player-content">
+                        <img src="assets/images/player-icon.png" alt="Empty Slot">
+                        <span>Empty Slot</span>
+                    </div>
+                `;
+            }
+
+            newSlotDiv.innerHTML = contentHtml;
+            imagePitchContainer.appendChild(newSlotDiv);
+        }
+    });
+
+    document.querySelectorAll('.sub-slot').forEach(subSlot => {
+        const subSlotContent = subSlot.querySelector('.sub-player-wrapper, .sub-profile-wrapper, .sub-slot-placeholder');
+        if (subSlotContent) {
+            const newSubSlotDiv = document.createElement('div');
+            newSubSlotDiv.className = 'image-sub-slot';
+
+            let contentHtml = '';
+            if (subSlotContent.classList.contains('sub-player-wrapper') || subSlotContent.classList.contains('sub-profile-wrapper')) {
+                const type = subSlotContent.dataset.itemType;
+                const name = subSlotContent.dataset[`${type}Name`];
+                let icon = subSlotContent.dataset[`${type}Icon`];
+
+                if (icon && !icon.startsWith('assets/images/')) {
+                    icon = `${BASE_URL}/api/proxy/image?imageUrl=${icon}`;
+                }
+
+                contentHtml = `
+                    <div class="image-player-content">
+                        <img src="${icon}" alt="${name}">
+                        <span>${name}</span>
+                    </div>
+                `;
+            } else if (subSlotContent.classList.contains('sub-slot-placeholder')) {
+                contentHtml = `
+                    <div class="image-player-content">
+                        <img src="assets/images/player-icon.png" alt="Empty Sub">
+                        <span>Empty Sub</span>
+                    </div>
+                `;
+            }
+
+            newSubSlotDiv.innerHTML = contentHtml;
+            imageSubstitutesArea.appendChild(newSubSlotDiv);
+        }
+    });
+
+    try {
+        const canvas = await html2canvas(imageGenerationContainer, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: null
+        });
+
+        const imgDataUrl = canvas.toDataURL('image/png');
+        const imgElement = generatedImageView.querySelector('img');
+        if (imgElement) {
+            imgElement.src = imgDataUrl;
+        }
+
+        imageGenerationContainer.remove();
+
+    } catch (error) {
+        console.error("Error while generating image: ", error);
+        alert("Error while generating image. Please try again.");
+        if (imageGenerationContainer) {
+            imageGenerationContainer.remove();
+        }
+    }
+}
+
+function downloadImage() {
+    const imgElement = generatedImageView.querySelector('img');
+    if (imgElement && imgElement.src) {
+        const link = document.createElement('a');
+        link.href = imgElement.src;
+        link.download = `my-team-formation-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } else {
+        alert("Does not found any image to download.");
+    }
+}
+
+function shareToTwitter() {
+    const imgElement = generatedImageView.querySelector('img');
+    if (imgElement && imgElement.src) {
+        const text = encodeURIComponent(`Tak?m Formasyonumu inceleyin: ${teamNameInput.value || "Tak?m?m"} - ${currentFormation}. #FutbolFormasyon #Taktik`);
+        const url = encodeURIComponent(window.location.href);
+
+        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=600,height=400');
+    } else {
+        alert("Does not found any image to share.");
+    }
+}
+
+function shareToFacebook() {
+    const imgElement = generatedImageView.querySelector('img');
+    if (imgElement && imgElement.src) {
+        const url = encodeURIComponent(window.location.href);
+
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+    } else {
+        alert("Does not found any image to share.");
+    }
+}
+
+async function copyImageToClipboard() {
+    const imgElement = generatedImageView.querySelector('img');
+    if (!imgElement || !imgElement.src) {
+        alert("Does not found any image to copy.");
+        return;
+    }
+
+    try {
+        const response = await fetch(imgElement.src);
+        const blob = await response.blob();
+        await navigator.clipboard.write([
+            new ClipboardItem({
+                [blob.type]: blob
+            })
+        ]);
+        alert("Copy image to clipboard successfully.");
+    } catch (error) {
+        console.error("Error while copying image to clipboard: ", error);
+        alert("Error while copying image to clipboard. Browser does not support clipboard API. Please try to download the image instead.");
+
+        try {
+            await navigator.clipboard.writeText(imgElement.src);
+            alert("Copy image URL to clipboard successfully.");
+        } catch (textError) {
+            console.error("Copy image URL to clipboard failed:", textError);
+            alert("Copy image URL to clipboard failed. Please try to download the image instead.");
+        }
+    }
+}
+
 function hideAllProfilePositionSections() {
     document.querySelectorAll('#playerRolesSection .modal-profile-category').forEach(section => {
         section.style.display = "none";
@@ -275,11 +551,15 @@ window.addEventListener('click', function (event) {
     if (event.target === modal) {
         closeModal();
     }
+
+    if (event.target === shareModal) {
+        closeShareModal();
+    }
 });
 
 async function fetchPlayerProfilesByPosition(positionCode) {
     try {
-        const response = await fetch(`http://localhost:8080/api/player-profiles/search/${positionCode}`);
+        const response = await fetch(`${BASE_URL}/api/player-profiles/search/${positionCode}`);
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status}`);
         }
@@ -292,7 +572,7 @@ async function fetchPlayerProfilesByPosition(positionCode) {
 
 async function fetchAllPlayerProfiles() {
     try {
-        const response = await fetch(`http://localhost:8080/api/player-profiles`);
+        const response = await fetch(`${BASE_URL}/api/player-profiles`);
         if (!response.ok) {
             throw new Error(`HTTP error: ${response.status}`);
         }
@@ -358,7 +638,7 @@ function renderPlayerProfiles(profiles) {
 
 async function loadLeagues() {
     try {
-        const response = await fetch("http://localhost:8080/api/leagues");
+        const response = await fetch(`${BASE_URL}/api/leagues`);
         if (!response.ok) {
             const errorText = await response.text();
             console.error("HTTP error when fetching leagues:", response.status, errorText);
@@ -381,7 +661,7 @@ async function loadLeagues() {
 
 async function loadTeams(leagueId) {
     try {
-        const response = await fetch(`http://localhost:8080/api/teams/search/${leagueId}`);
+        const response = await fetch(`${BASE_URL}/api/teams/search/${leagueId}`);
         if (!response.ok) {
             const errorText = await response.text();
             console.error("HTTP error when fetching teams:", response.status, errorText);
@@ -394,6 +674,7 @@ async function loadTeams(leagueId) {
             const option = document.createElement("option");
             option.value = team.id;
             option.textContent = team.name;
+            option.dataset.logoUrl = team.logoUrl || 'assets/images/default-team-logo.png';
             teamSelect.appendChild(option);
         });
         return teams;
@@ -405,7 +686,7 @@ async function loadTeams(leagueId) {
 
 async function fetchPlayers(teamId) {
     try {
-        const response = await fetch(`http://localhost:8080/api/players/search/${teamId}`);
+        const response = await fetch(`${BASE_URL}/api/players/search/${teamId}`);
         if (!response.ok) throw new Error("Didn't fetch players");
         const players = await response.json();
         renderPlayers(players);
@@ -471,7 +752,7 @@ function renderPlayers(players) {
 
 async function fetchSearchResults(searchTerm) {
     try {
-        const response = await fetch(`http://localhost:8080/api/players/search?query=${searchTerm}`);
+        const response = await fetch(`${BASE_URL}/api/players/search?query=${searchTerm}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

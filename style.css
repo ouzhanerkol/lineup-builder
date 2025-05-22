@@ -61,6 +61,16 @@ body {
     padding: 0.5rem;
     letter-spacing: 1px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    width: 100px;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
 }
 
 .nav-links {
@@ -819,6 +829,270 @@ main {
     color: #777;
     font-size: 14px;
     margin-left: 5px;
+}
+
+/* Share Modal Styles */
+.modal-content.share-modal-content {
+    background-color: #333;
+    padding: 20px;
+    border: 1px solid #555;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow: auto;
+    box-sizing: border-box;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#shareModal .close-btn {
+    top: 10px;
+    right: 20px;
+    color: #aaa;
+    position: absolute;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+#shareModal .close-btn:hover,
+#shareModal .close-btn:focus {
+    color: #fff;
+    text-decoration: none;
+}
+
+.share-options-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.generated-image-preview {
+    width: 100%;
+    max-height: 600px;
+    overflow: hidden;
+    background-color: #222;
+    border: 1px solid #666;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.generated-image-preview img {
+    max-width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+.share-buttons-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.share-action-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+    background-color: #007bff;
+    color: white;
+}
+
+.share-action-btn:hover {
+    background-color: #0056b3;
+}
+
+#twitterShareBtn { background-color: #1DA1F2; }
+#twitterShareBtn:hover { background-color: #0c85d0; }
+#facebookShareBtn { background-color: #1877F2; }
+#facebookShareBtn:hover { background-color: #145db3; }
+#copyImageLinkBtn { background-color: #6c757d; }
+#copyImageLinkBtn:hover { background-color: #5a6268; }
+
+#image-generation-container {
+    background-color: #222;
+    color: #eee;
+    width: 1000px;
+    height: 800px;
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    z-index: -1;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    grid-template-rows: 1fr;
+    gap: 15px;
+}
+
+#left-column-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    align-items: center;
+    padding: 10px;
+    background-color: #333;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.site-logo-area {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #444;
+    margin-bottom: 15px;
+}
+
+.site-logo-area img {
+    height: 70px;
+    width: auto;
+}
+
+#image-pitch-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-color: #28a745;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    background-image: url('assets/images/pitch-background.png');
+    background-size: 95% 98%;
+    background-position: center;
+    background-repeat: no-repeat;
+    aspect-ratio: 10 / 7;
+}
+
+#image-substitutes-area {
+    width: 100%;
+    flex-grow: 1;
+    background-color: #444;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: min-content;
+    gap: 8px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.team-info-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #555;
+    margin-top: auto;
+    text-align: center;
+}
+
+.team-info-area img {
+    height: 60px;
+    width: auto;
+    margin-bottom: 10px;
+}
+.team-info-area .team-name {
+    font-weight: bold;
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+.team-info-area .formation-name {
+    color: #bbb;
+    font-size: 16px;
+}
+
+.image-position-slot {
+    width: 100px;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25%;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    position: absolute;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.image-sub-slot {
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 10px;
+    text-align: center;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.image-player-content, .image-profile-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #666666;
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+}
+
+.image-player-content img, .image-profile-content img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 5px;
+}
+
+.image-sub-slot .image-player-content img, .image-sub-slot .image-profile-content img {
+    width: 35px;
+    height: 35px;
+}
+
+.image-player-content span, .image-profile-content span {
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 95%;
+}
+
+.image-sub-slot .image-player-content span, .image-sub-slot .image-profile-content span {
+    font-size: 8px;
+    font-weight: normal;
 }
 
 /* Control Panel - Right section */
