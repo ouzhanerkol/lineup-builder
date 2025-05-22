@@ -46,18 +46,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    const formationSelect = document.getElementById("formation-select");
-
-    const defaultFormation = "4-2-3-1";
-    changeFormation(null, defaultFormation);
-    currentFormation = defaultFormation;
-
-    formationSelect.value = defaultFormation;
-
     const playersTabBtn = document.getElementById('playersTabBtn');
     const rolesTabBtn = document.getElementById('rolesTabBtn');
     const controlPanelPlayersTabBtn = document.querySelector('.control-panel .tab-btn[data-tab="players"]');
+    const closeModalButton = document.querySelector('.close-btn');
 
+    if (closeModalButton) {
+        closeModalButton.addEventListener('click', closeModal);
+    }
     if (playersTabBtn) {
         playersTabBtn.addEventListener('click', showPlayersTab);
     }
@@ -72,7 +68,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    setupFieldClickListeners();
+    const defaultFormation = "4-2-3-1";
+    applyFormation(defaultFormation);
+    currentFormation = defaultFormation;
+    if (formationSelect) {
+        formationSelect.value = defaultFormation;
+        formationSelect.addEventListener('change', (event) => {
+            applyFormation(event.target.value);
+        });
+    }
+
     loadLeagues().then(leagues => {
         const firstLeague = leagues[0];
         if (firstLeague) {
@@ -90,15 +95,16 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     });
+
+    setupDragAndDropListeners();
 });
 
 // Global variables
-let selectedFieldSlot = null;
+let selectedSlotForModal = null;
 let searchInputListener = null;
 let isSubstituteSlotSelected = false;
 let currentFormation = "4-2-3-1";
 const modal = document.getElementById('playerModal');
-const closeModalButton = document.querySelector('.close-btn');
 const playerListSection = document.getElementById('playerListSection');
 const playerRolesSection = document.getElementById("playerRolesSection");
 const goalkeepersSection = document.querySelector(".modal-player-list.goalkeepers");
@@ -113,6 +119,11 @@ const profileFullBacksSection = document.querySelector(".modal-profile-list.prof
 const profileMidfieldersSection = document.querySelector(".modal-profile-list.profile-midfielders");
 const profileWingersSection = document.querySelector(".modal-profile-list.profile-wingers");
 const profileForwardsSection = document.querySelector(".modal-profile-list.profile-forwards");
+const pitchContainer = document.getElementById('pitch-container');
+const formationSelect = document.getElementById('formation-select');
+const allPositionSlots = document.querySelectorAll('.position-slot');
+const goalkeeperSlot = document.getElementById('position-gk');
+let draggedElement = null;
 
 function openModal() {
     modal.style.display = "flex";
@@ -135,7 +146,7 @@ function openModal() {
 
 function closeModal() {
     modal.style.display = "none";
-    selectedFieldSlot = null;
+    selectedSlotForModal = null;
 
     playerListSection.style.display = "none";
     playerRolesSection.style.display = "none";
@@ -168,9 +179,22 @@ function showRolesTab() {
     if (isSubstituteSlotSelected) {
         fetchAllPlayerProfiles();
         showAllProfilePositionSections();
-    } else if (selectedFieldSlot) {
-        const formationClass = Array.from(selectedFieldSlot.classList).find(cls => cls.startsWith('formation-'));
-        const positionCode = mapFormationToPositionCode(formationClass);
+    } else if (selectedSlotForModal) {
+        const slotId = selectedSlotForModal.id;
+        let positionCode = "UNKNOWN";
+
+        if (slotId === 'position-gk') positionCode = 'GK';
+        else if (slotId === 'position-1-1' || slotId === 'position-1-5') positionCode = 'FB';
+        else if (slotId === 'position-2-1' || slotId === 'position-2-5') positionCode = 'FB';
+        else if (slotId === 'position-3-1' || slotId === 'position-3-5') positionCode = 'FW';
+        else if (slotId === 'position-4-1' || slotId === 'position-4-5') positionCode = 'FW';
+        else if (slotId === 'position-5-1' || slotId === 'position-5-5') positionCode = 'FW';
+        else if (slotId.startsWith('position-1-')) positionCode = 'CB';
+        else if (slotId.startsWith('position-2-')) positionCode = 'DM';
+        else if (slotId.startsWith('position-3-')) positionCode = 'CM';
+        else if (slotId.startsWith('position-4-')) positionCode = 'AM';
+        else if (slotId.startsWith('position-5-')) positionCode = 'ST';
+
 
         hideAllProfilePositionSections();
 
@@ -200,17 +224,15 @@ function hideAllProfilePositionSections() {
 function showAllProfilePositionSections() {
     document.querySelectorAll('#playerRolesSection .modal-profile-category').forEach(section => {
         section.style.display = "block";
+        const list = section.querySelector('.modal-profile-list');
+        if (list) {
+            list.classList.add('active-list');
+        }
+        const toggleIcon = section.querySelector('.toggle-icon');
+        if (toggleIcon) {
+            toggleIcon.textContent = '-';
+        }
     });
-    // TODO: check this section
-    const list = section.querySelector('.modal-profile-list');
-    if (list) {
-        list.classList.add('active-list');
-    }
-
-    const toggleIcon = section.querySelector('.toggle-icon');
-    if (toggleIcon) {
-        toggleIcon.textContent = '-';
-    }
 }
 
 function showProfilePositionSection(positionCode) {
@@ -241,73 +263,16 @@ function showProfilePositionSection(positionCode) {
         if (toggleIcon) {
             toggleIcon.textContent = '-';
         }
+    }  else {
+        console.warn(`No profile section defined for position code: ${positionCode}`);
     }
 }
-
-closeModalButton.addEventListener('click', closeModal);
 
 window.addEventListener('click', function (event) {
     if (event.target === modal) {
         closeModal();
     }
 });
-
-function handleFieldPlayerClick(event) {
-    selectedFieldSlot = event.target.closest('.field-slot');
-    isSubstituteSlotSelected = false;
-    openModal();
-    showPlayersTab();
-}
-
-function handleSubstitutePlayerClick(event) {
-    selectedFieldSlot = event.target.closest('.sub-slot');
-    isSubstituteSlotSelected = true;
-    openModal();
-    showPlayersTab();
-}
-
-function setupFieldClickListeners() {
-    // Event listener for field players
-    const fieldPlayerButtons = document.querySelectorAll('.field-slot .field-slot-btn');
-    fieldPlayerButtons.forEach(button => {
-        button.removeEventListener('click', handleFieldPlayerClick);
-        button.addEventListener('click', handleFieldPlayerClick);
-    });
-
-    // Event listener for sub players
-    const substituteButtons = document.querySelectorAll('.sub-slot .sub-slot-btn');
-    substituteButtons.forEach(button => {
-        button.removeEventListener('click', handleSubstitutePlayerClick);
-        button.addEventListener('click', handleSubstitutePlayerClick);
-    });
-}
-
-function mapFormationToPositionCode(formationClass) {
-    const map = {
-        "formation-gk": "GK",
-        "formation-1f": "ST",
-        "formation-3aml": "FW",
-        "formation-3amm": "AM",
-        "formation-3amr": "FW",
-        "formation-2dml": "DM",
-        "formation-2dmr": "DM",
-        "formation-4dll": "FB",
-        "formation-4dml": "CB",
-        "formation-4dmr": "CB",
-        "formation-4drr": "FB",
-        "formation-3fl": "FW",
-        "formation-3fm": "FW",
-        "formation-3fr": "FW",
-        "formation-3ml": "CM",
-        "formation-3mm": "CM",
-        "formation-3mr": "CM",
-        "formation-4ll": "FW",
-        "formation-4ml": "CM",
-        "formation-4mr": "CM",
-        "formation-4rr": "FW"
-    };
-    return map[formationClass] || "UNKNOWN";
-}
 
 async function fetchPlayerProfilesByPosition(positionCode) {
     try {
@@ -341,7 +306,7 @@ function renderPlayerProfiles(profiles) {
     profiles.forEach(profile => {
         let section;
         // TODO: check this
-        const profilePosCode = profile.positionCode.toUpperCase();
+        const profilePosCode = profile.positionCode ? profile.positionCode.toUpperCase() : "UNKNOWN";
 
         if (profilePosCode === "GK") {
             section = profileGoalkeepersSection;
@@ -455,43 +420,17 @@ function clearProfileLists() {
 }
 
 function selectPlayer(player) {
-    if (selectedFieldSlot) {
-        const content = `
-            <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-player-content-wrapper' : 'sub-player-content-wrapper'}">
-                <button class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-btn' : 'sub-slot-btn'}">
-                    <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-placeholder' : 'sub-slot-placeholder'}">
-                        <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-icon' : 'sub-slot-icon'}">
-                            <img src="${player.photoUrl}" alt="${player.name}" width="50" height="50" loading="lazy">
-                        </div>
-                        <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-name' : 'sub-slot-name'}">
-                            <span>${player.name}</span>
-                        </div>
-                    </div>
-                </button>
-            </div>
-        `;
-        updateFieldSlot(content);
+    console.log("selectPlayer called :", selectedSlotForModal ? selectedSlotForModal.id : 'Yok');
+    if (selectedSlotForModal) {
+        updateSlotContent(selectedSlotForModal, player.id, player.name, player.photoUrl, 'player');
         closeModal();
     }
 }
 
 function selectProfile(profile) {
-    if (selectedFieldSlot) {
-        const content = `
-            <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-profile-content-wrapper' : 'sub-profile-content-wrapper'}">
-                <button class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-btn' : 'sub-slot-btn'}">
-                    <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-placeholder' : 'sub-slot-placeholder'}">
-                        <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-icon' : 'sub-slot-icon'}">
-                            <img src="assets/images/player-icon.png" alt="Profile Icon" width="50" height="50">
-                        </div>
-                        <div class="${selectedFieldSlot.classList.contains('field-slot') ? 'field-slot-name' : 'sub-slot-name'}">
-                            <span>${profile.name}</span>
-                        </div>
-                    </div>
-                </button>
-            </div>
-        `;
-        updateFieldSlot(content);
+    console.log("selectProfile called :", selectedSlotForModal ? selectedSlotForModal.id : 'Yok');
+    if (selectedSlotForModal) {
+        updateSlotContent(selectedSlotForModal, profile.id, profile.name, "assets/images/player-icon.png", 'profile');
         closeModal();
     }
 }
@@ -525,23 +464,6 @@ function renderPlayers(players) {
             section.appendChild(container);
         }
     });
-}
-
-function updateFieldSlot(content) {
-    if (selectedFieldSlot) {
-        selectedFieldSlot.innerHTML = content;
-        const newButton = selectedFieldSlot.querySelector('.field-slot-btn, .sub-slot-btn');
-        if (newButton) {
-            newButton.removeEventListener('click', handleFieldPlayerClick);
-            newButton.removeEventListener('click', handleSubstitutePlayerClick);
-
-            if (selectedFieldSlot.classList.contains('field-slot')) {
-                newButton.addEventListener('click', handleFieldPlayerClick);
-            } else if (selectedFieldSlot.classList.contains('sub-slot')) {
-                newButton.addEventListener('click', handleSubstitutePlayerClick);
-            }
-        }
-    }
 }
 
 async function fetchSearchResults(searchTerm) {
@@ -639,50 +561,330 @@ document.getElementById("formation-select").addEventListener("change", function 
     currentFormation = newFormation;
 });
 
-const formations = {
-    "4-2-3-1": [
-        "formation-1f", "formation-3aml", "formation-3amm", "formation-3amr",
-        "formation-2dml", "formation-2dmr", "formation-4dll", "formation-4dml",
-        "formation-4dmr", "formation-4drr", "formation-gk"
+const FORMATION_SLOTS = {
+    '4-2-3-1': [
+        'position-gk',
+        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
+        'position-2-2', 'position-2-4',
+        'position-4-1', 'position-4-3', 'position-4-5',
+        'position-5-3'
     ],
-    "4-3-3": [
-        "formation-3fl", "formation-3fm", "formation-3fr", "formation-3ml",
-        "formation-3mm", "formation-3mr", "formation-4dll", "formation-4dml",
-        "formation-4dmr", "formation-4drr", "formation-gk"
+    '4-4-2': [
+        'position-gk',
+        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
+        'position-3-1', 'position-3-2', 'position-3-4', 'position-3-5',
+        'position-5-2', 'position-5-4'
     ],
-    "4-4-2": [
-        "formation-2fl", "formation-2fr", "formation-4ll", "formation-4ml",
-        "formation-4mr", "formation-4rr", "formation-4dll", "formation-4dml",
-        "formation-4dmr", "formation-4drr", "formation-gk"
+    '5-3-2': [
+        'position-gk',
+        'position-1-1', 'position-1-2', 'position-1-3', 'position-1-4', 'position-1-5',
+        'position-2-3',
+        'position-4-2', 'position-4-4',
+        'position-5-2', 'position-5-4'
     ]
+    // ... Other formations will add here ...
 };
 
-function changeFormation(fromFormation, toFormation) {
-    const fromClasses = fromFormation ? formations[fromFormation] : [];
-    const toClasses = formations[toFormation];
+document.addEventListener('DOMContentLoaded', () => {
+    setupDragAndDropListeners();
 
-    if (!toClasses) {
-        console.error("Not find formation:", toFormation);
+    if (formationSelect) {
+        applyFormation(formationSelect.value);
+        formationSelect.addEventListener('change', (event) => {
+            applyFormation(event.target.value);
+        });
+    } else {
+        applyFormation('4-2-3-1');
+    }
+});
+
+function setupDragAndDropListeners() {
+    allPositionSlots.forEach(slot => {
+        slot.addEventListener('dragover', handleDragOver);
+        slot.addEventListener('dragleave', handleDragLeave);
+        slot.addEventListener('drop', handleDrop);
+    });
+
+    document.querySelectorAll('.sub-slot').forEach(slot => {
+        slot.addEventListener('dragover', handleDragOver);
+        slot.addEventListener('dragleave', handleDragLeave);
+        slot.addEventListener('drop', handleDrop);
+    });
+    updateDraggableElements();
+}
+
+function updateDraggableElements() {
+    document.querySelectorAll('[draggable="true"]').forEach(item => {
+        item.removeEventListener('dragstart', handleDragStart);
+        item.removeEventListener('dragend', handleDragEnd);
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+}
+
+function handleDragStart(event) {
+    draggedElement = event.target.closest('[draggable="true"]');
+    if (!draggedElement) {
+        event.preventDefault();
         return;
     }
 
-    if (fromClasses.length > 0) {
-        fromClasses.forEach((fromClass, index) => {
-            const playerDiv = document.querySelector(`.field-slot.${fromClass}`);
-            if (playerDiv) {
-                playerDiv.classList.remove(fromClass);
-                playerDiv.classList.add(toClasses[index]);
-            }
-        });
-    } else {
-        toClasses.forEach((toClass, index) => {
-            const playerDiv = document.querySelectorAll('.field-slot')[index];
-            if (playerDiv) {
-                playerDiv.classList.add(toClass);
-            }
-        });
+    const type = draggedElement.dataset.itemType || 'placeholder';
+    let id = null, name = null, icon = null;
+
+    if (type === 'player' || type === 'profile') {
+        id = draggedElement.dataset[`${type}Id`];
+        name = draggedElement.dataset[`${type}Name`];
+        icon = draggedElement.dataset[`${type}Icon`];
     }
-    setupFieldClickListeners();
+
+    const sourceSlotId = draggedElement.closest('.position-slot, .sub-slot')?.id;
+
+    event.dataTransfer.setData('application/json', JSON.stringify({ type, id, name, icon, sourceSlotId }));
+    event.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => draggedElement.style.opacity = '0.4', 0);
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    event.currentTarget.classList.add('drag-over');
+}
+
+function handleDragLeave(event) {
+    event.currentTarget.classList.remove('drag-over');
+}
+
+async function handleDrop(event) {
+    event.preventDefault();
+    event.currentTarget.classList.remove('drag-over');
+
+    const dropZone = event.currentTarget;
+    const data = JSON.parse(event.dataTransfer.getData('application/json'));
+
+    if (!data || !data.type) {
+        console.error("Data is not valid: ", data);
+        return;
+    }
+
+    const sourceSlot = document.getElementById(data.sourceSlotId);
+
+    if (!sourceSlot && data.sourceSlotId) {
+        console.error("Source slot not found for ID:", data.sourceSlotId);
+        if (draggedElement) draggedElement.style.opacity = '1';
+        draggedElement = null;
+        return;
+    }
+
+    if (sourceSlot === dropZone) {
+        if (draggedElement) draggedElement.style.opacity = '1';
+        draggedElement = null;
+        return;
+    }
+
+    const targetContentWrapper = dropZone.querySelector(
+        '.field-player-wrapper,' +
+        ' .field-profile-wrapper,' +
+        ' .sub-player-wrapper,' +
+        ' .sub-profile-wrapper,' +
+        ' .sub-slot-placeholder,' +
+        ' .field-slot-placeholder');
+
+    updateSlotContent(dropZone, data.id, data.name, data.icon, data.type);
+
+    if (targetContentWrapper) {
+        const targetType = targetContentWrapper.dataset.itemType || 'placeholder';
+        let targetId = null, targetName = null, targetIcon = null;
+
+        if (targetType === 'player' || targetType === 'profile') {
+            targetId = targetContentWrapper.dataset[`${targetType}Id`];
+            targetName = targetContentWrapper.dataset[`${targetType}Name`];
+            targetIcon = targetContentWrapper.dataset[`${targetType}Icon`];
+        }
+
+        if (sourceSlot) {
+            updateSlotContent(sourceSlot, targetId, targetName, targetIcon, targetType);
+        } else {
+
+        }
+    } else {
+        sourceSlot.innerHTML = '';
+        sourceSlot.classList.remove('has-content');
+    }
+
+    updateDraggableElements();
+    if (draggedElement) draggedElement.style.opacity = '1';
+    draggedElement = null;
+}
+
+function handleDragEnd(event) {
+    if (draggedElement) {
+        draggedElement.style.opacity = '1';
+        draggedElement = null;
+    }
+}
+
+function applyFormation(formationName) {
+    const formationSlotsToFill = FORMATION_SLOTS[formationName];
+
+    allPositionSlots.forEach(slot => {
+        const slotId = slot.id;
+        const hasContent = slot.querySelector('.player-content-wrapper, .profile-content-wrapper');
+
+        if (formationSlotsToFill.includes(slotId)) {
+            if (!hasContent) {
+                updateSlotContent(slot, null, null, null, 'placeholder');
+            }
+        } else {
+            slot.innerHTML = '';
+            slot.classList.remove('has-content');
+
+        }
+    });
+
+    updateSlotClickListeners();
+    updateDraggableElements();
+}
+
+function updateSlotContent(slotElement, id, name, icon, type) {
+    slotElement.innerHTML = '';
+
+    const isFieldSlot = slotElement.classList.contains('position-slot');
+    const isSubSlot = slotElement.classList.contains('sub-slot');
+
+    if (!isFieldSlot && !isSubSlot) {
+        console.error("Slot element is not a field slot or a sub slot:", slotElement);
+        return;
+    }
+
+    let innerHTMLContent = '';
+
+    if (id && name && icon && (type === 'player' || type === 'profile')) {
+        const actualIcon = (type === 'player' && icon) ? icon : "assets/images/player-icon.png";
+
+        const dataAttrId = `data-${type}-id="${id}"`;
+        const dataAttrName = `data-${type}-name="${name}"`;
+        const dataAttrIcon = `data-${type}-icon="${actualIcon}"`;
+        const dataAttrType = `data-item-type="${type}"`;
+
+        let contentWrapperClass, buttonClass, iconClass, nameClass;
+
+        if (isFieldSlot) {
+            contentWrapperClass = type === 'player' ? 'field-player-wrapper' : 'field-profile-wrapper';
+            buttonClass = 'field-slot-btn';
+            iconClass = 'field-slot-icon';
+            nameClass = 'field-slot-name';
+        } else if (isSubSlot) {
+            contentWrapperClass = type === 'player' ? 'sub-player-wrapper' : 'sub-profile-wrapper';
+            buttonClass = 'sub-slot-btn';
+            iconClass = 'sub-slot-icon';
+            nameClass = 'sub-slot-name';
+        }
+
+        innerHTMLContent = `
+            <div class="${contentWrapperClass}" ${dataAttrId} ${dataAttrName} ${dataAttrIcon} ${dataAttrType} draggable="true">
+                <button class="${buttonClass}">
+                    <div class="slot-content-inner">
+                        <div class="${iconClass}">
+                            <img src="${actualIcon}" alt="${name}" loading="lazy">
+                        </div>
+                        <div class="${nameClass}">
+                            <span>${name}</span>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        `;
+
+        slotElement.classList.add('has-content');
+        slotElement.innerHTML = innerHTMLContent;
+
+        const newButton = slotElement.querySelector(`.${buttonClass}`);
+        if (newButton) {
+            newButton.addEventListener('click', handleSlotClick);
+        }
+    } else if (type === 'placeholder') {
+        const uniqueClipId = `clip${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+        let placeholderButtonClass, placeholderContentInnerClass, placeholderIconClass, placeholderAddIconWrapperClass;
+
+        if (isFieldSlot) {
+            placeholderButtonClass = 'field-slot-btn';
+            placeholderContentInnerClass = 'field-slot-placeholder-content';
+            placeholderIconClass = 'field-slot-icon';
+            placeholderAddIconWrapperClass = 'field-slot-add-icon-wrapper';
+        } else if (isSubSlot) {
+            placeholderButtonClass = 'sub-slot-btn';
+            placeholderContentInnerClass = 'sub-slot-placeholder-content';
+            placeholderIconClass = 'sub-slot-icon';
+            placeholderAddIconWrapperClass = 'sub-slot-add-icon-wrapper';
+        }
+
+        innerHTMLContent = `
+            <div class="${isSubSlot ? 'sub-slot-placeholder' : 'field-slot-placeholder'}" draggable="true">
+                <button class="${placeholderButtonClass}">
+                    <div class="${placeholderContentInnerClass}">
+                        <div class="${placeholderIconClass}">
+                            <img src="assets/images/player-icon.png" alt="Add Player Icon" loading="lazy">
+                        </div>
+                        <div class="${placeholderAddIconWrapperClass}">
+                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#${uniqueClipId})">
+                                    <path d="M11 22C16.5228 22 22 16.5228 22 11C22 5.47715 16.5228 0 11 0C5.47715 0 0 5.47715 0 11C0 16.5228 5.47715 22 11 22Z"
+                                          fill="#000000"/>
+                                    <path d="M17 11H5M11 5V17" stroke="white" stroke-width="2"
+                                          stroke-linecap="round"/>
+                                </g>
+                                <defs>
+                                    <clipPath id="${uniqueClipId}">
+                                        <rect width="22" height="22" fill="white"/>
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        `;
+
+        slotElement.classList.remove('has-content');
+        slotElement.innerHTML = innerHTMLContent;
+
+        const newButton = slotElement.querySelector(`.${placeholderButtonClass}`);
+        if (newButton) {
+            newButton.addEventListener('click', handleSlotClick);
+        }
+    } else {
+        slotElement.innerHTML = '';
+        slotElement.classList.remove('has-content');
+    }
+    updateDraggableElements();
+}
+
+function handleSlotClick(event) {
+    const clickedSlot = event.target.closest('.position-slot, .sub-slot');
+
+    if (clickedSlot) {
+        selectedSlotForModal = clickedSlot;
+        isSubstituteSlotSelected = clickedSlot.classList.contains('sub-slot');
+        openModal();
+        console.log(`Slot clicked: ${clickedSlot.id || clickedSlot.className}. Is substitute: ${isSubstituteSlotSelected}`);
+    }
+}
+
+function updateSlotClickListeners() {
+    const fieldSlotButtons = document.querySelectorAll('.position-slot .field-slot-btn');
+    fieldSlotButtons.forEach(button => {
+        button.removeEventListener('click', handleSlotClick);
+        button.addEventListener('click', handleSlotClick);
+    });
+
+    const subSlotButtons = document.querySelectorAll('.sub-slot .sub-slot-btn');
+    subSlotButtons.forEach(button => {
+        button.removeEventListener('click', handleSlotClick);
+        button.addEventListener('click', handleSlotClick);
+    });
 }
 
 document.getElementById("league-select").addEventListener("change", function () {
