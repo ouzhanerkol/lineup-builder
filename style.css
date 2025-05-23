@@ -269,11 +269,9 @@ main {
     flex-shrink: 0;
     width: 90px;
     height: 90px;
-    border: 1px dashed #555;
-    border-radius: 25%;
+    border-radius: 10%;
     background-color: rgba(255, 255, 255, 0.05);
     display: flex;
-    cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease;
     justify-content: center;
     align-items: center;
@@ -345,13 +343,13 @@ main {
 }
 
 .position-slot .field-slot-name {
-    font-size: 0.85em;
+    font-size: 10px;
     font-weight: bold;
-    color: white;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 80px;
+    color: #333;
+    line-height: 1.2;
+    word-break: break-word;
+    text-align: center;
+    max-width: 85px;
 }
 
 .position-slot .field-slot-add-icon {
@@ -418,11 +416,12 @@ main {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     flex: 1;
+    padding-left: 35px;
 }
 
 .sub-slot {
-    width: 70px;
-    height: 70px;
+    width: 90px;
+    height: 90px;
     border: 1px dashed #ccc;
     box-sizing: border-box;
     display: flex;
@@ -463,8 +462,8 @@ main {
 }
 
 .sub-slot .sub-slot-icon {
-    width: 40px;
-    height: 40px;
+    width: 43px;
+    height: 43px;
     border-radius: 50%;
     overflow: hidden;
     background-color: #999;
@@ -486,10 +485,10 @@ main {
     font-size: 0.75em;
     font-weight: normal;
     color: #333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 60px;
+    line-height: 1.2;
+    word-break: break-word;
+    text-align: center;
+    max-width: 80px;
 }
 
 /* Modal Style Settings */
@@ -977,7 +976,7 @@ main {
     padding: 10px;
     box-sizing: border-box;
     background-image: url('assets/images/pitch-background.png');
-    background-size: 95% 98%;
+    background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
     aspect-ratio: 10 / 7;
@@ -1030,7 +1029,6 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 25%;
     color: #fff;
     font-size: 12px;
     text-align: center;
@@ -1041,7 +1039,7 @@ main {
 
 .image-sub-slot {
     width: auto;
-    height: auto;
+    height: 68px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1055,7 +1053,35 @@ main {
     overflow: hidden;
 }
 
-.image-player-content, .image-profile-content {
+.image-pitch-player-content, .image-pitch-profile-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 5px;
+    box-sizing: border-box;
+}
+
+.image-player-icon-container {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background-color: #666666;
+    object-fit: cover;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.image-player-icon-container img {
+    width: 85%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.image-sub-player-content, .image-sub-profile-content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1063,35 +1089,39 @@ main {
     background-color: #666666;
     width: 100%;
     height: 100%;
-    padding: 5px;
+    padding: 0 5px;
+    box-sizing: border-box;
 }
 
-.image-player-content img, .image-profile-content img {
-    width: 45px;
-    height: 45px;
+.image-pitch-player-content img, .image-pitch-profile-content img,
+.image-sub-player-content img, .image-sub-profile-content img {
+    width: auto;
+    height: 68px;
     border-radius: 50%;
+    background-color: #666666;
     object-fit: cover;
     margin-bottom: 5px;
 }
 
-.image-sub-slot .image-player-content img, .image-sub-slot .image-profile-content img {
-    width: 35px;
-    height: 35px;
+.image-sub-slot .image-sub-player-content img, .image-sub-slot .image-sub-profile-content img {
+    width: auto;
+    height: 40px;
 }
 
-.image-player-content span, .image-profile-content span {
+.image-pitch-player-content span, .image-pitch-profile-content span,
+.image-sub-player-content span, .image-sub-profile-content span {
     font-size: 10px;
     font-weight: bold;
     color: white;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 95%;
+    max-width: 80px;
+    line-height: 1.1;
+    word-break: break-word;
+    text-align: center;
 }
 
-.image-sub-slot .image-player-content span, .image-sub-slot .image-profile-content span {
-    font-size: 8px;
+.image-sub-slot .image-sub-player-content span, .image-sub-slot .image-sub-profile-content span {
+    font-size: 10px;
     font-weight: normal;
 }
 

@@ -341,14 +341,16 @@ async function generateShareImage() {
                 }
 
                 contentHtml = `
-                    <div class="image-player-content">
-                        <img src="${icon}" alt="${name}">
+                    <div class="image-pitch-player-content">
+                        <div class="image-player-icon-container">
+                            <img src="${icon}" alt="${name}">
+                        </div>
                         <span>${name}</span>
                     </div>
                 `;
             } else if (slotContent.classList.contains('field-slot-placeholder')) {
                 contentHtml = `
-                    <div class="image-player-content">
+                    <div class="image-pitch-player-content">
                         <img src="assets/images/player-icon.png" alt="Empty Slot">
                         <span>Empty Slot</span>
                     </div>
@@ -377,14 +379,14 @@ async function generateShareImage() {
                 }
 
                 contentHtml = `
-                    <div class="image-player-content">
+                    <div class="image-sub-player-content">
                         <img src="${icon}" alt="${name}">
                         <span>${name}</span>
                     </div>
                 `;
             } else if (subSlotContent.classList.contains('sub-slot-placeholder')) {
                 contentHtml = `
-                    <div class="image-player-content">
+                    <div class="image-sub-player-content">
                         <img src="assets/images/player-icon.png" alt="Empty Sub">
                         <span>Empty Sub</span>
                     </div>
