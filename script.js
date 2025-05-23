@@ -327,7 +327,7 @@ async function generateShareImage() {
             const slotWidth = 90;
             const slotHeight = 90;
 
-            newSlotDiv.style.left = `${(xRatio * newPitchWidth) - (slotWidth / 2) + 47}px`;
+            newSlotDiv.style.left = `${(xRatio * newPitchWidth) - (slotWidth / 2) + 43}px`;
             newSlotDiv.style.top = `${(yRatio * newPitchHeight) - (slotHeight / 2) + 50}px`;
 
             let contentHtml = '';
@@ -507,11 +507,11 @@ function showAllProfilePositionSections() {
         section.style.display = "block";
         const list = section.querySelector('.modal-profile-list');
         if (list) {
-            list.classList.add('active-list');
+            list.classList.remove('active-list');
         }
         const toggleIcon = section.querySelector('.toggle-icon');
         if (toggleIcon) {
-            toggleIcon.textContent = '-';
+            toggleIcon.textContent = '+';
         }
     });
 }
@@ -1272,22 +1272,29 @@ async function handleDrop(event) {
         ' .sub-slot-placeholder,' +
         ' .field-slot-placeholder');
 
-    updateSlotContent(dropZone, data.id, data.name, data.icon, data.type);
+    if (data.type === 'profile') {
+        updateSlotContent(dropZone, null, null, null, 'placeholder');
+    } else {
+        updateSlotContent(dropZone, data.id, data.name, data.icon, data.type);
+    }
 
     if (targetContentWrapper) {
         const targetType = targetContentWrapper.dataset.itemType || 'placeholder';
         let targetId = null, targetName = null, targetIcon = null;
-
-        if (targetType === 'player' || targetType === 'profile') {
-            targetId = targetContentWrapper.dataset[`${targetType}Id`];
-            targetName = targetContentWrapper.dataset[`${targetType}Name`];
-            targetIcon = targetContentWrapper.dataset[`${targetType}Icon`];
-        }
-
-        if (sourceSlot) {
-            updateSlotContent(sourceSlot, targetId, targetName, targetIcon, targetType);
+        if (targetType === 'profile') {
+            updateSlotContent(sourceSlot, null, null, null, 'placeholder');
         } else {
+            if (targetType === 'player') {
+                targetId = targetContentWrapper.dataset[`${targetType}Id`];
+                targetName = targetContentWrapper.dataset[`${targetType}Name`];
+                targetIcon = targetContentWrapper.dataset[`${targetType}Icon`];
+            }
 
+            if (sourceSlot) {
+                updateSlotContent(sourceSlot, targetId, targetName, targetIcon, targetType);
+            } else {
+
+            }
         }
     } else {
         sourceSlot.innerHTML = '';
