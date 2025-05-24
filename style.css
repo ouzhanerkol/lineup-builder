@@ -169,7 +169,7 @@ main {
 
 .slot-content-inner,
 .field-slot-placeholder-content,
-.sub-slot-placeholder-content {
+.bench-slot-placeholder-content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -181,7 +181,7 @@ main {
 }
 
 .field-slot-btn,
-.sub-slot-btn {
+.bench-slot-btn {
     text-decoration: none;
     outline: none;
     border: 0;
@@ -197,7 +197,7 @@ main {
 }
 
 .field-slot-btn:hover,
-.sub-slot-btn:hover {
+.bench-slot-btn:hover {
     color: #007bff;
 }
 
@@ -377,7 +377,7 @@ main {
     height: 16px;
 }
 
-.sub-slot-add-icon-wrapper {
+.bench-slot-add-icon-wrapper {
     width: 18px;
     height: 18px;
     background-color: black;
@@ -387,13 +387,13 @@ main {
     align-items: center;
 }
 
-.sub-slot-add-icon-wrapper svg {
+.bench-slot-add-icon-wrapper svg {
     fill: white;
     width: 12px;
     height: 12px;
 }
 
-.substitutes-section {
+.bench-section {
     background-color: #f5f5f5;
     border-radius: 8px;
     padding: 0.5rem;
@@ -406,12 +406,12 @@ main {
     color: #333;
 }
 
-.substitutes-section h3 {
+.bench-section h3 {
     margin-bottom: 10px;
     color: #333;
 }
 
-.substitute-list {
+.bench-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
@@ -419,7 +419,7 @@ main {
     padding-left: 35px;
 }
 
-.sub-slot {
+.bench-slot {
     width: 90px;
     height: 90px;
     border: 1px dashed #ccc;
@@ -434,14 +434,14 @@ main {
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.sub-slot.drag-over {
+.bench-slot.drag-over {
     border-color: #4CAF50;
     background-color: rgba(76, 175, 80, 0.1);
 }
 
-.sub-slot .sub-player-wrapper,
-.sub-slot .sub-profile-wrapper,
-.sub-slot .sub-slot-placeholder {
+.bench-slot .bench-player-wrapper,
+.bench-slot .bench-profile-wrapper,
+.bench-slot .bench-slot-placeholder {
     cursor: grab;
     opacity: 1;
     height: 100%;
@@ -455,13 +455,13 @@ main {
     text-align: center;
 }
 
-.sub-slot .sub-player-wrapper:hover,
-.sub-slot .sub-profile-wrapper:hover,
-.sub-slot .sub-slot-placeholder:hover {
+.bench-slot .bench-player-wrapper:hover,
+.bench-slot .bench-profile-wrapper:hover,
+.bench-slot .bench-slot-placeholder:hover {
     transform: scale(1.05);
 }
 
-.sub-slot .sub-slot-icon {
+.bench-slot .bench-slot-icon {
     width: 43px;
     height: 43px;
     border-radius: 50%;
@@ -474,14 +474,14 @@ main {
     margin-bottom: 3px;
 }
 
-.sub-slot .sub-slot-icon img {
+.bench-slot .bench-slot-icon img {
     width: 85%;
     height: 100%;
     object-fit: cover;
     object-position: center;
 }
 
-.sub-slot .sub-slot-name {
+.bench-slot .bench-slot-name {
     font-size: 0.75em;
     font-weight: normal;
     color: #333;
@@ -982,7 +982,7 @@ main {
     aspect-ratio: 10 / 7;
 }
 
-#image-substitutes-area {
+#image-bench-area {
     width: 100%;
     flex-grow: 1;
     background-color: #444;
@@ -1037,7 +1037,7 @@ main {
     overflow: hidden;
 }
 
-.image-sub-slot {
+.image-bench-slot {
     width: auto;
     height: 68px;
     display: flex;
@@ -1081,7 +1081,7 @@ main {
     object-position: center;
 }
 
-.image-sub-player-content, .image-sub-profile-content {
+.image-bench-player-content, .image-bench-profile-content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1094,7 +1094,7 @@ main {
 }
 
 .image-pitch-player-content img, .image-pitch-profile-content img,
-.image-sub-player-content img, .image-sub-profile-content img {
+.image-bench-player-content img, .image-bench-profile-content img {
     width: auto;
     height: 68px;
     border-radius: 50%;
@@ -1103,13 +1103,13 @@ main {
     margin-bottom: 5px;
 }
 
-.image-sub-slot .image-sub-player-content img, .image-sub-slot .image-sub-profile-content img {
+.image-bench-slot .image-bench-player-content img, .image-bench-slot .image-bench-profile-content img {
     width: auto;
     height: 40px;
 }
 
 .image-pitch-player-content span, .image-pitch-profile-content span,
-.image-sub-player-content span, .image-sub-profile-content span {
+.image-bench-player-content span, .image-bench-profile-content span {
     font-size: 10px;
     font-weight: bold;
     color: white;
@@ -1120,7 +1120,7 @@ main {
     text-align: center;
 }
 
-.image-sub-slot .image-sub-player-content span, .image-sub-slot .image-sub-profile-content span {
+.image-bench-slot .image-bench-player-content span, .image-bench-slot .image-bench-profile-content span {
     font-size: 10px;
     font-weight: normal;
 }
@@ -1281,7 +1281,7 @@ main {
 }
 
 .control-starting-players,
-.control-substitute-players {
+.control-bench-players {
     list-style: none;
     padding: 0;
 }

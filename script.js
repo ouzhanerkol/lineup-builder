@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
 const BASE_URL = "http://localhost:8080";
 let selectedSlotForModal = null;
 let searchInputListener = null;
-let isSubstituteSlotSelected = false;
+let isBenchSlotSelected = false;
 let currentFormation = "4-2-3-1";
 const modal = document.getElementById('playerModal');
 const playerListSection = document.getElementById('playerListSection');
@@ -208,7 +208,7 @@ function showRolesTab() {
 
     clearProfileLists();
 
-    if (isSubstituteSlotSelected) {
+    if (isBenchSlotSelected) {
         fetchAllPlayerProfiles();
         showAllProfilePositionSections();
     } else if (selectedSlotForModal) {
@@ -284,7 +284,7 @@ async function generateShareImage() {
             <div class="site-logo-area">
                 <img src="${siteLogoUrl}" alt="MyTeamFormation Logo">
             </div>
-            <div id="image-substitutes-area">
+            <div id="image-bench-area">
                 </div>
             <div class="team-info-area">
                 <img src="${teamLogoUrl}" alt="Team Logo">
@@ -302,7 +302,7 @@ async function generateShareImage() {
     imageGenerationContainer.innerHTML = leftColumnHtml + pitchAreaHtml;
 
     const imagePitchContainer = imageGenerationContainer.querySelector('#image-pitch-container');
-    const imageSubstitutesArea = imageGenerationContainer.querySelector('#image-substitutes-area');
+    const imageBenchArea = imageGenerationContainer.querySelector('#image-bench-area');
 
     allPositionSlots.forEach(slot => {
         const slotContent = slot.querySelector('.field-player-wrapper, .field-profile-wrapper, .field-slot-placeholder');
@@ -362,39 +362,39 @@ async function generateShareImage() {
         }
     });
 
-    document.querySelectorAll('.sub-slot').forEach(subSlot => {
-        const subSlotContent = subSlot.querySelector('.sub-player-wrapper, .sub-profile-wrapper, .sub-slot-placeholder');
-        if (subSlotContent) {
-            const newSubSlotDiv = document.createElement('div');
-            newSubSlotDiv.className = 'image-sub-slot';
+    document.querySelectorAll('.bench-slot').forEach(benchSlot => {
+        const benchSlotContent = benchSlot.querySelector('.bench-player-wrapper, .bench-profile-wrapper, .bench-slot-placeholder');
+        if (benchSlotContent) {
+            const newBenchSlotDiv = document.createElement('div');
+            newBenchSlotDiv.className = 'image-bench-slot';
 
             let contentHtml = '';
-            if (subSlotContent.classList.contains('sub-player-wrapper') || subSlotContent.classList.contains('sub-profile-wrapper')) {
-                const type = subSlotContent.dataset.itemType;
-                const name = subSlotContent.dataset[`${type}Name`];
-                let icon = subSlotContent.dataset[`${type}Icon`];
+            if (benchSlotContent.classList.contains('bench-player-wrapper') || benchSlotContent.classList.contains('bench-profile-wrapper')) {
+                const type = benchSlotContent.dataset.itemType;
+                const name = benchSlotContent.dataset[`${type}Name`];
+                let icon = benchSlotContent.dataset[`${type}Icon`];
 
                 if (icon && !icon.startsWith('assets/images/')) {
                     icon = `${BASE_URL}/api/proxy/image?imageUrl=${icon}`;
                 }
 
                 contentHtml = `
-                    <div class="image-sub-player-content">
+                    <div class="image-bench-player-content">
                         <img src="${icon}" alt="${name}">
                         <span>${name}</span>
                     </div>
                 `;
-            } else if (subSlotContent.classList.contains('sub-slot-placeholder')) {
+            } else if (benchSlotContent.classList.contains('bench-slot-placeholder')) {
                 contentHtml = `
-                    <div class="image-sub-player-content">
-                        <img src="assets/images/player-icon.png" alt="Empty Sub">
-                        <span>Empty Sub</span>
+                    <div class="image-bench-player-content">
+                        <img src="assets/images/player-icon.png" alt="Empty Bench">
+                        <span>Empty Bench</span>
                     </div>
                 `;
             }
 
-            newSubSlotDiv.innerHTML = contentHtml;
-            imageSubstitutesArea.appendChild(newSubSlotDiv);
+            newBenchSlotDiv.innerHTML = contentHtml;
+            imageBenchArea.appendChild(newBenchSlotDiv);
         }
     });
 
@@ -1042,10 +1042,10 @@ function updateSlotContent(slotElement, id, name, icon, type) {
     slotElement.innerHTML = '';
 
     const isFieldSlot = slotElement.classList.contains('position-slot');
-    const isSubSlot = slotElement.classList.contains('sub-slot');
+    const isBenchSlot = slotElement.classList.contains('bench-slot');
 
-    if (!isFieldSlot && !isSubSlot) {
-        console.error("Slot element is not a field slot or a sub slot:", slotElement);
+    if (!isFieldSlot && !isBenchSlot) {
+        console.error("Slot element is not a field slot or a bench slot:", slotElement);
         return;
     }
 
@@ -1066,11 +1066,11 @@ function updateSlotContent(slotElement, id, name, icon, type) {
             buttonClass = 'field-slot-btn';
             iconClass = 'field-slot-icon';
             nameClass = 'field-slot-name';
-        } else if (isSubSlot) {
-            contentWrapperClass = type === 'player' ? 'sub-player-wrapper' : 'sub-profile-wrapper';
-            buttonClass = 'sub-slot-btn';
-            iconClass = 'sub-slot-icon';
-            nameClass = 'sub-slot-name';
+        } else if (isBenchSlot) {
+            contentWrapperClass = type === 'player' ? 'bench-player-wrapper' : 'bench-profile-wrapper';
+            buttonClass = 'bench-slot-btn';
+            iconClass = 'bench-slot-icon';
+            nameClass = 'bench-slot-name';
         }
 
         innerHTMLContent = `
@@ -1105,15 +1105,15 @@ function updateSlotContent(slotElement, id, name, icon, type) {
             placeholderContentInnerClass = 'field-slot-placeholder-content';
             placeholderIconClass = 'field-slot-icon';
             placeholderAddIconWrapperClass = 'field-slot-add-icon-wrapper';
-        } else if (isSubSlot) {
-            placeholderButtonClass = 'sub-slot-btn';
-            placeholderContentInnerClass = 'sub-slot-placeholder-content';
-            placeholderIconClass = 'sub-slot-icon';
-            placeholderAddIconWrapperClass = 'sub-slot-add-icon-wrapper';
+        } else if (isBenchSlot) {
+            placeholderButtonClass = 'bench-slot-btn';
+            placeholderContentInnerClass = 'bench-slot-placeholder-content';
+            placeholderIconClass = 'bench-slot-icon';
+            placeholderAddIconWrapperClass = 'bench-slot-add-icon-wrapper';
         }
 
         innerHTMLContent = `
-            <div class="${isSubSlot ? 'sub-slot-placeholder' : 'field-slot-placeholder'}" draggable="true">
+            <div class="${isBenchSlot ? 'bench-slot-placeholder' : 'field-slot-placeholder'}" draggable="true">
                 <button class="${placeholderButtonClass}">
                     <div class="${placeholderContentInnerClass}">
                         <div class="${placeholderIconClass}">
@@ -1156,13 +1156,13 @@ function updateSlotContent(slotElement, id, name, icon, type) {
 }
 
 function handleSlotClick(event) {
-    const clickedSlot = event.target.closest('.position-slot, .sub-slot');
+    const clickedSlot = event.target.closest('.position-slot, .bench-slot');
 
     if (clickedSlot) {
         selectedSlotForModal = clickedSlot;
-        isSubstituteSlotSelected = clickedSlot.classList.contains('sub-slot');
+        isBenchSlotSelected = clickedSlot.classList.contains('bench-slot');
         openModal();
-        console.log(`Slot clicked: ${clickedSlot.id || clickedSlot.className}. Is substitute: ${isSubstituteSlotSelected}`);
+        console.log(`Slot clicked: ${clickedSlot.id || clickedSlot.className}. Is bench : ${isBenchSlotSelected}`);
     }
 }
 
@@ -1173,8 +1173,8 @@ function updateSlotClickListeners() {
         button.addEventListener('click', handleSlotClick);
     });
 
-    const subSlotButtons = document.querySelectorAll('.sub-slot .sub-slot-btn');
-    subSlotButtons.forEach(button => {
+    const benchSlotButtons = document.querySelectorAll('.bench-slot .bench-slot-btn');
+    benchSlotButtons.forEach(button => {
         button.removeEventListener('click', handleSlotClick);
         button.addEventListener('click', handleSlotClick);
     });
@@ -1187,7 +1187,7 @@ function setupDragAndDropListeners() {
         slot.addEventListener('drop', handleDrop);
     });
 
-    document.querySelectorAll('.sub-slot').forEach(slot => {
+    document.querySelectorAll('.bench-slot').forEach(slot => {
         slot.addEventListener('dragover', handleDragOver);
         slot.addEventListener('dragleave', handleDragLeave);
         slot.addEventListener('drop', handleDrop);
@@ -1220,7 +1220,7 @@ function handleDragStart(event) {
         icon = draggedElement.dataset[`${type}Icon`];
     }
 
-    const sourceSlotId = draggedElement.closest('.position-slot, .sub-slot')?.id;
+    const sourceSlotId = draggedElement.closest('.position-slot, .bench-slot')?.id;
 
     event.dataTransfer.setData('application/json', JSON.stringify({ type, id, name, icon, sourceSlotId }));
     event.dataTransfer.effectAllowed = 'move';
@@ -1267,9 +1267,9 @@ async function handleDrop(event) {
     const targetContentWrapper = dropZone.querySelector(
         '.field-player-wrapper,' +
         ' .field-profile-wrapper,' +
-        ' .sub-player-wrapper,' +
-        ' .sub-profile-wrapper,' +
-        ' .sub-slot-placeholder,' +
+        ' .bench-player-wrapper,' +
+        ' .bench-profile-wrapper,' +
+        ' .bench-slot-placeholder,' +
         ' .field-slot-placeholder');
 
     if (data.type === 'profile') {
