@@ -20,13 +20,14 @@ import {
 
 import {
     applyFormation
-} from '../script.js';
+} from './formationManager.js';
 import {
     openShareModal, closeShareModal, downloadImage, shareToTwitter,
     shareToFacebook, copyImageToClipboard
 } from './shareUtils.js';
 import { loadTeams, fetchPlayers, fetchAllPlayerProfiles } from './apiService.js';
 import {clearPlayerLists, closeModal, showPlayersTab, showRolesTab} from "./modalManager.js";
+import {renderPlayers} from "./renderUtils.js";
 
 
 export function setupEventListeners() {
@@ -116,7 +117,30 @@ export function setupEventListeners() {
         leagueSelect.addEventListener("change", function () {
             const leagueId = this.value;
             if (leagueId) {
-                loadTeams(leagueId);
+                loadTeams(leagueId).then(teams => {
+                    if (teams && Array.isArray(teams) && teams.length > 0) {
+                        teamSelect.innerHTML = '';
+                        teams.forEach(team => {
+                            const option = document.createElement("option");
+                            option.value = team.id;
+                            option.textContent = team.name;
+                            teamSelect.appendChild(option);
+                        });
+                        const firstTeam = teams[0];
+                        if (firstTeam) {
+                            teamSelect.value = firstTeam.id;
+                            fetchPlayers(firstTeam.id).then(players => {
+                                if (players) {
+                                    renderPlayers(players);
+                                }
+                            });
+                        }
+                    } else {
+                        console.warn("Team data is not found or empty for this league.");
+                        teamSelect.innerHTML = '<option value="">No teams found</option>';
+                        clearPlayerLists();
+                    }
+                });
             } else {
                 teamSelect.innerHTML = '';
                 clearPlayerLists();
@@ -127,7 +151,11 @@ export function setupEventListeners() {
         teamSelect.addEventListener("change", function () {
             const teamId = this.value;
             if (teamId) {
-                fetchPlayers(teamId);
+                fetchPlayers(teamId).then(players => {
+                    if (players) {
+                        renderPlayers(players);
+                    }
+                });
             } else {
                 clearPlayerLists();
             }

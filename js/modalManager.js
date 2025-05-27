@@ -13,9 +13,9 @@ import {
     setSearchInputListener,
     setSelectedSlotForModal, SLOT_POSITION_MAP
 } from "./constants.js";
-import {updateSlotContent} from "../script.js";
+import {updateSlotContent} from "./slotManager.js";
 import {fetchAllPlayerProfiles, fetchPlayerProfilesByPosition, fetchSearchResults} from './apiService.js';
-import {displaySearchResults} from "./renderUtils.js";
+import {displaySearchResults, renderPlayerProfiles} from "./renderUtils.js";
 
 export function openModal() {
     modal.style.display = "flex";
@@ -69,7 +69,11 @@ export function showRolesTab() {
     clearProfileLists();
 
     if (AppState.isBenchSlotSelected) {
-        fetchAllPlayerProfiles();
+        fetchAllPlayerProfiles().then(profiles => {
+            if (profiles) {
+                renderPlayerProfiles(profiles);
+            }
+        });
         showAllProfilePositionSections();
     } else if (AppState.selectedSlotForModal) {
         const slotId = AppState.selectedSlotForModal.id;
@@ -78,8 +82,11 @@ export function showRolesTab() {
         hideAllProfilePositionSections();
 
         fetchPlayerProfilesByPosition(positionCode)
-            .then(() => {
-                showProfilePositionSection(positionCode);
+            .then(profiles => {
+                if (profiles) {
+                    renderPlayerProfiles(profiles);
+                    showProfilePositionSection(positionCode);
+                }
             });
     } else {
         clearProfileLists();
