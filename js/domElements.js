@@ -37,3 +37,4 @@ export const controlPanelTabBtns = document.querySelectorAll('.tab-header .tab-b
 export const tabPanes = document.querySelectorAll('.tab-panel');
 export const profileSectionHeaders = document.querySelectorAll('.profile-section-header');
 export const modalProfileCategoryToggleIcons = document.querySelectorAll('.modal-profile-category .toggle-icon');
+export const pitchContainer = document.getElementById('pitch-container');

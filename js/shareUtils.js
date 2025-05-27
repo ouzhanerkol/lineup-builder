@@ -4,7 +4,7 @@ import {
     generatedImageView,
     teamNameInput,
     teamSelect,
-    allPositionSlots
+    allPositionSlots, pitchContainer, allBenchSlots
 } from './domElements.js';
 
 export function openShareModal() {
@@ -81,7 +81,7 @@ export async function generateShareImage() {
             newSlotDiv.className = 'image-position-slot';
             newSlotDiv.style.position = 'absolute';
 
-            const pitchContainer = document.getElementById('pitch-container');
+
             const pitchRect = pitchContainer.getBoundingClientRect();
             const slotRect = slot.getBoundingClientRect();
 
@@ -132,7 +132,7 @@ export async function generateShareImage() {
         }
     });
 
-    document.querySelectorAll('.bench-slot').forEach(benchSlot => {
+    allBenchSlots.forEach(benchSlot => {
         const benchSlotContent = benchSlot.querySelector('.bench-player-wrapper, .bench-profile-wrapper, .bench-slot-placeholder');
         if (benchSlotContent) {
             const newBenchSlotDiv = document.createElement('div');
