@@ -20,11 +20,13 @@ import {
 
 import {
     closeModal, showPlayersTab, showRolesTab, fetchAllPlayerProfiles,
-    openShareModal, closeShareModal, downloadImage, shareToTwitter,
-    shareToFacebook, copyImageToClipboard,
     applyFormation,
     loadTeams, fetchPlayers, clearPlayerLists,
 } from '../script.js';
+import {
+    openShareModal, closeShareModal, downloadImage, shareToTwitter,
+    shareToFacebook, copyImageToClipboard
+} from './shareUtils.js';
 
 export function setupEventListeners() {
     controlPanelTabBtns.forEach(btn => {
