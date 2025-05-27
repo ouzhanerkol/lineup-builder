@@ -1,95 +1,102 @@
 import {BASE_URL} from "./constants.js";
-import {renderPlayerProfiles, renderPlayers} from "./renderUtils.js";
-import {teamSelect} from "./domElements.js";
+import {hideLoading, showLoading, showNotification} from "./uiManager.js";
+
+async function handleApiResponse(response) {
+    if (!response.ok) {
+        let errorData = {};
+        try {
+            errorData = await response.json();
+        } catch (e) {
+            errorData = { message: response.statusText || 'Unknown Error' };
+        }
+        const errorMessage = errorData.message || `API Error: ${response.status} - ${response.statusText}`;
+        console.error("API Error:", response.status, errorMessage, errorData);
+        showNotification(`API Error: ${errorMessage}`, 'error');
+        throw new Error(errorMessage);
+    }
+    return response.json();
+}
 
 export async function loadLeagues() {
+    showLoading();
     try {
         const response = await fetch(`${BASE_URL}/api/leagues`);
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error("HTTP error when fetching leagues:", response.status, errorText);
-            return [];
-        }
-        return await response.json();
+        return await handleApiResponse(response);
     } catch (error) {
         console.error("Error loading leagues:", error);
+        showNotification(`Error loading leagues: ${error.message}`, 'error');
         return [];
+    } finally {
+        hideLoading();
     }
 }
 
 export async function loadTeams(leagueId) {
+    showLoading();
     try {
         const response = await fetch(`${BASE_URL}/api/teams/search/${leagueId}`);
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error("HTTP error when fetching teams:", response.status, errorText);
-            return [];
-        }
-        const teams = await response.json();
-        teamSelect.innerHTML = '';
-        teams.forEach(team => {
-            const option = document.createElement("option");
-            option.value = team.id;
-            option.textContent = team.name;
-            option.dataset.logoUrl = team.logoUrl?.trim() ? team.logoUrl : 'assets/images/default-team-logo.png';
-            if (team.id === '1') {
-                option.selected = true;
-            }
-            teamSelect.appendChild(option);
-        });
-        return teams;
+        return await handleApiResponse(response);
     } catch (error) {
         console.error("Error loading teams:", error);
+        showNotification(`Error loading teams: ${error.message}`, 'error');
         return [];
+    } finally {
+        hideLoading();
     }
 }
 
 export async function fetchPlayers(teamId) {
+    showLoading();
     try {
         const response = await fetch(`${BASE_URL}/api/players/search/${teamId}`);
-        if (!response.ok) throw new Error("Didn't fetch players");
-        const players = await response.json();
-        renderPlayers(players);
+        return await handleApiResponse(response);
     } catch (error) {
-        console.error("Error:", error.message);
+        console.error("Error fetching players:", error.message);
+        showNotification(`Error fetching players: ${error.message}`, 'error');
+        return [];
+    } finally {
+        hideLoading();
     }
 }
 
 export async function fetchAllPlayerProfiles() {
+    showLoading()
     try {
         const response = await fetch(`${BASE_URL}/api/player-profiles`);
-        if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
-        }
-        const profiles = await response.json();
-        renderPlayerProfiles(profiles);
+        return await handleApiResponse(response);
     } catch (error) {
-        console.error("Error (roles):", error);
+        console.error("Error (roles) fetching all player profiles:", error);
+        showNotification(`Error (roles) fetching all player profiles: ${error.message}`, 'error');
+        return [];
+    } finally {
+        hideLoading();
     }
 }
 
 export async function fetchPlayerProfilesByPosition(positionCode) {
+    showLoading();
     try {
         const response = await fetch(`${BASE_URL}/api/player-profiles/search/${positionCode}`);
-        if (!response.ok) {
-            throw new Error(`HTTP Error: ${response.status}`);
-        }
-        const profiles = await response.json();
-        renderPlayerProfiles(profiles);
+        return await handleApiResponse(response);
     } catch (error) {
-        console.error("Error (roles):", error);
+        console.error("Error (roles) fetching player profiles by position:", error);
+        showNotification(`Error (roles) fetching player profiles by position: ${error.message}`, 'error');
+        return [];
+    } finally {
+        hideLoading();
     }
 }
 
 export async function fetchSearchResults(searchTerm) {
+    showLoading()
     try {
         const response = await fetch(`${BASE_URL}/api/players/search?query=${searchTerm}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
+        return await handleApiResponse(response);
     } catch (error) {
         console.error("Error when fetching search result:", error);
-        return null;
+        showNotification(`Error when fetching search result: ${error.message}`, 'error');
+        return [];
+    } finally {
+        hideLoading();
     }
 }

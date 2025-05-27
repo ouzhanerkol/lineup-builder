@@ -114,48 +114,19 @@ export function setupEventListeners() {
     }
 
     if (leagueSelect) {
-        leagueSelect.addEventListener("change", function () {
+        leagueSelect.addEventListener("change", async function () {
             const leagueId = this.value;
-            if (leagueId) {
-                loadTeams(leagueId).then(teams => {
-                    if (teams && Array.isArray(teams) && teams.length > 0) {
-                        teamSelect.innerHTML = '';
-                        teams.forEach(team => {
-                            const option = document.createElement("option");
-                            option.value = team.id;
-                            option.textContent = team.name;
-                            teamSelect.appendChild(option);
-                        });
-                        const firstTeam = teams[0];
-                        if (firstTeam) {
-                            teamSelect.value = firstTeam.id;
-                            fetchPlayers(firstTeam.id).then(players => {
-                                if (players) {
-                                    renderPlayers(players);
-                                }
-                            });
-                        }
-                    } else {
-                        console.warn("Team data is not found or empty for this league.");
-                        teamSelect.innerHTML = '<option value="">No teams found</option>';
-                        clearPlayerLists();
-                    }
-                });
-            } else {
-                teamSelect.innerHTML = '';
-                clearPlayerLists();
-            }
+            await populateTeamsAndPlayers(leagueId);
         });
     }
     if (teamSelect) {
-        teamSelect.addEventListener("change", function () {
+        teamSelect.addEventListener("change", async function () {
             const teamId = this.value;
             if (teamId) {
-                fetchPlayers(teamId).then(players => {
-                    if (players) {
-                        renderPlayers(players);
-                    }
-                });
+                const players = await fetchPlayers(teamId);
+                if (players) {
+                    renderPlayers(players);
+                }
             } else {
                 clearPlayerLists();
             }
@@ -170,4 +141,35 @@ export function setupEventListeners() {
             icon.textContent = '+';
         }
     });
+}
+
+export async function populateTeamsAndPlayers(leagueId) {
+    if (!leagueId) {
+        teamSelect.innerHTML = '<option value="">No teams found</option>';
+        clearPlayerLists();
+        return;
+    }
+
+    const teams = await loadTeams(leagueId);
+    if (teams && Array.isArray(teams) && teams.length > 0) {
+        teamSelect.innerHTML = '';
+        teams.forEach(team => {
+            const option = document.createElement("option");
+            option.value = team.id;
+            option.textContent = team.name;
+            option.dataset.logoUrl = team.logoUrl?.trim() ? team.logoUrl : 'assets/images/default-team-logo.png';
+            teamSelect.appendChild(option);
+        });
+
+        const firstTeamId = teams[0].id;
+        teamSelect.value = firstTeamId;
+        const players = await fetchPlayers(firstTeamId);
+        if (players) {
+            renderPlayers(players);
+        }
+    } else {
+        console.warn("Team data is not found or empty for this league.");
+        teamSelect.innerHTML = '<option value="">No teams found</option>';
+        clearPlayerLists();
+    }
 }

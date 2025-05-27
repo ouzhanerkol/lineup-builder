@@ -16,6 +16,7 @@ import {
 import {updateSlotContent} from "./slotManager.js";
 import {fetchAllPlayerProfiles, fetchPlayerProfilesByPosition, fetchSearchResults} from './apiService.js';
 import {displaySearchResults, renderPlayerProfiles} from "./renderUtils.js";
+import {showNotification} from "./uiManager.js";
 
 export function openModal() {
     modal.style.display = "flex";
@@ -60,37 +61,38 @@ export function showPlayersTab() {
     });
 }
 
-export function showRolesTab() {
+export async function showRolesTab() {
     playerListSection.style.display = 'none';
     playerRolesSection.style.display = 'grid';
     playersTabBtn.classList.remove('active');
     rolesTabBtn.classList.add('active');
 
     clearProfileLists();
-
-    if (AppState.isBenchSlotSelected) {
-        fetchAllPlayerProfiles().then(profiles => {
+    try {
+        if (AppState.isBenchSlotSelected) {
+            const profiles = await fetchAllPlayerProfiles();
             if (profiles) {
                 renderPlayerProfiles(profiles);
             }
-        });
-        showAllProfilePositionSections();
-    } else if (AppState.selectedSlotForModal) {
-        const slotId = AppState.selectedSlotForModal.id;
-        const positionCode = SLOT_POSITION_MAP[slotId] || 'UNKNOWN';
+            showAllProfilePositionSections();
+        } else if (AppState.selectedSlotForModal) {
+            const slotId = AppState.selectedSlotForModal.id;
+            const positionCode = SLOT_POSITION_MAP[slotId] || 'UNKNOWN';
 
-        hideAllProfilePositionSections();
+            hideAllProfilePositionSections();
 
-        fetchPlayerProfilesByPosition(positionCode)
-            .then(profiles => {
-                if (profiles) {
-                    renderPlayerProfiles(profiles);
-                    showProfilePositionSection(positionCode);
-                }
-            });
-    } else {
-        clearProfileLists();
-        hideAllProfilePositionSections();
+            const profiles = await fetchPlayerProfilesByPosition(positionCode);
+            if (profiles) {
+                renderPlayerProfiles(profiles);
+                showProfilePositionSection(positionCode);
+            }
+        } else {
+            clearProfileLists();
+            hideAllProfilePositionSections();
+        }
+    } catch (error) {
+        console.error("Error while fetching player profiles: ", error);
+        showNotification("Error while fetching player profiles. Please try again later.", "error");
     }
 }
 
@@ -99,20 +101,25 @@ export function setupPlayerSearch() {
         playerSearchInput.removeEventListener('input', AppState.searchInputListener);
     }
 
-    setSearchInputListener(async function () {
+    const newSearchInputListener = async function () {
         const searchTerm = this.value.toLowerCase().trim();
         playerSearchResults.innerHTML = '';
         playerSearchResults.style.display = 'none';
 
         if (searchTerm.length >= 2) {
-            fetchSearchResults(searchTerm)
-                .then(results => {
-                    if (results) {
-                        displaySearchResults(results);
-                    }
-                });
+            try {
+                const results = await fetchSearchResults(searchTerm);
+                if (results) {
+                    displaySearchResults(results);
+                }
+            } catch (error) {
+                console.error("Error while fetching search results: ", error);
+                showNotification("Error while fetching search results. Please try again later.", "error");
+            }
         }
-    });
+    }
+
+    setSearchInputListener(newSearchInputListener);
     playerSearchInput.addEventListener('input', AppState.searchInputListener);
 }
 
