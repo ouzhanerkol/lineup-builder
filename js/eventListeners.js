@@ -19,14 +19,14 @@ import {
 } from './domElements.js';
 
 import {
-    closeModal, showPlayersTab, showRolesTab, fetchAllPlayerProfiles,
-    applyFormation,
-    loadTeams, fetchPlayers, clearPlayerLists,
+    closeModal, showPlayersTab, showRolesTab, applyFormation, clearPlayerLists,
 } from '../script.js';
 import {
     openShareModal, closeShareModal, downloadImage, shareToTwitter,
     shareToFacebook, copyImageToClipboard
 } from './shareUtils.js';
+import { loadTeams, fetchPlayers, fetchAllPlayerProfiles } from './apiService.js';
+
 
 export function setupEventListeners() {
     controlPanelTabBtns.forEach(btn => {
