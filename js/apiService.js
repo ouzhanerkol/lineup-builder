@@ -1,12 +1,6 @@
 import {BASE_URL} from "./constants.js";
-import {
-    defendersSection,
-    forwardsSection,
-    goalkeepersSection, leagueSelect,
-    midfieldersSection, profileCenterBacksSection, profileForwardsSection, profileFullBacksSection,
-    profileGoalkeepersSection, profileMidfieldersSection, profileWingersSection, teamSelect
-} from "./domElements.js";
-import {clearPlayerLists, clearProfileLists, selectPlayer, selectProfile} from "../script.js";
+import {renderPlayerProfiles, renderPlayers} from "../script.js";
+import {teamSelect} from "./domElements.js";
 
 export async function loadLeagues() {
     try {
@@ -16,14 +10,7 @@ export async function loadLeagues() {
             console.error("HTTP error when fetching leagues:", response.status, errorText);
             return [];
         }
-        const leagues = await response.json();
-        leagues.forEach(league => {
-            const option = document.createElement("option");
-            option.value = league.id;
-            option.textContent = league.name;
-            leagueSelect.appendChild(option);
-        });
-        return leagues;
+        return await response.json();
     } catch (error) {
         console.error("Error loading leagues:", error);
         return [];
@@ -44,7 +31,10 @@ export async function loadTeams(leagueId) {
             const option = document.createElement("option");
             option.value = team.id;
             option.textContent = team.name;
-            option.dataset.logoUrl = team.logoUrl || 'assets/images/default-team-logo.png';
+            option.dataset.logoUrl = team.logoUrl?.trim() ? team.logoUrl : 'assets/images/default-team-logo.png';
+            if (team.id === '1') {
+                option.selected = true;
+            }
             teamSelect.appendChild(option);
         });
         return teams;
@@ -65,37 +55,6 @@ export async function fetchPlayers(teamId) {
     }
 }
 
-function renderPlayers(players) {
-    clearPlayerLists();
-    players.forEach(player => {
-        let section;
-        const pos = player.position.toUpperCase();
-        if (pos.includes("GK")) section = goalkeepersSection;
-        else if (pos.includes("CB") || pos.includes("LB") || pos.includes("RB") || pos.startsWith("D")) section = defendersSection;
-        else if (pos.includes("CM") || pos.includes("AM") || pos.includes("DM") || pos.startsWith("M")) section = midfieldersSection;
-        else if (pos.includes("ST") || pos.includes("CF") || pos.startsWith("F") || pos.includes("W")) section = forwardsSection;
-
-        if (section) {
-            const container = document.createElement("div");
-            container.className = "modal-player-item";
-            container.innerHTML = `
-                <button class="modal-player-item-btn player-item-btn">
-                    <div class="modal-player-item-icon">
-                        <img src="${player.photoUrl}" alt="${player.name}" width="50" height="50" loading="lazy">
-                    </div>
-                    <div class="modal-player-item-name">
-                        <span>${player.name}</span>
-                    </div>
-                </button>
-            `;
-            container.querySelector(".modal-player-item-btn").addEventListener("click", () => {
-                selectPlayer(player);
-            });
-            section.appendChild(container);
-        }
-    });
-}
-
 export async function fetchAllPlayerProfiles() {
     try {
         const response = await fetch(`${BASE_URL}/api/player-profiles`);
@@ -109,51 +68,6 @@ export async function fetchAllPlayerProfiles() {
     }
 }
 
-function renderPlayerProfiles(profiles) {
-    clearProfileLists();
-
-    profiles.forEach(profile => {
-        let section;
-        // TODO: check this
-        const profilePosCode = profile.positionCode ? profile.positionCode.toUpperCase() : "UNKNOWN";
-
-        if (profilePosCode === "GK") {
-            section = profileGoalkeepersSection;
-        } else if (profilePosCode === "CB") {
-            section = profileCenterBacksSection;
-        } else if (profilePosCode === "FB") {
-            section = profileFullBacksSection;
-        } else if (profilePosCode === "DM" || profilePosCode === "CM" || profilePosCode === "AM") {
-            section = profileMidfieldersSection;
-        } else if (profilePosCode === "FW") {
-            section = profileWingersSection;
-        } else if (profilePosCode === "ST") {
-            section = profileForwardsSection;
-        }
-
-        if (section) {
-            const div = document.createElement("div");
-            div.className = "modal-player-item";
-            div.innerHTML = `
-                <button class="modal-player-item-btn profile-btn">
-                    <div class="modal-player-item-icon">
-                        <img src="assets/images/placeholder-icon.png" alt="Profile Icon" width="50" height="50">
-                    </div>
-                    <div class="modal-player-item-name">
-                        <span>${profile.name}</span>
-                    </div>
-                </button>
-            `;
-            div.querySelector(".modal-player-item-btn").addEventListener("click", () => {
-                selectProfile(profile);
-            });
-            section.appendChild(div);
-        } else {
-            console.warn(`Section is not found for profile: ${profile.name} (Position Code: ${profile.positionCode})`);
-        }
-    });
-}
-
 export async function fetchPlayerProfilesByPosition(positionCode) {
     try {
         const response = await fetch(`${BASE_URL}/api/player-profiles/search/${positionCode}`);
@@ -164,5 +78,18 @@ export async function fetchPlayerProfilesByPosition(positionCode) {
         renderPlayerProfiles(profiles);
     } catch (error) {
         console.error("Error (roles):", error);
+    }
+}
+
+export async function fetchSearchResults(searchTerm) {
+    try {
+        const response = await fetch(`${BASE_URL}/api/players/search?query=${searchTerm}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error when fetching search result:", error);
+        return null;
     }
 }

@@ -24,6 +24,20 @@ export function setDraggedElement(element) {
     AppState.draggedElement = element;
 }
 
+export const SLOT_POSITION_MAP = {
+    'position-gk': 'GK',
+    'position-1-1': 'FB', 'position-1-5': 'FB',
+    'position-2-1': 'FB', 'position-2-5': 'FB',
+    'position-3-1': 'FW', 'position-3-5': 'FW',
+    'position-4-1': 'FW', 'position-4-5': 'FW',
+    'position-5-1': 'FW', 'position-5-5': 'FW',
+    'position-1-2': 'CB', 'position-1-3': 'CB', 'position-1-4': 'CB',
+    'position-2-2': 'DM', 'position-2-3': 'DM', 'position-2-4': 'DM',
+    'position-3-2': 'CM', 'position-3-3': 'CM', 'position-3-4': 'CM',
+    'position-4-2': 'AM', 'position-4-3': 'AM', 'position-4-4': 'AM',
+    'position-5-2': 'ST', 'position-5-3': 'ST', 'position-5-4': 'ST'
+};
+
 export const ZONE_SLOT_MAP = {
     'goalkeeper-zone': ['position-gk'],
     'zone-row-1': ['position-1-1', 'position-1-2', 'position-1-3', 'position-1-4', 'position-1-5'],

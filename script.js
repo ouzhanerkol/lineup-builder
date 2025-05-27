@@ -1,9 +1,5 @@
 import {
-    BASE_URL,
     AppState,
-    setSelectedSlotForModal,
-    setSearchInputListener,
-    setIsBenchSlotSelected,
     setCurrentFormation,
     setDraggedElement,
     ZONE_SLOT_MAP,
@@ -11,9 +7,12 @@ import {
     addIconSvgPaths
 } from './js/constants.js';
 import {
-    modal, playerSearchInput, formationSelect, allPositionSlots,
-    playerListSection,
-    playerRolesSection,
+    modal,
+    formationSelect,
+    allPositionSlots,
+    shareModal,
+    playerSearchResults,
+    playerSearchInput,
     goalkeepersSection,
     defendersSection,
     midfieldersSection,
@@ -24,13 +23,21 @@ import {
     profileMidfieldersSection,
     profileWingersSection,
     profileForwardsSection,
-    shareModal, playerSearchResults
+    leagueSelect
 } from './js/domElements.js';
 import { setupEventListeners } from './js/eventListeners.js';
 import { closeShareModal } from './js/shareUtils.js';
 import {
-    loadLeagues, loadTeams, fetchPlayers, fetchAllPlayerProfiles, fetchPlayerProfilesByPosition
+    loadLeagues, loadTeams, fetchPlayers
 } from './js/apiService.js'
+import {
+    clearPlayerLists,
+    clearProfileLists,
+    closeModal,
+    handleSlotClick,
+    selectPlayer,
+    selectProfile
+} from "./js/modalManager.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     setupEventListeners();
@@ -48,6 +55,12 @@ document.addEventListener('DOMContentLoaded', function () {
     updateMiddleSlotLayouts();
 
     loadLeagues().then(leagues => {
+        leagues.forEach(league => {
+            const option = document.createElement("option");
+            option.value = league.id;
+            option.textContent = league.name;
+            leagueSelect.appendChild(option);
+        });
         const firstLeague = leagues[0];
         if (firstLeague) {
             document.getElementById("league-select").value = firstLeague.id;
@@ -67,149 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-export function openModal() {
-    modal.style.display = "flex";
-    playerRolesSection.style.display = "none";
-    playerListSection.style.display = "block";
-
-    goalkeepersSection.parentElement.style.display = "block";
-    defendersSection.parentElement.style.display = "block";
-    midfieldersSection.parentElement.style.display = "block";
-    forwardsSection.parentElement.style.display = "block";
-
-    playerSearchInput.value = '';
-    playerSearchResults.style.display = 'none';
-
-    document.getElementById('playersTabBtn').classList.add('active');
-    document.getElementById('rolesTabBtn').classList.remove('active');
-
-    setupPlayerSearch();
-}
-
-export function closeModal() {
-    modal.style.display = "none";
-    setSelectedSlotForModal(null);
-
-    playerListSection.style.display = "none";
-    playerRolesSection.style.display = "none";
-
-    if (AppState.searchInputListener) {
-        playerSearchInput.removeEventListener('input', AppState.searchInputListener);
-        setSearchInputListener(null);
-    }
-}
-
-export function showPlayersTab() {
-    playerListSection.style.display = 'block';
-    playerRolesSection.style.display = 'none';
-    document.getElementById('playersTabBtn').classList.add('active');
-    document.getElementById('rolesTabBtn').classList.remove('active');
-
-    document.querySelectorAll('#playerListSection .modal-player-category').forEach(section => {
-        section.style.display = 'block';
-    });
-}
-
-export function showRolesTab() {
-    playerListSection.style.display = 'none';
-    playerRolesSection.style.display = 'grid';
-    document.getElementById('playersTabBtn').classList.remove('active');
-    document.getElementById('rolesTabBtn').classList.add('active');
-
-    clearProfileLists();
-
-    if (AppState.isBenchSlotSelected) {
-        fetchAllPlayerProfiles();
-        showAllProfilePositionSections();
-    } else if (AppState.selectedSlotForModal) {
-        const slotId = AppState.selectedSlotForModal.id;
-        let positionCode = "UNKNOWN";
-
-        if (slotId === 'position-gk') positionCode = 'GK';
-        else if (slotId === 'position-1-1' || slotId === 'position-1-5') positionCode = 'FB';
-        else if (slotId === 'position-2-1' || slotId === 'position-2-5') positionCode = 'FB';
-        else if (slotId === 'position-3-1' || slotId === 'position-3-5') positionCode = 'FW';
-        else if (slotId === 'position-4-1' || slotId === 'position-4-5') positionCode = 'FW';
-        else if (slotId === 'position-5-1' || slotId === 'position-5-5') positionCode = 'FW';
-        else if (slotId.startsWith('position-1-')) positionCode = 'CB';
-        else if (slotId.startsWith('position-2-')) positionCode = 'DM';
-        else if (slotId.startsWith('position-3-')) positionCode = 'CM';
-        else if (slotId.startsWith('position-4-')) positionCode = 'AM';
-        else if (slotId.startsWith('position-5-')) positionCode = 'ST';
-
-
-        hideAllProfilePositionSections();
-
-        fetchPlayerProfilesByPosition(positionCode)
-            .then(() => {
-                showProfilePositionSection(positionCode);
-            });
-    } else {
-        clearProfileLists();
-        hideAllProfilePositionSections();
-    }
-}
-
-function hideAllProfilePositionSections() {
-    document.querySelectorAll('#playerRolesSection .modal-profile-category').forEach(section => {
-        section.style.display = "none";
-    });
-
-    document.querySelectorAll('.modal-profile-list').forEach(list => {
-        list.classList.remove('active-list');
-    });
-    document.querySelectorAll('.profile-section-header .toggle-icon').forEach(icon => {
-        icon.textContent = '+';
-    });
-}
-
-export function showAllProfilePositionSections() {
-    document.querySelectorAll('#playerRolesSection .modal-profile-category').forEach(section => {
-        section.style.display = "block";
-        const list = section.querySelector('.modal-profile-list');
-        if (list) {
-            list.classList.remove('active-list');
-        }
-        const toggleIcon = section.querySelector('.toggle-icon');
-        if (toggleIcon) {
-            toggleIcon.textContent = '+';
-        }
-    });
-}
-
-function showProfilePositionSection(positionCode) {
-    let sectionToShow;
-    const posCode = positionCode.toUpperCase();
-
-    if (posCode === "GK") {
-        sectionToShow = profileGoalkeepersSection.closest('.modal-profile-category');
-    } else if (posCode === "CB") {
-        sectionToShow = profileCenterBacksSection.closest('.modal-profile-category');
-    } else if (posCode === "FB") {
-        sectionToShow = profileFullBacksSection.closest('.modal-profile-category');
-    } else if (posCode === "DM" || posCode === "CM" || posCode === "AM") {
-        sectionToShow = profileMidfieldersSection.closest('.modal-profile-category');
-    } else if (posCode === "FW") {
-        sectionToShow = profileWingersSection.closest('.modal-profile-category');
-    } else if (posCode === "ST") {
-        sectionToShow = profileForwardsSection.closest('.modal-profile-category');
-    }
-
-    if (sectionToShow) {
-        sectionToShow.style.display = "block";
-        const list = sectionToShow.querySelector('.modal-profile-list');
-        if (list) {
-            list.classList.add('active-list');
-        }
-        const toggleIcon = sectionToShow.querySelector('.toggle-icon');
-        if (toggleIcon) {
-            toggleIcon.textContent = '-';
-        }
-    }  else {
-        console.warn(`No profile section defined for position code: ${positionCode}`);
-    }
-}
-
 window.addEventListener('click', function (event) {
     if (event.target === modal) {
         closeModal();
@@ -220,52 +90,100 @@ window.addEventListener('click', function (event) {
     }
 });
 
-export function selectProfile(profile) {
-    console.log("selectProfile called :", AppState.selectedSlotForModal ? AppState.selectedSlotForModal.id : 'Yok');
-    if (AppState.selectedSlotForModal) {
-        updateSlotContent(AppState.selectedSlotForModal, profile.id, profile.name, "assets/images/placeholder-icon.png", 'profile');
-        closeModal();
+document.getElementById("formation-select").addEventListener("change", function () {
+    setCurrentFormation(this.value);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    setupDragAndDropListeners();
+
+    if (formationSelect) {
+        applyFormation(formationSelect.value);
+        formationSelect.addEventListener('change', (event) => {
+            applyFormation(event.target.value);
+        });
+    } else {
+        applyFormation('4-2-3-1');
     }
-}
+});
 
-export function clearPlayerLists() {
-    goalkeepersSection.innerHTML = "";
-    defendersSection.innerHTML = "";
-    midfieldersSection.innerHTML = "";
-    forwardsSection.innerHTML = "";
-}
+export function renderPlayers(players) {
+    clearPlayerLists();
+    players.forEach(player => {
+        let section;
+        const pos = player.position.toUpperCase();
+        if (pos.includes("GK")) section = goalkeepersSection;
+        else if (pos.includes("CB") || pos.includes("LB") || pos.includes("RB") || pos.startsWith("D")) section = defendersSection;
+        else if (pos.includes("CM") || pos.includes("AM") || pos.includes("DM") || pos.startsWith("M")) section = midfieldersSection;
+        else if (pos.includes("ST") || pos.includes("CF") || pos.startsWith("F") || pos.includes("W")) section = forwardsSection;
 
-export function clearProfileLists() {
-    profileGoalkeepersSection.innerHTML = "";
-    profileCenterBacksSection.innerHTML = "";
-    profileFullBacksSection.innerHTML = "";
-    profileMidfieldersSection.innerHTML = "";
-    profileWingersSection.innerHTML = "";
-    profileForwardsSection.innerHTML = "";
-}
-
-export function selectPlayer(player) {
-    console.log("selectPlayer called :", AppState.selectedSlotForModal ? AppState.selectedSlotForModal.id : 'Yok');
-    if (AppState.selectedSlotForModal) {
-        updateSlotContent(AppState.selectedSlotForModal, player.id, player.name, player.photoUrl, 'player');
-        closeModal();
-    }
-}
-
-async function fetchSearchResults(searchTerm) {
-    try {
-        const response = await fetch(`${BASE_URL}/api/players/search?query=${searchTerm}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (section) {
+            const container = document.createElement("div");
+            container.className = "modal-player-item";
+            container.innerHTML = `
+                <button class="modal-player-item-btn player-item-btn">
+                    <div class="modal-player-item-icon">
+                        <img src="${player.photoUrl}" alt="${player.name}" width="50" height="50" loading="lazy">
+                    </div>
+                    <div class="modal-player-item-name">
+                        <span>${player.name}</span>
+                    </div>
+                </button>
+            `;
+            container.querySelector(".modal-player-item-btn").addEventListener("click", () => {
+                selectPlayer(player);
+            });
+            section.appendChild(container);
         }
-        return await response.json();
-    } catch (error) {
-        console.error("Error when fetching search result:", error);
-        return null;
-    }
+    });
 }
 
-function displaySearchResults(results) {
+export function renderPlayerProfiles(profiles) {
+    clearProfileLists();
+
+    profiles.forEach(profile => {
+        let section;
+        // TODO: check this
+        const profilePosCode = profile.positionCode ? profile.positionCode.toUpperCase() : "UNKNOWN";
+
+        if (profilePosCode === "GK") {
+            section = profileGoalkeepersSection;
+        } else if (profilePosCode === "CB") {
+            section = profileCenterBacksSection;
+        } else if (profilePosCode === "FB") {
+            section = profileFullBacksSection;
+        } else if (profilePosCode === "DM" || profilePosCode === "CM" || profilePosCode === "AM") {
+            section = profileMidfieldersSection;
+        } else if (profilePosCode === "FW") {
+            section = profileWingersSection;
+        } else if (profilePosCode === "ST") {
+            section = profileForwardsSection;
+        }
+
+        if (section) {
+            const div = document.createElement("div");
+            div.className = "modal-player-item";
+            div.innerHTML = `
+                <button class="modal-player-item-btn profile-btn">
+                    <div class="modal-player-item-icon">
+                        <img src="assets/images/placeholder-icon.png" alt="Profile Icon" width="50" height="50">
+                    </div>
+                    <div class="modal-player-item-name">
+                        <span>${profile.name}</span>
+                    </div>
+                </button>
+            `;
+            div.querySelector(".modal-player-item-btn").addEventListener("click", () => {
+                selectProfile(profile);
+            });
+            section.appendChild(div);
+        } else {
+            console.warn(`Section is not found for profile: ${profile.name} (Position Code: ${profile.positionCode})`);
+        }
+    });
+}
+
+export function displaySearchResults(results) {
     playerSearchResults.innerHTML = '';
     playerSearchResults.style.display = 'none';
 
@@ -284,7 +202,7 @@ function displaySearchResults(results) {
     }
 }
 
-function createSearchResultItem(player) {
+export function createSearchResultItem(player) {
     const resultItem = document.createElement('div');
     resultItem.classList.add('search-result-item');
 
@@ -318,45 +236,6 @@ function createSearchResultItem(player) {
 
     return resultItem;
 }
-
-function setupPlayerSearch() {
-    if (AppState.searchInputListener) {
-        playerSearchInput.removeEventListener('input', AppState.searchInputListener);
-    }
-
-    setSearchInputListener(function () {
-        const searchTerm = this.value.toLowerCase().trim();
-        playerSearchResults.innerHTML = '';
-        playerSearchResults.style.display = 'none';
-
-        if (searchTerm.length >= 2) {
-            fetchSearchResults(searchTerm)
-                .then(results => {
-                    if (results) {
-                        displaySearchResults(results);
-                    }
-                });
-        }
-    });
-    playerSearchInput.addEventListener('input', AppState.searchInputListener);
-}
-
-document.getElementById("formation-select").addEventListener("change", function () {
-    setCurrentFormation(this.value);
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    setupDragAndDropListeners();
-
-    if (formationSelect) {
-        applyFormation(formationSelect.value);
-        formationSelect.addEventListener('change', (event) => {
-            applyFormation(event.target.value);
-        });
-    } else {
-        applyFormation('4-2-3-1');
-    }
-});
 
 export function applyFormation(formationName) {
     const formationSlotsToFill = FORMATION_SLOTS[formationName];
@@ -570,17 +449,6 @@ export function updateSlotContent(slotElement, id, name, icon, type) {
     }
     updateDraggableElements();
     updateMiddleSlotLayouts();
-}
-
-function handleSlotClick(event) {
-    const clickedSlot = event.target.closest('.position-slot, .bench-slot');
-
-    if (clickedSlot) {
-        setSelectedSlotForModal(clickedSlot);
-        setIsBenchSlotSelected(clickedSlot.classList.contains('bench-slot'));
-        openModal();
-        console.log(`Slot clicked: ${clickedSlot.id || clickedSlot.className}. Is bench : ${AppState.isBenchSlotSelected}`);
-    }
 }
 
 export function updateSlotClickListeners() {

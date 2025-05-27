@@ -19,13 +19,14 @@ import {
 } from './domElements.js';
 
 import {
-    closeModal, showPlayersTab, showRolesTab, applyFormation, clearPlayerLists,
+    applyFormation
 } from '../script.js';
 import {
     openShareModal, closeShareModal, downloadImage, shareToTwitter,
     shareToFacebook, copyImageToClipboard
 } from './shareUtils.js';
 import { loadTeams, fetchPlayers, fetchAllPlayerProfiles } from './apiService.js';
+import {clearPlayerLists, closeModal, showPlayersTab, showRolesTab} from "./modalManager.js";
 
 
 export function setupEventListeners() {
