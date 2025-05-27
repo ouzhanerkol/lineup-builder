@@ -13,8 +13,9 @@ import {
     setSearchInputListener,
     setSelectedSlotForModal, SLOT_POSITION_MAP
 } from "./constants.js";
-import {displaySearchResults, updateSlotContent} from "../script.js";
+import {updateSlotContent} from "../script.js";
 import {fetchAllPlayerProfiles, fetchPlayerProfilesByPosition, fetchSearchResults} from './apiService.js';
+import {displaySearchResults} from "./renderUtils.js";
 
 export function openModal() {
     modal.style.display = "flex";

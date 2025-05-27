@@ -1,5 +1,5 @@
 import {BASE_URL} from "./constants.js";
-import {renderPlayerProfiles, renderPlayers} from "../script.js";
+import {renderPlayerProfiles, renderPlayers} from "./renderUtils.js";
 import {teamSelect} from "./domElements.js";
 
 export async function loadLeagues() {
