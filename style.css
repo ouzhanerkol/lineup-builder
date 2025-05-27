@@ -1064,7 +1064,7 @@ main {
     box-sizing: border-box;
 }
 
-.image-player-icon-container {
+.image-placeholder-icon-container {
     width: 68px;
     height: 68px;
     border-radius: 50%;
@@ -1074,7 +1074,7 @@ main {
     margin-bottom: 5px;
 }
 
-.image-player-icon-container img {
+.image-placeholder-icon-container img {
     width: 85%;
     height: 100%;
     object-fit: cover;

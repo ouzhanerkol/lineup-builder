@@ -1,3 +1,42 @@
+import {
+    BASE_URL,
+    AppState,
+    setSelectedSlotForModal,
+    setSearchInputListener,
+    setIsBenchSlotSelected,
+    setCurrentFormation,
+    setDraggedElement,
+    modal,
+    playerListSection,
+    playerRolesSection,
+    goalkeepersSection,
+    defendersSection,
+    midfieldersSection,
+    forwardsSection,
+    playerSearchInput,
+    playerSearchResults,
+    profileGoalkeepersSection,
+    profileCenterBacksSection,
+    profileFullBacksSection,
+    profileMidfieldersSection,
+    profileWingersSection,
+    profileForwardsSection,
+    formationSelect,
+    allPositionSlots,
+    teamNameInput,
+    shareButton,
+    shareModal,
+    closeShareModalButton,
+    downloadImageBtn,
+    twitterShareBtn,
+    facebookShareBtn,
+    copyImageLinkBtn,
+    generatedImageView,
+    ZONE_SLOT_MAP,
+    FORMATION_SLOTS,
+    addIconSvgPaths
+} from './js/constants.js';
+
 document.addEventListener('DOMContentLoaded', function () {
     const controlPanelTabBtns = document.querySelectorAll('.tab-header .tab-btn');
     const tabPanes = document.querySelectorAll('.tab-panel');
@@ -123,40 +162,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-// Global variables
-const BASE_URL = "http://localhost:8080";
-let selectedSlotForModal = null;
-let searchInputListener = null;
-let isBenchSlotSelected = false;
-let currentFormation = "4-2-3-1";
-const modal = document.getElementById('playerModal');
-const playerListSection = document.getElementById('playerListSection');
-const playerRolesSection = document.getElementById("playerRolesSection");
-const goalkeepersSection = document.querySelector(".modal-player-list.goalkeepers");
-const defendersSection = document.querySelector(".modal-player-list.defenders");
-const midfieldersSection = document.querySelector(".modal-player-list.midfielders");
-const forwardsSection = document.querySelector(".modal-player-list.forwards");
-const playerSearchInput = document.getElementById('playerSearchInput');
-const playerSearchResults = document.getElementById('playerSearchResults');
-const profileGoalkeepersSection = document.querySelector(".modal-profile-list.profile-goalkeepers");
-const profileCenterBacksSection = document.querySelector(".modal-profile-list.profile-center-backs");
-const profileFullBacksSection = document.querySelector(".modal-profile-list.profile-full-backs");
-const profileMidfieldersSection = document.querySelector(".modal-profile-list.profile-midfielders");
-const profileWingersSection = document.querySelector(".modal-profile-list.profile-wingers");
-const profileForwardsSection = document.querySelector(".modal-profile-list.profile-forwards");
-const formationSelect = document.getElementById('formation-select');
-const allPositionSlots = document.querySelectorAll('.position-slot');
-let draggedElement = null;
-const teamNameInput = document.getElementById('team-name');
-const shareButton = document.querySelector('.share-btn');
-const shareModal = document.getElementById('shareModal');
-const closeShareModalButton = document.querySelector('#shareModal .close-btn');
-const downloadImageBtn = document.getElementById('downloadImageBtn');
-const twitterShareBtn = document.getElementById('twitterShareBtn');
-const facebookShareBtn = document.getElementById('facebookShareBtn');
-const copyImageLinkBtn = document.getElementById('copyImageLinkBtn');
-const generatedImageView = document.getElementById('generatedImageView');
-
 function openModal() {
     modal.style.display = "flex";
     playerRolesSection.style.display = "none";
@@ -178,14 +183,14 @@ function openModal() {
 
 function closeModal() {
     modal.style.display = "none";
-    selectedSlotForModal = null;
+    setSelectedSlotForModal(null);
 
     playerListSection.style.display = "none";
     playerRolesSection.style.display = "none";
 
-    if (searchInputListener) {
-        playerSearchInput.removeEventListener('input', searchInputListener);
-        searchInputListener = null;
+    if (AppState.searchInputListener) {
+        playerSearchInput.removeEventListener('input', AppState.searchInputListener);
+        setSearchInputListener(null);
     }
 }
 
@@ -208,11 +213,11 @@ function showRolesTab() {
 
     clearProfileLists();
 
-    if (isBenchSlotSelected) {
+    if (AppState.isBenchSlotSelected) {
         fetchAllPlayerProfiles();
         showAllProfilePositionSections();
-    } else if (selectedSlotForModal) {
-        const slotId = selectedSlotForModal.id;
+    } else if (AppState.selectedSlotForModal) {
+        const slotId = AppState.selectedSlotForModal.id;
         let positionCode = "UNKNOWN";
 
         if (slotId === 'position-gk') positionCode = 'GK';
@@ -259,7 +264,7 @@ function closeShareModal() {
 
 async function generateShareImage() {
     const teamName = teamNameInput.value || "My Team";
-    const formationName = currentFormation;
+    const formationName = AppState.currentFormation;
 
     const selectedTeamId = document.getElementById("team-select").value;
     let teamLogoUrl = 'assets/images/default-team-logo.png';
@@ -342,7 +347,7 @@ async function generateShareImage() {
 
                 contentHtml = `
                     <div class="image-pitch-player-content">
-                        <div class="image-player-icon-container">
+                        <div class="image-placeholder-icon-container">
                             <img src="${icon}" alt="${name}">
                         </div>
                         <span>${name}</span>
@@ -351,7 +356,7 @@ async function generateShareImage() {
             } else if (slotContent.classList.contains('field-slot-placeholder')) {
                 contentHtml = `
                     <div class="image-pitch-player-content">
-                        <img src="assets/images/player-icon.png" alt="Empty Slot">
+                        <img src="assets/images/placeholder-icon.png" alt="Empty Slot">
                         <span>Empty Slot</span>
                     </div>
                 `;
@@ -387,7 +392,7 @@ async function generateShareImage() {
             } else if (benchSlotContent.classList.contains('bench-slot-placeholder')) {
                 contentHtml = `
                     <div class="image-bench-player-content">
-                        <img src="assets/images/player-icon.png" alt="Empty Bench">
+                        <img src="assets/images/placeholder-icon.png" alt="Empty Bench">
                         <span>Empty Bench</span>
                     </div>
                 `;
@@ -439,7 +444,7 @@ function downloadImage() {
 function shareToTwitter() {
     const imgElement = generatedImageView.querySelector('img');
     if (imgElement && imgElement.src) {
-        const text = encodeURIComponent(`Tak?m Formasyonumu inceleyin: ${teamNameInput.value || "Tak?m?m"} - ${currentFormation}. #FutbolFormasyon #Taktik`);
+        const text = encodeURIComponent(`Tak?m Formasyonumu inceleyin: ${teamNameInput.value || "Tak?m?m"} - ${AppState.currentFormation}. #FutbolFormasyon #Taktik`);
         const url = encodeURIComponent(window.location.href);
 
         window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=600,height=400');
@@ -586,9 +591,9 @@ async function fetchAllPlayerProfiles() {
 }
 
 function selectProfile(profile) {
-    console.log("selectProfile called :", selectedSlotForModal ? selectedSlotForModal.id : 'Yok');
-    if (selectedSlotForModal) {
-        updateSlotContent(selectedSlotForModal, profile.id, profile.name, "assets/images/player-icon.png", 'profile');
+    console.log("selectProfile called :", AppState.selectedSlotForModal ? AppState.selectedSlotForModal.id : 'Yok');
+    if (AppState.selectedSlotForModal) {
+        updateSlotContent(AppState.selectedSlotForModal, profile.id, profile.name, "assets/images/placeholder-icon.png", 'profile');
         closeModal();
     }
 }
@@ -621,7 +626,7 @@ function renderPlayerProfiles(profiles) {
             div.innerHTML = `
                 <button class="modal-player-item-btn profile-btn">
                     <div class="modal-player-item-icon">
-                        <img src="assets/images/player-icon.png" alt="Profile Icon" width="50" height="50">
+                        <img src="assets/images/placeholder-icon.png" alt="Profile Icon" width="50" height="50">
                     </div>
                     <div class="modal-player-item-name">
                         <span>${profile.name}</span>
@@ -714,9 +719,9 @@ function clearProfileLists() {
 }
 
 function selectPlayer(player) {
-    console.log("selectPlayer called :", selectedSlotForModal ? selectedSlotForModal.id : 'Yok');
-    if (selectedSlotForModal) {
-        updateSlotContent(selectedSlotForModal, player.id, player.name, player.photoUrl, 'player');
+    console.log("selectPlayer called :", AppState.selectedSlotForModal ? AppState.selectedSlotForModal.id : 'Yok');
+    if (AppState.selectedSlotForModal) {
+        updateSlotContent(AppState.selectedSlotForModal, player.id, player.name, player.photoUrl, 'player');
         closeModal();
     }
 }
@@ -820,11 +825,11 @@ function createSearchResultItem(player) {
 }
 
 function setupPlayerSearch() {
-    if (searchInputListener) {
-        playerSearchInput.removeEventListener('input', searchInputListener);
+    if (AppState.searchInputListener) {
+        playerSearchInput.removeEventListener('input', AppState.searchInputListener);
     }
 
-    searchInputListener = function () {
+    setSearchInputListener(function () {
         const searchTerm = this.value.toLowerCase().trim();
         playerSearchResults.innerHTML = '';
         playerSearchResults.style.display = 'none';
@@ -837,96 +842,13 @@ function setupPlayerSearch() {
                     }
                 });
         }
-    };
-    playerSearchInput.addEventListener('input', searchInputListener);
+    });
+    playerSearchInput.addEventListener('input', AppState.searchInputListener);
 }
 
 document.getElementById("formation-select").addEventListener("change", function () {
-    currentFormation = this.value;
+    setCurrentFormation(this.value);
 });
-
-const ZONE_SLOT_MAP = {
-    'goalkeeper-zone': ['position-gk'],
-    'zone-row-1': ['position-1-1', 'position-1-2', 'position-1-3', 'position-1-4', 'position-1-5'],
-    'zone-row-2': ['position-2-1', 'position-2-2', 'position-2-3', 'position-2-4', 'position-2-5'],
-    'zone-row-3': ['position-3-1', 'position-3-2', 'position-3-3', 'position-3-4', 'position-3-5'],
-    'zone-row-4': ['position-4-1', 'position-4-2', 'position-4-3', 'position-4-4', 'position-4-5'],
-    'zone-row-5': ['position-5-1', 'position-5-2', 'position-5-3', 'position-5-4', 'position-5-5']
-};
-
-const FORMATION_SLOTS = {
-    '4-2-3-1': [
-        'position-gk',
-        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
-        'position-2-2', 'position-2-4',
-        'position-4-1', 'position-4-3', 'position-4-5',
-        'position-5-3'
-    ],
-    '4-3-2-1': [
-        'position-gk',
-        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
-        'position-2-3',
-        'position-3-2', 'position-3-4',
-        'position-4-2', 'position-4-4',
-        'position-5-3'
-    ],
-    '4-3-3': [
-        'position-gk',
-        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
-        'position-2-3',
-        'position-3-2', 'position-3-4',
-        'position-4-1', 'position-4-5',
-        'position-5-3'
-    ],
-    '4-4-2': [
-        'position-gk',
-        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
-        'position-3-1', 'position-3-2', 'position-3-4', 'position-3-5',
-        'position-5-2', 'position-5-4'
-    ],
-    '4-2-2-2': [
-        'position-gk',
-        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
-        'position-2-2', 'position-2-4',
-        'position-4-2', 'position-4-4',
-        'position-5-2', 'position-5-4'
-    ],
-    '4-2-4': [
-        'position-gk',
-        'position-1-1', 'position-1-2', 'position-1-4', 'position-1-5',
-        'position-2-2', 'position-2-4',
-        'position-4-1', 'position-4-5',
-        'position-5-2', 'position-5-4'
-    ],
-    '5-3-2': [
-        'position-gk',
-        'position-1-1', 'position-1-2', 'position-1-3', 'position-1-4', 'position-1-5',
-        'position-2-3',
-        'position-3-2', 'position-3-4',
-        'position-5-2', 'position-5-4'
-    ],
-    '3-4-1-2': [
-        'position-gk',
-        'position-1-2', 'position-1-3', 'position-1-4',
-        'position-2-1', 'position-2-2', 'position-2-4', 'position-2-5',
-        'position-4-3',
-        'position-5-2', 'position-5-4'
-    ],
-    '3-4-3': [
-        'position-gk',
-        'position-1-2', 'position-1-3', 'position-1-4',
-        'position-2-1', 'position-2-2', 'position-2-4', 'position-2-5',
-        'position-4-1', 'position-4-5',
-        'position-5-3'
-    ],
-    '3-4-2-1': [
-        'position-gk',
-        'position-1-2', 'position-1-3', 'position-1-4',
-        'position-2-1', 'position-2-2', 'position-2-4', 'position-2-5',
-        'position-4-2', 'position-4-4',
-        'position-5-3'
-    ]
-};
 
 document.addEventListener('DOMContentLoaded', () => {
     setupDragAndDropListeners();
@@ -950,7 +872,7 @@ function applyFormation(formationName) {
     }
 
     formationSelect.value = formationName;
-    currentFormation = formationName;
+    setCurrentFormation(formationName);
 
     allPositionSlots.forEach(slot => {
         const slotId = slot.id;
@@ -1052,7 +974,7 @@ function updateSlotContent(slotElement, id, name, icon, type) {
     let innerHTMLContent = '';
 
     if (id && name && icon && (type === 'player' || type === 'profile')) {
-        const actualIcon = (type === 'player' && icon) ? icon : "assets/images/player-icon.png";
+        const actualIcon = (type === 'player' && icon) ? icon : "assets/images/placeholder-icon.png";
 
         const dataAttrId = `data-${type}-id="${id}"`;
         const dataAttrName = `data-${type}-name="${name}"`;
@@ -1117,15 +1039,15 @@ function updateSlotContent(slotElement, id, name, icon, type) {
                 <button class="${placeholderButtonClass}">
                     <div class="${placeholderContentInnerClass}">
                         <div class="${placeholderIconClass}">
-                            <img src="assets/images/player-icon.png" alt="Add Player Icon" loading="lazy">
+                            <img src="assets/images/placeholder-icon.png" alt="Add Player Icon" loading="lazy">
                         </div>
                         <div class="${placeholderAddIconWrapperClass}">
                             <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#${uniqueClipId})">
-                                    <path d="M11 22C16.5228 22 22 16.5228 22 11C22 5.47715 16.5228 0 11 0C5.47715 0 0 5.47715 0 11C0 16.5228 5.47715 22 11 22Z"
+                                    <path d="${addIconSvgPaths.M}"
                                           fill="#000000"/>
-                                    <path d="M17 11H5M11 5V17" stroke="white" stroke-width="2"
+                                    <path d="${addIconSvgPaths.line}" stroke="white" stroke-width="2"
                                           stroke-linecap="round"/>
                                 </g>
                                 <defs>
@@ -1159,10 +1081,10 @@ function handleSlotClick(event) {
     const clickedSlot = event.target.closest('.position-slot, .bench-slot');
 
     if (clickedSlot) {
-        selectedSlotForModal = clickedSlot;
-        isBenchSlotSelected = clickedSlot.classList.contains('bench-slot');
+        setSelectedSlotForModal(clickedSlot);
+        setIsBenchSlotSelected(clickedSlot.classList.contains('bench-slot'));
         openModal();
-        console.log(`Slot clicked: ${clickedSlot.id || clickedSlot.className}. Is bench : ${isBenchSlotSelected}`);
+        console.log(`Slot clicked: ${clickedSlot.id || clickedSlot.className}. Is bench : ${AppState.isBenchSlotSelected}`);
     }
 }
 
@@ -1205,26 +1127,26 @@ function updateDraggableElements() {
 }
 
 function handleDragStart(event) {
-    draggedElement = event.target.closest('[draggable="true"]');
-    if (!draggedElement) {
+    setDraggedElement(event.target.closest('[draggable="true"]'));
+    if (!AppState.draggedElement) {
         event.preventDefault();
         return;
     }
 
-    const type = draggedElement.dataset.itemType || 'placeholder';
+    const type = AppState.draggedElement.dataset.itemType || 'placeholder';
     let id = null, name = null, icon = null;
 
     if (type === 'player' || type === 'profile') {
-        id = draggedElement.dataset[`${type}Id`];
-        name = draggedElement.dataset[`${type}Name`];
-        icon = draggedElement.dataset[`${type}Icon`];
+        id = AppState.draggedElement.dataset[`${type}Id`];
+        name = AppState.draggedElement.dataset[`${type}Name`];
+        icon = AppState.draggedElement.dataset[`${type}Icon`];
     }
 
-    const sourceSlotId = draggedElement.closest('.position-slot, .bench-slot')?.id;
+    const sourceSlotId = AppState.draggedElement.closest('.position-slot, .bench-slot')?.id;
 
     event.dataTransfer.setData('application/json', JSON.stringify({ type, id, name, icon, sourceSlotId }));
     event.dataTransfer.effectAllowed = 'move';
-    setTimeout(() => draggedElement.style.opacity = '0.4', 0);
+    setTimeout(() => AppState.draggedElement.style.opacity = '0.4', 0);
 }
 
 function handleDragOver(event) {
@@ -1253,14 +1175,14 @@ async function handleDrop(event) {
 
     if (!sourceSlot && data.sourceSlotId) {
         console.error("Source slot not found for ID:", data.sourceSlotId);
-        if (draggedElement) draggedElement.style.opacity = '1';
-        draggedElement = null;
+        if (AppState.draggedElement) AppState.draggedElement.style.opacity = '1';
+        setDraggedElement(null);
         return;
     }
 
     if (sourceSlot === dropZone) {
-        if (draggedElement) draggedElement.style.opacity = '1';
-        draggedElement = null;
+        if (AppState.draggedElement) AppState.draggedElement.style.opacity = '1';
+        setDraggedElement(null);
         return;
     }
 
@@ -1302,16 +1224,16 @@ async function handleDrop(event) {
     }
 
     updateDraggableElements();
-    if (draggedElement) draggedElement.style.opacity = '1';
-    draggedElement = null;
+    if (AppState.draggedElement) AppState.draggedElement.style.opacity = '1';
+    setDraggedElement(null);
     updateMiddleSlotLayouts();
     setFormationToCustom();
 }
 
 function handleDragEnd() {
-    if (draggedElement) {
-        draggedElement.style.opacity = '1';
-        draggedElement = null;
+    if (AppState.draggedElement) {
+        AppState.draggedElement.style.opacity = '1';
+        setDraggedElement(null);
     }
 }
 
