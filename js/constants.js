@@ -24,33 +24,6 @@ export function setDraggedElement(element) {
     AppState.draggedElement = element;
 }
 
-export const modal = document.getElementById('playerModal');
-export const playerListSection = document.getElementById('playerListSection');
-export const playerRolesSection = document.getElementById("playerRolesSection");
-export const goalkeepersSection = document.querySelector(".modal-player-list.goalkeepers");
-export const defendersSection = document.querySelector(".modal-player-list.defenders");
-export const midfieldersSection = document.querySelector(".modal-player-list.midfielders");
-export const forwardsSection = document.querySelector(".modal-player-list.forwards");
-export const playerSearchInput = document.getElementById('playerSearchInput');
-export const playerSearchResults = document.getElementById('playerSearchResults');
-export const profileGoalkeepersSection = document.querySelector(".modal-profile-list.profile-goalkeepers");
-export const profileCenterBacksSection = document.querySelector(".modal-profile-list.profile-center-backs");
-export const profileFullBacksSection = document.querySelector(".modal-profile-list.profile-full-backs");
-export const profileMidfieldersSection = document.querySelector(".modal-profile-list.profile-midfielders");
-export const profileWingersSection = document.querySelector(".modal-profile-list.profile-wingers");
-export const profileForwardsSection = document.querySelector(".modal-profile-list.profile-forwards");
-export const formationSelect = document.getElementById('formation-select');
-export const allPositionSlots = document.querySelectorAll('.position-slot');
-export const teamNameInput = document.getElementById('team-name');
-export const shareButton = document.querySelector('.share-btn');
-export const shareModal = document.getElementById('shareModal');
-export const closeShareModalButton = document.querySelector('#shareModal .close-btn');
-export const downloadImageBtn = document.getElementById('downloadImageBtn');
-export const twitterShareBtn = document.getElementById('twitterShareBtn');
-export const facebookShareBtn = document.getElementById('facebookShareBtn');
-export const copyImageLinkBtn = document.getElementById('copyImageLinkBtn');
-export const generatedImageView = document.getElementById('generatedImageView');
-
 export const ZONE_SLOT_MAP = {
     'goalkeeper-zone': ['position-gk'],
     'zone-row-1': ['position-1-1', 'position-1-2', 'position-1-3', 'position-1-4', 'position-1-5'],

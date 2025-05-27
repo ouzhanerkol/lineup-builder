@@ -6,138 +6,40 @@ import {
     setIsBenchSlotSelected,
     setCurrentFormation,
     setDraggedElement,
-    modal,
+    ZONE_SLOT_MAP,
+    FORMATION_SLOTS,
+    addIconSvgPaths
+} from './js/constants.js';
+import {
+    modal, playerSearchInput, formationSelect, allPositionSlots,
+    teamNameInput,
     playerListSection,
     playerRolesSection,
     goalkeepersSection,
     defendersSection,
     midfieldersSection,
     forwardsSection,
-    playerSearchInput,
-    playerSearchResults,
     profileGoalkeepersSection,
     profileCenterBacksSection,
     profileFullBacksSection,
     profileMidfieldersSection,
     profileWingersSection,
     profileForwardsSection,
-    formationSelect,
-    allPositionSlots,
-    teamNameInput,
-    shareButton,
-    shareModal,
-    closeShareModalButton,
-    downloadImageBtn,
-    twitterShareBtn,
-    facebookShareBtn,
-    copyImageLinkBtn,
-    generatedImageView,
-    ZONE_SLOT_MAP,
-    FORMATION_SLOTS,
-    addIconSvgPaths
-} from './js/constants.js';
+    generatedImageView, shareModal, playerSearchResults
+} from './js/domElements.js';
+import { setupEventListeners } from './js/eventListeners.js';
 
 document.addEventListener('DOMContentLoaded', function () {
-    const controlPanelTabBtns = document.querySelectorAll('.tab-header .tab-btn');
-    const tabPanes = document.querySelectorAll('.tab-panel');
-
-    controlPanelTabBtns.forEach(btn => {
-        btn.addEventListener('click', function () {
-            controlPanelTabBtns.forEach(b => b.classList.remove('active'));
-            tabPanes.forEach(p => p.classList.remove('active'));
-            this.classList.add('active');
-            const targetPanel = document.getElementById(this.dataset.tab);
-            if (targetPanel) {
-                targetPanel.classList.add('active');
-            } else {
-                console.error("Target panel not found:", this.dataset.tab);
-            }
-        });
-    });
-
-    const profileSectionHeaders = document.querySelectorAll('.profile-section-header');
-    profileSectionHeaders.forEach(header => {
-        header.addEventListener('click', function() {
-            const targetId = this.dataset.target;
-            const targetList = document.getElementById(targetId);
-            const toggleIcon = this.querySelector('.toggle-icon');
-
-            if (targetList) {
-                // Show/hide list
-                targetList.classList.toggle('active-list');
-
-                // change icon
-                if (targetList.classList.contains('active-list')) {
-                    toggleIcon.textContent = '-';
-                } else {
-                    toggleIcon.textContent = '+';
-                }
-            }
-        });
-    });
-
-    document.querySelectorAll('.modal-profile-category .toggle-icon').forEach(icon => {
-        if (icon.closest('.modal-profile-category')
-            .querySelector('.modal-profile-list').classList.contains('active-list')) {
-            icon.textContent = '-';
-        } else {
-            icon.textContent = '+';
-        }
-    });
-
-    const playersTabBtn = document.getElementById('playersTabBtn');
-    const rolesTabBtn = document.getElementById('rolesTabBtn');
-    const controlPanelPlayersTabBtn = document.querySelector('.control-panel .tab-btn[data-tab="players"]');
-    const closeModalButton = document.querySelector('.close-btn');
-
-    if (closeModalButton) {
-        closeModalButton.addEventListener('click', closeModal);
-    }
-    if (playersTabBtn) {
-        playersTabBtn.addEventListener('click', showPlayersTab);
-    }
-    if (rolesTabBtn) {
-        rolesTabBtn.addEventListener('click', showRolesTab);
-    }
-    if (controlPanelPlayersTabBtn) {
-        controlPanelPlayersTabBtn.addEventListener('click', () => {
-            if (modal.style.display === "block" && rolesTabBtn.classList.contains('active')) {
-                fetchAllPlayerProfiles();
-            }
-        });
-    }
-
-    if (shareButton) {
-        shareButton.addEventListener('click', openShareModal);
-    }
-    if (closeShareModalButton) {
-        closeShareModalButton.addEventListener('click', closeShareModal);
-    }
-    if (downloadImageBtn) {
-        downloadImageBtn.addEventListener('click', downloadImage);
-    }
-    if (twitterShareBtn) {
-        twitterShareBtn.addEventListener('click', shareToTwitter);
-    }
-    if (facebookShareBtn) {
-        facebookShareBtn.addEventListener('click', shareToFacebook);
-    }
-    if (copyImageLinkBtn) {
-        copyImageLinkBtn.addEventListener('click', copyImageToClipboard);
-    }
+    setupEventListeners();
 
     populateFormationSelect();
-
     setupDragAndDropListeners();
 
     if (formationSelect) {
         formationSelect.value = Object.keys(FORMATION_SLOTS)[0] || '4-2-3-1';
         applyFormation(formationSelect.value);
-        formationSelect.addEventListener('change', (event) => {
-            applyFormation(event.target.value);
-        });
     } else {
-        applyFormation('4-2-3-1');
+        applyFormation(AppState.currentFormation);
     }
 
     updateMiddleSlotLayouts();
@@ -162,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-function openModal() {
+export function openModal() {
     modal.style.display = "flex";
     playerRolesSection.style.display = "none";
     playerListSection.style.display = "block";
@@ -181,7 +83,7 @@ function openModal() {
     setupPlayerSearch();
 }
 
-function closeModal() {
+export function closeModal() {
     modal.style.display = "none";
     setSelectedSlotForModal(null);
 
@@ -194,7 +96,7 @@ function closeModal() {
     }
 }
 
-function showPlayersTab() {
+export function showPlayersTab() {
     playerListSection.style.display = 'block';
     playerRolesSection.style.display = 'none';
     document.getElementById('playersTabBtn').classList.add('active');
@@ -205,7 +107,7 @@ function showPlayersTab() {
     });
 }
 
-function showRolesTab() {
+export function showRolesTab() {
     playerListSection.style.display = 'none';
     playerRolesSection.style.display = 'grid';
     document.getElementById('playersTabBtn').classList.remove('active');
@@ -245,12 +147,12 @@ function showRolesTab() {
     }
 }
 
-function openShareModal() {
+export function openShareModal() {
     shareModal.style.display = "flex";
     generateShareImage();
 }
 
-function closeShareModal() {
+export function closeShareModal() {
     shareModal.style.display = "none";
     const imgElement = generatedImageView.querySelector('img');
     if (imgElement) {
@@ -427,7 +329,7 @@ async function generateShareImage() {
     }
 }
 
-function downloadImage() {
+export function downloadImage() {
     const imgElement = generatedImageView.querySelector('img');
     if (imgElement && imgElement.src) {
         const link = document.createElement('a');
@@ -441,7 +343,7 @@ function downloadImage() {
     }
 }
 
-function shareToTwitter() {
+export function shareToTwitter() {
     const imgElement = generatedImageView.querySelector('img');
     if (imgElement && imgElement.src) {
         const text = encodeURIComponent(`Tak?m Formasyonumu inceleyin: ${teamNameInput.value || "Tak?m?m"} - ${AppState.currentFormation}. #FutbolFormasyon #Taktik`);
@@ -453,7 +355,7 @@ function shareToTwitter() {
     }
 }
 
-function shareToFacebook() {
+export function shareToFacebook() {
     const imgElement = generatedImageView.querySelector('img');
     if (imgElement && imgElement.src) {
         const url = encodeURIComponent(window.location.href);
@@ -464,7 +366,7 @@ function shareToFacebook() {
     }
 }
 
-async function copyImageToClipboard() {
+export async function copyImageToClipboard() {
     const imgElement = generatedImageView.querySelector('img');
     if (!imgElement || !imgElement.src) {
         alert("Does not found any image to copy.");
@@ -507,7 +409,7 @@ function hideAllProfilePositionSections() {
     });
 }
 
-function showAllProfilePositionSections() {
+export function showAllProfilePositionSections() {
     document.querySelectorAll('#playerRolesSection .modal-profile-category').forEach(section => {
         section.style.display = "block";
         const list = section.querySelector('.modal-profile-list');
@@ -577,7 +479,7 @@ async function fetchPlayerProfilesByPosition(positionCode) {
     }
 }
 
-async function fetchAllPlayerProfiles() {
+export async function fetchAllPlayerProfiles() {
     try {
         const response = await fetch(`${BASE_URL}/api/player-profiles`);
         if (!response.ok) {
@@ -643,7 +545,7 @@ function renderPlayerProfiles(profiles) {
     });
 }
 
-async function loadLeagues() {
+export async function loadLeagues() {
     try {
         const response = await fetch(`${BASE_URL}/api/leagues`);
         if (!response.ok) {
@@ -666,7 +568,7 @@ async function loadLeagues() {
     }
 }
 
-async function loadTeams(leagueId) {
+export async function loadTeams(leagueId) {
     try {
         const response = await fetch(`${BASE_URL}/api/teams/search/${leagueId}`);
         if (!response.ok) {
@@ -691,7 +593,7 @@ async function loadTeams(leagueId) {
     }
 }
 
-async function fetchPlayers(teamId) {
+export async function fetchPlayers(teamId) {
     try {
         const response = await fetch(`${BASE_URL}/api/players/search/${teamId}`);
         if (!response.ok) throw new Error("Didn't fetch players");
@@ -702,7 +604,7 @@ async function fetchPlayers(teamId) {
     }
 }
 
-function clearPlayerLists() {
+export function clearPlayerLists() {
     goalkeepersSection.innerHTML = "";
     defendersSection.innerHTML = "";
     midfieldersSection.innerHTML = "";
@@ -863,7 +765,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function applyFormation(formationName) {
+export function applyFormation(formationName) {
     const formationSlotsToFill = FORMATION_SLOTS[formationName];
 
     const customOption = formationSelect.querySelector('option[value="Custom"]');
@@ -894,7 +796,7 @@ function applyFormation(formationName) {
     updateMiddleSlotLayouts();
 }
 
-function populateFormationSelect() {
+export function populateFormationSelect() {
     if (!formationSelect) {
         console.error("Formation select element not found!");
         return;
@@ -926,7 +828,7 @@ function setFormationToCustom() {
     }
 }
 
-function updateMiddleSlotLayouts() {
+export function updateMiddleSlotLayouts() {
     for (const zoneId in ZONE_SLOT_MAP) {
         if (!ZONE_SLOT_MAP.hasOwnProperty(zoneId) || zoneId === 'goalkeeper-zone') {
             continue;
@@ -960,7 +862,7 @@ function updateMiddleSlotLayouts() {
     }
 }
 
-function updateSlotContent(slotElement, id, name, icon, type) {
+export function updateSlotContent(slotElement, id, name, icon, type) {
     slotElement.innerHTML = '';
 
     const isFieldSlot = slotElement.classList.contains('position-slot');
@@ -1088,7 +990,7 @@ function handleSlotClick(event) {
     }
 }
 
-function updateSlotClickListeners() {
+export function updateSlotClickListeners() {
     const fieldSlotButtons = document.querySelectorAll('.position-slot .field-slot-btn');
     fieldSlotButtons.forEach(button => {
         button.removeEventListener('click', handleSlotClick);
@@ -1102,7 +1004,7 @@ function updateSlotClickListeners() {
     });
 }
 
-function setupDragAndDropListeners() {
+export function setupDragAndDropListeners() {
     allPositionSlots.forEach(slot => {
         slot.addEventListener('dragover', handleDragOver);
         slot.addEventListener('dragleave', handleDragLeave);
@@ -1117,7 +1019,7 @@ function setupDragAndDropListeners() {
     updateDraggableElements();
 }
 
-function updateDraggableElements() {
+export function updateDraggableElements() {
     document.querySelectorAll('[draggable="true"]').forEach(item => {
         item.removeEventListener('dragstart', handleDragStart);
         item.removeEventListener('dragend', handleDragEnd);
@@ -1236,22 +1138,3 @@ function handleDragEnd() {
         setDraggedElement(null);
     }
 }
-
-document.getElementById("league-select").addEventListener("change", function () {
-    const leagueId = this.value;
-    if (leagueId) {
-        loadTeams(leagueId);
-    } else {
-        document.getElementById("team-select").innerHTML = '';
-        clearPlayerLists();
-    }
-});
-
-document.getElementById("team-select").addEventListener("change", function () {
-    const teamId = this.value;
-    if (teamId) {
-        fetchPlayers(teamId);
-    } else {
-        clearPlayerLists();
-    }
-});
