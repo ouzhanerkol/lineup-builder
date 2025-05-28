@@ -2,6 +2,7 @@ import {AppState, setDraggedElement} from "./constants.js";
 import {allPositionSlots} from "./domElements.js";
 import {updateSlotContent} from "./slotManager.js";
 import {setFormationToCustom, updateMiddleSlotLayouts} from "./formationManager.js";
+import {showNotification} from "./uiManager.js";
 
 export function setupDragAndDropListeners() {
     allPositionSlots.forEach(slot => {
@@ -82,6 +83,17 @@ async function handleDrop(event) {
     }
 
     if (sourceSlot === dropZone) {
+        if (AppState.draggedElement) AppState.draggedElement.style.opacity = '1';
+        setDraggedElement(null);
+        return;
+    }
+
+    const dropZoneHasContent = dropZone.classList.contains('has-content')
+    const isDraggedFromBench = sourceSlot && sourceSlot.classList.contains('bench-slot');
+
+    if (isDraggedFromBench && !dropZoneHasContent) {
+        console.warn("Drop zone does not have content. Cannot drop from bench to field slot.");
+        showNotification("Drop zone does not have content. Cannot drop from bench to field slot.", "warning");
         if (AppState.draggedElement) AppState.draggedElement.style.opacity = '1';
         setDraggedElement(null);
         return;
