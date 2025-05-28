@@ -1,7 +1,8 @@
 import {handleSlotClick} from "./modalManager.js";
-import {addIconSvgPaths} from "./constants.js";
+import {addIconSvgPaths, DEFAULT_PLAYER_PHOTO} from "./constants.js";
 import {updateMiddleSlotLayouts} from "./formationManager.js";
 import {updateDraggableElements} from "./dragDropManager.js";
+import {allSlots} from "./domElements.js";
 
 export function updateSlotContent(slotElement, id, name, icon, type) {
     slotElement.innerHTML = '';
@@ -17,7 +18,7 @@ export function updateSlotContent(slotElement, id, name, icon, type) {
     let innerHTMLContent = '';
 
     if (id && name && icon && (type === 'player' || type === 'profile')) {
-        const actualIcon = (type === 'player' && icon) ? icon : "assets/images/placeholder-icon.png";
+        const actualIcon = (type === 'player' && icon) ? icon : DEFAULT_PLAYER_PHOTO;
 
         const dataAttrId = `data-${type}-id="${id}"`;
         const dataAttrName = `data-${type}-name="${name}"`;
@@ -61,54 +62,10 @@ export function updateSlotContent(slotElement, id, name, icon, type) {
             newButton.addEventListener('click', handleSlotClick);
         }
     } else if (type === 'placeholder') {
-        const uniqueClipId = `clip${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-        let placeholderButtonClass, placeholderContentInnerClass, placeholderIconClass, placeholderAddIconWrapperClass;
-
-        if (isFieldSlot) {
-            placeholderButtonClass = 'field-slot-btn';
-            placeholderContentInnerClass = 'field-slot-placeholder-content';
-            placeholderIconClass = 'field-slot-icon';
-            placeholderAddIconWrapperClass = 'field-slot-add-icon-wrapper';
-        } else if (isBenchSlot) {
-            placeholderButtonClass = 'bench-slot-btn';
-            placeholderContentInnerClass = 'bench-slot-placeholder-content';
-            placeholderIconClass = 'bench-slot-icon';
-            placeholderAddIconWrapperClass = 'bench-slot-add-icon-wrapper';
-        }
-
-        innerHTMLContent = `
-            <div class="${isBenchSlot ? 'bench-slot-placeholder' : 'field-slot-placeholder'}" draggable="true">
-                <button class="${placeholderButtonClass}">
-                    <div class="${placeholderContentInnerClass}">
-                        <div class="${placeholderIconClass}">
-                            <img src="assets/images/placeholder-icon.png" alt="Add Player Icon" loading="lazy">
-                        </div>
-                        <div class="${placeholderAddIconWrapperClass}">
-                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#${uniqueClipId})">
-                                    <path d="${addIconSvgPaths.M}"
-                                          fill="#000000"/>
-                                    <path d="${addIconSvgPaths.line}" stroke="white" stroke-width="2"
-                                          stroke-linecap="round"/>
-                                </g>
-                                <defs>
-                                    <clipPath id="${uniqueClipId}">
-                                        <rect width="22" height="22" fill="white"/>
-                                    </clipPath>
-                                </defs>
-                            </svg>
-                        </div>
-                    </div>
-                </button>
-            </div>
-        `;
-
         slotElement.classList.add('has-content');
-        slotElement.innerHTML = innerHTMLContent;
+        slotElement.innerHTML = createPlaceholderContent(slotElement);
 
-        const newButton = slotElement.querySelector(`.${placeholderButtonClass}`);
+        const newButton = slotElement.querySelector('.field-slot-btn, .bench-slot-btn');
         if (newButton) {
             newButton.addEventListener('click', handleSlotClick);
         }
@@ -132,4 +89,68 @@ export function updateSlotClickListeners() {
         button.removeEventListener('click', handleSlotClick);
         button.addEventListener('click', handleSlotClick);
     });
+}
+
+export function clearFormationSlots() {
+    allSlots.forEach(slotElement => {
+        if (slotElement.classList.contains('has-content')) {
+            slotElement.classList.add('has-content');
+            slotElement.innerHTML = createPlaceholderContent(slotElement);
+
+            const newButton = slotElement.querySelector('.field-slot-btn, .bench-slot-btn');
+            if (newButton) {
+                newButton.addEventListener('click', handleSlotClick);
+            }
+        }
+    });
+
+    updateDraggableElements();
+    updateMiddleSlotLayouts();
+}
+
+function createPlaceholderContent(slotElement) {
+    const isBenchSlot = slotElement.classList.contains('bench-slot');
+    const uniqueClipId = `clip${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    let placeholderButtonClass, placeholderContentInnerClass, placeholderIconClass, placeholderAddIconWrapperClass;
+
+    if (isBenchSlot) {
+        placeholderButtonClass = 'bench-slot-btn';
+        placeholderContentInnerClass = 'bench-slot-placeholder-content';
+        placeholderIconClass = 'bench-slot-icon';
+        placeholderAddIconWrapperClass = 'bench-slot-add-icon-wrapper';
+    } else { // field slot
+        placeholderButtonClass = 'field-slot-btn';
+        placeholderContentInnerClass = 'field-slot-placeholder-content';
+        placeholderIconClass = 'field-slot-icon';
+        placeholderAddIconWrapperClass = 'field-slot-add-icon-wrapper';
+    }
+
+    return `
+        <div class="${isBenchSlot ? 'bench-slot-placeholder' : 'field-slot-placeholder'}" draggable="true">
+            <button class="${placeholderButtonClass}">
+                <div class="${placeholderContentInnerClass}">
+                    <div class="${placeholderIconClass}">
+                        <img src="${DEFAULT_PLAYER_PHOTO}" alt="Add Player Icon" loading="lazy">
+                    </div>
+                    <div class="${placeholderAddIconWrapperClass}">
+                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#${uniqueClipId})">
+                                <path d="${addIconSvgPaths.M}"
+                                      fill="#000000"/>
+                                <path d="${addIconSvgPaths.line}" stroke="white" stroke-width="2"
+                                      stroke-linecap="round"/>
+                            </g>
+                            <defs>
+                                <clipPath id="${uniqueClipId}">
+                                    <rect width="22" height="22" fill="white"/>
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+            </button>
+        </div>
+    `;
 }

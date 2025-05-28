@@ -8,6 +8,9 @@ export const AppState = {
     draggedElement: null
 };
 
+export const DEFAULT_PLAYER_PHOTO = 'assets/images/placeholder-icon.png';
+export const DEFAULT_PROFILE_PHOTO = 'assets/images/placeholder-icon.png';
+
 export function setSelectedSlotForModal(slot) {
     AppState.selectedSlotForModal = slot;
 }

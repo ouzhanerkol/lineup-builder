@@ -1,4 +1,4 @@
-import { BASE_URL, AppState } from './constants.js';
+import {BASE_URL, AppState, DEFAULT_PLAYER_PHOTO} from './constants.js';
 import {
     shareModal,
     generatedImageView,
@@ -121,7 +121,7 @@ export async function generateShareImage() {
             } else if (slotContent.classList.contains('field-slot-placeholder')) {
                 contentHtml = `
                     <div class="image-pitch-player-content">
-                        <img src="../assets/images/placeholder-icon.png" alt="Empty Slot">
+                        <img src="${DEFAULT_PLAYER_PHOTO}" alt="Empty Slot">
                         <span>Empty Slot</span>
                     </div>
                 `;
@@ -157,7 +157,7 @@ export async function generateShareImage() {
             } else if (benchSlotContent.classList.contains('bench-slot-placeholder')) {
                 contentHtml = `
                     <div class="image-bench-player-content">
-                        <img src="../assets/images/placeholder-icon.png" alt="Empty Bench">
+                        <img src="${DEFAULT_PLAYER_PHOTO}" alt="Empty Bench">
                         <span>Empty Bench</span>
                     </div>
                 `;

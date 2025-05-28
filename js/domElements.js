@@ -14,6 +14,7 @@ export const profileMidfieldersSection = document.querySelector(".modal-profile-
 export const profileWingersSection = document.querySelector(".modal-profile-list.profile-wingers");
 export const profileForwardsSection = document.querySelector(".modal-profile-list.profile-forwards");
 export const formationSelect = document.getElementById('formation-select');
+export const allSlots = document.querySelectorAll('.position-slot, .bench-slot');
 export const allPositionSlots = document.querySelectorAll('.position-slot');
 export const allBenchSlots = document.querySelectorAll('.bench-slot');
 export const teamNameInput = document.getElementById('team-name');

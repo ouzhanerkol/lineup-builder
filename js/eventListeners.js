@@ -28,6 +28,7 @@ import {
 import { loadTeams, fetchPlayers, fetchAllPlayerProfiles } from './apiService.js';
 import {clearPlayerLists, closeModal, showPlayersTab, showRolesTab} from "./modalManager.js";
 import {renderPlayers} from "./renderUtils.js";
+import {clearFormationSlots} from "./slotManager.js";
 
 
 export function setupEventListeners() {
@@ -122,6 +123,7 @@ export function setupEventListeners() {
     if (teamSelect) {
         teamSelect.addEventListener("change", async function () {
             const teamId = this.value;
+            clearFormationSlots();
             if (teamId) {
                 const players = await fetchPlayers(teamId);
                 if (players) {
