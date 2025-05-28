@@ -108,7 +108,7 @@ export function clearFormationSlots() {
     updateMiddleSlotLayouts();
 }
 
-function createPlaceholderContent(slotElement) {
+export function createPlaceholderContent(slotElement) {
     const isBenchSlot = slotElement.classList.contains('bench-slot');
     const uniqueClipId = `clip${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 

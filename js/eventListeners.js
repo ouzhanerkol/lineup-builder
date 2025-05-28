@@ -15,7 +15,9 @@ import {
     teamSelect,
     controlPanelTabBtns,
     tabPanes,
-    profileSectionHeaders, modalProfileCategoryToggleIcons
+    profileSectionHeaders,
+    modalProfileCategoryToggleIcons,
+    allBenchSlots
 } from './domElements.js';
 
 import {
@@ -26,9 +28,9 @@ import {
     shareToFacebook, copyImageToClipboard
 } from './shareUtils.js';
 import { loadTeams, fetchPlayers, fetchAllPlayerProfiles } from './apiService.js';
-import {clearPlayerLists, closeModal, showPlayersTab, showRolesTab} from "./modalManager.js";
+import {clearPlayerLists, closeModal, handleSlotClick, showPlayersTab, showRolesTab} from "./modalManager.js";
 import {renderPlayers} from "./renderUtils.js";
-import {clearFormationSlots} from "./slotManager.js";
+import {clearFormationSlots, createPlaceholderContent} from "./slotManager.js";
 
 
 export function setupEventListeners() {
@@ -143,6 +145,16 @@ export function setupEventListeners() {
             icon.textContent = '+';
         }
     });
+
+    allBenchSlots.forEach(slot => {
+        slot.innerHTML = createPlaceholderContent(slot);
+        slot.classList.add('has-content');
+
+        const newButton = slot.querySelector('.bench-slot-btn');
+        if (newButton) {
+            newButton.addEventListener('click', handleSlotClick);
+        }
+    })
 }
 
 export async function populateTeamsAndPlayers(leagueId) {
