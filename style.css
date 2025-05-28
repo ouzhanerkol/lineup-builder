@@ -163,6 +163,9 @@ main {
     grid-template-columns: 1fr;
     gap: 1rem;
     width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 1rem;
 }
 
 /* Field Section - Main section */
@@ -210,7 +213,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5px 0;
+    padding: 3px 0;
     border-top: 1px dashed rgba(255, 255, 255, 0.1);
     box-sizing: border-box;
 }
@@ -228,8 +231,8 @@ main {
 
 .position-slot {
     flex-shrink: 0;
-    width: 60px;
-    height: 60px;
+    width: 38px;
+    height: 38px;
     border-radius: 10%;
     background-color: rgba(255, 255, 255, 0.05);
     display: flex;
@@ -252,8 +255,8 @@ main {
 }
 
 .position-slot .field-slot-icon {
-    width: 33px;
-    height: 33px;
+    width: 23px;
+    height: 23px;
     background-color: #666666;
     color: white;
     display: flex;
@@ -273,7 +276,7 @@ main {
 }
 
 .position-slot .field-slot-name {
-    font-size: 7px;
+    font-size: 4px;
     font-weight: bold;
     color: #333;
     line-height: 1.2;
@@ -292,8 +295,8 @@ main {
 }
 
 .field-slot-add-icon-wrapper {
-    width: 18px;
-    height: 18px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -313,24 +316,63 @@ main {
     border-radius: 8px;
     padding: 0.5rem;
     min-height: auto;
-    display: none;
+    display: flex;
     flex-direction: column;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    grid-column: 1;
     text-align: center;
     color: #333;
+    transition: background-color 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.bench-section.is-mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    width: 350px;
+    max-width: 80vw;
+    padding-top: 60px;
+    box-sizing: border-box;
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    display: flex;
+}
+
+.bench-section.is-mobile-overlay.is-open {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.bench-section-toggle-btn {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    z-index: 1001;
+    border-radius: 8px 8px 0 0;
+    display: none;
+    transform-origin: left bottom;
+    white-space: nowrap;
 }
 
 .bench-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     flex: 1;
 }
 
 .bench-slot {
     width: auto;
-    height: 60px;
+    height: auto;
     border: 1px dashed #ccc;
     box-sizing: border-box;
     display: flex;
@@ -344,8 +386,8 @@ main {
 }
 
 .bench-slot .bench-slot-icon {
-    width: 32px;
-    height: 32px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     overflow: hidden;
     background-color: #999;
@@ -366,7 +408,7 @@ main {
 }
 
 .bench-slot .bench-slot-name {
-    font-size: 0.65em;
+    font-size: 0.85em;
     font-weight: normal;
     color: #333;
     line-height: 1.2;
@@ -382,13 +424,76 @@ main {
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     padding: 1rem;
     min-height: auto;
-    display: none;
+    display: flex;
     flex-direction: column;
     overflow-y: auto;
-    grid-column: 1;
+    transition: background-color 0.3s ease-out, box-shadow 0.3s ease-out;
 }
 
-@media (min-width: 550px) {
+.control-panel.is-mobile-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    z-index: 1000;
+    width: 250px;
+    max-width: 80vw;
+    padding-top: 60px;
+    box-sizing: border-box;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    display: flex;
+}
+
+.control-panel.is-mobile-overlay.is-open {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.control-panel-toggle-btn {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    z-index: 1001;
+    border-radius: 8px 8px 0 0;
+    display: none;
+    transform-origin: right bottom;
+    white-space: nowrap;
+}
+
+/* --- Media Queries --- */
+@media (min-width: 410px) {
+    .position-slot {
+        width: 60px;
+        height: 60px;
+        margin: 0 10px;
+    }
+
+    .position-slot .field-slot-icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .field-slot-add-icon-wrapper {
+        width: 16px;
+        height: 16px;
+    }
+
+    .position-slot .field-slot-name {
+        font-size: 0.55em;
+        max-width: 60px;
+    }
+
+}
+@media (min-width: 600px) {
     .position-slot {
         width: 90px;
         height: 90px;
@@ -414,6 +519,16 @@ main {
     .position-slot .field-slot-name {
         font-size: 10px;
         max-width: 85px;
+    }
+}
+
+@media (max-width: 899px) {
+    .bench-section {
+        display: none;
+    }
+
+    .bench-section-toggle-btn {
+        display: block;
     }
 }
 
@@ -481,6 +596,17 @@ main {
         display: flex;
         grid-column: 1;
         min-height: 550px;
+        position: static;
+        transform: none;
+        opacity: 1;
+        height: auto;
+        width: auto;
+        padding-top: 0.5rem;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .bench-section-toggle-btn {
+        display: none;
     }
 
     .field-section {
@@ -533,14 +659,34 @@ main {
     }
 }
 
+@media (max-width: 1279px) {
+    .control-panel {
+        display: none;
+    }
+
+    .control-panel-toggle-btn {
+        display: block;
+    }
+}
+
 @media (min-width: 1280px) {
     .grid-layout {
         grid-template-columns: minmax(200px, 1fr) 2fr minmax(200px, 1fr);
-        max-width: 1280px;
     }
+
     .control-panel {
         display: flex;
         grid-column: 3;
+        position: static;
+        transform: none;
+        opacity: 1;
+        height: auto;
+        width: auto;
+        padding-top: 1rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .control-panel-toggle-btn {
+        display: none;
     }
 }
 

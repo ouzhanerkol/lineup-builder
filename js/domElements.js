@@ -40,3 +40,8 @@ export const profileSectionHeaders = document.querySelectorAll('.profile-section
 export const modalProfileCategoryToggleIcons = document.querySelectorAll('.modal-profile-category .toggle-icon');
 export const pitchContainer = document.getElementById('pitch-container');
 export const loadingSpinner = document.getElementById('loading-spinner');
+
+export const controlPanel = document.getElementById('controlPanel');
+export const benchSection = document.getElementById('benchSection');
+export const controlPanelToggleBtn = document.getElementById('controlPanelToggleBtn');
+export const benchToggleBtn = document.getElementById('benchToggleBtn');

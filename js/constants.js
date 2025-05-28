@@ -5,7 +5,9 @@ export const AppState = {
     searchInputListener: null,
     isBenchSlotSelected: false,
     currentFormation: "4-2-3-1",
-    draggedElement: null
+    draggedElement: null,
+    isControlPanelOpen: false,
+    isBenchSectionOpen: false
 };
 
 export const DEFAULT_PLAYER_PHOTO = 'assets/images/placeholder-icon.png';

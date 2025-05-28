@@ -17,7 +17,11 @@ import {
     tabPanes,
     profileSectionHeaders,
     modalProfileCategoryToggleIcons,
-    allBenchSlots
+    allBenchSlots,
+    benchToggleBtn,
+    controlPanelToggleBtn,
+    benchSection,
+    controlPanel
 } from './domElements.js';
 
 import {
@@ -31,7 +35,7 @@ import { loadTeams, fetchPlayers, fetchAllPlayerProfiles } from './apiService.js
 import {clearPlayerLists, closeModal, handleSlotClick, showPlayersTab, showRolesTab} from "./modalManager.js";
 import {renderPlayers} from "./renderUtils.js";
 import {clearFormationSlots, createPlaceholderContent} from "./slotManager.js";
-
+import {AppState} from "./constants.js";
 
 export function setupEventListeners() {
     controlPanelTabBtns.forEach(btn => {
@@ -155,6 +159,91 @@ export function setupEventListeners() {
             newButton.addEventListener('click', handleSlotClick);
         }
     })
+
+    if (controlPanelToggleBtn) {
+        controlPanelToggleBtn.addEventListener('click', toggleControlPanel);
+    }
+    if (benchToggleBtn) {
+        benchToggleBtn.addEventListener('click', toggleBenchSection);
+    }
+
+    handlePanelDisplayOnResize();
+    window.addEventListener('resize', handlePanelDisplayOnResize);
+
+    document.addEventListener('click', handleClickOutsidePanel);
+}
+
+function toggleControlPanel() {
+    if (!controlPanel) {
+        console.error("Control panel element not found!");
+        return;
+    }
+    AppState.isControlPanelOpen = !AppState.isControlPanelOpen;
+    if (AppState.isControlPanelOpen) {
+        controlPanel.classList.add('is-open');
+    } else {
+        controlPanel.classList.remove('is-open');
+    }
+}
+
+function toggleBenchSection() {
+    if (!benchSection) {
+        console.error("Bench section element not found!");
+        return;
+    }
+    AppState.isBenchSectionOpen = !AppState.isBenchSectionOpen;
+    if (AppState.isBenchSectionOpen) {
+        benchSection.classList.add('is-open');
+    } else {
+        benchSection.classList.remove('is-open');
+    }
+}
+
+function handlePanelDisplayOnResize() {
+    if (window.innerWidth >= 1280) {
+        if (controlPanel) {
+            controlPanel.classList.remove('is-open');
+            controlPanel.classList.remove('is-mobile-overlay');
+        }
+        AppState.isControlPanelOpen = false;
+    } else {
+        if (controlPanel) {
+            controlPanel.classList.remove('is-open');
+            controlPanel.classList.add('is-mobile-overlay');
+        }
+        AppState.isControlPanelOpen = false;
+    }
+
+    if (window.innerWidth >= 900) {
+        if (benchSection) {
+            benchSection.classList.remove('is-open');
+            benchSection.classList.remove('is-mobile-overlay');
+        }
+        AppState.isBenchSectionOpen = false;
+    } else {
+        if (benchSection) {
+            benchSection.classList.remove('is-open');
+            benchSection.classList.add('is-mobile-overlay');
+        }
+        AppState.isBenchSectionOpen = false;
+    }
+}
+
+function handleClickOutsidePanel(event) {
+    if (!controlPanel || !benchSection) {
+        return;
+    }
+
+    if (modal && modal.style.display === 'flex') {
+        return;
+    }
+
+    if (window.innerWidth < 1280 && AppState.isControlPanelOpen && !controlPanel.contains(event.target) && event.target !== controlPanelToggleBtn) {
+        toggleControlPanel();
+    }
+    if (window.innerWidth < 900 && AppState.isBenchSectionOpen && !benchSection.contains(event.target) && event.target !== benchToggleBtn) {
+        toggleBenchSection();
+    }
 }
 
 export async function populateTeamsAndPlayers(leagueId) {
