@@ -45,3 +45,7 @@ export const controlPanel = document.getElementById('controlPanel');
 export const benchSection = document.getElementById('benchSection');
 export const controlPanelToggleBtn = document.getElementById('controlPanelToggleBtn');
 export const benchToggleBtn = document.getElementById('benchToggleBtn');
+
+export const hamburgerMenu = document.querySelector('.hamburger-menu');
+export const mainNav = document.querySelector('.main-nav');
+export const themeToggle = document.querySelector('.theme-toggle');

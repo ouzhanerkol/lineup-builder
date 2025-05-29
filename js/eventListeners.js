@@ -21,7 +21,7 @@ import {
     benchToggleBtn,
     controlPanelToggleBtn,
     benchSection,
-    controlPanel
+    controlPanel, themeToggle, mainNav, hamburgerMenu
 } from './domElements.js';
 
 import {
@@ -139,6 +139,44 @@ export function setupEventListeners() {
                 clearPlayerLists();
             }
         });
+    }
+
+    if (hamburgerMenu && mainNav) {
+        hamburgerMenu.addEventListener('click', () => {
+            mainNav.classList.toggle('is-active');
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768 && mainNav.classList.contains('is-active')) {
+                mainNav.classList.remove('is-active');
+            }
+        });
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggle.querySelector('i').classList.replace('fa-sun', 'fa-moon');
+            }
+        });
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (themeToggle.querySelector('i')) {
+                themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+            }
+        } else {
+            document.body.classList.remove('dark-mode');
+            if (themeToggle.querySelector('i')) {
+                themeToggle.querySelector('i').classList.replace('fa-sun', 'fa-moon');
+            }
+        }
     }
 
     document.querySelectorAll('.modal-profile-category .toggle-icon').forEach(icon => {
