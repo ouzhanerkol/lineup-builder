@@ -39,7 +39,7 @@ export async function generateShareImage() {
         teamLogoUrl = `${API_BASE_PATH}/proxy/image?imageUrl=${originalLogoUrl}`;
     }
 
-    const siteLogoUrl = 'assets/images/logo.png';
+    const siteLogoUrl = 'assets/images/logo.svg';
 
     let imageGenerationContainer = document.getElementById('image-generation-container');
     if (imageGenerationContainer) {

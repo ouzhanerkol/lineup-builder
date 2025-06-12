@@ -298,7 +298,7 @@ export async function populateTeamsAndPlayers(leagueId) {
             const option = document.createElement("option");
             option.value = team.id;
             option.textContent = team.name;
-            option.dataset.logoUrl = team.logoUrl?.trim() ? team.logoUrl : 'assets/images/default-team-logo.png';
+            option.dataset.logoUrl = team.logoUrl?.trim() ? team.logoUrl : 'assets/images/default-team-logo.svg';
             teamSelect.appendChild(option);
         });
 

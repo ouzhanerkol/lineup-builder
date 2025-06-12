@@ -326,7 +326,7 @@ body.dark-mode .social-icons a:hover {
     border: none;
     font-size: 1.8rem;
     cursor: pointer;
-    color: var(--text-color-dark);
+    color: var(--text-color-light);
     margin-left: 1rem;
     z-index: 101;
     padding: 0.5rem;
@@ -815,7 +815,7 @@ main {
         position: absolute;
         top: 100%;
         left: 0;
-        background-color: var(--bg-color-white);
+        background-color: var(--bg-color-dark-grey);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         padding: 1rem 0;
         z-index: 99;
@@ -840,7 +840,6 @@ main {
     .main-nav .nav-links a {
         display: block;
         padding: 0.8rem 1rem;
-        border-bottom: 1px solid var(--border-color-light);
     }
 
     .header-actions {
@@ -2077,7 +2076,7 @@ select, input {
     color: white;
 }
 
-#loadingSpinner {
+#loading-spinner {
     display: none;
     position: fixed;
     top: 50%;
