@@ -1,4 +1,4 @@
-import {BASE_URL} from "./constants.js";
+import {API_BASE_PATH} from "./constants.js";
 import {hideLoading, showLoading, showNotification} from "./uiManager.js";
 
 async function handleApiResponse(response) {
@@ -20,7 +20,7 @@ async function handleApiResponse(response) {
 export async function loadLeagues() {
     showLoading();
     try {
-        const response = await fetch(`${BASE_URL}/api/leagues`);
+        const response = await fetch(`${API_BASE_PATH}/leagues`);
         return await handleApiResponse(response);
     } catch (error) {
         console.error("Error loading leagues:", error);
@@ -34,7 +34,7 @@ export async function loadLeagues() {
 export async function loadTeams(leagueId) {
     showLoading();
     try {
-        const response = await fetch(`${BASE_URL}/api/teams/search/${leagueId}`);
+        const response = await fetch(`${API_BASE_PATH}/teams/search/${leagueId}`);
         return await handleApiResponse(response);
     } catch (error) {
         console.error("Error loading teams:", error);
@@ -48,7 +48,7 @@ export async function loadTeams(leagueId) {
 export async function fetchPlayers(teamId) {
     showLoading();
     try {
-        const response = await fetch(`${BASE_URL}/api/players/search/${teamId}`);
+        const response = await fetch(`${API_BASE_PATH}/players/search/${teamId}`);
         return await handleApiResponse(response);
     } catch (error) {
         console.error("Error fetching players:", error.message);
@@ -62,7 +62,7 @@ export async function fetchPlayers(teamId) {
 export async function fetchAllPlayerProfiles() {
     showLoading()
     try {
-        const response = await fetch(`${BASE_URL}/api/player-profiles`);
+        const response = await fetch(`${API_BASE_PATH}/player-profiles`);
         return await handleApiResponse(response);
     } catch (error) {
         console.error("Error (roles) fetching all player profiles:", error);
@@ -76,7 +76,7 @@ export async function fetchAllPlayerProfiles() {
 export async function fetchPlayerProfilesByPosition(positionCode) {
     showLoading();
     try {
-        const response = await fetch(`${BASE_URL}/api/player-profiles/search/${positionCode}`);
+        const response = await fetch(`${API_BASE_PATH}/player-profiles/search/${positionCode}`);
         return await handleApiResponse(response);
     } catch (error) {
         console.error("Error (roles) fetching player profiles by position:", error);
@@ -90,7 +90,7 @@ export async function fetchPlayerProfilesByPosition(positionCode) {
 export async function fetchSearchResults(searchTerm) {
     showLoading()
     try {
-        const response = await fetch(`${BASE_URL}/api/players/search?query=${searchTerm}`);
+        const response = await fetch(`${API_BASE_PATH}/players/search?query=${searchTerm}`);
         return await handleApiResponse(response);
     } catch (error) {
         console.error("Error when fetching search result:", error);

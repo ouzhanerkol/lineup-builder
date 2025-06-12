@@ -1,4 +1,4 @@
-import {BASE_URL, AppState, DEFAULT_PLAYER_PHOTO} from './constants.js';
+import {AppState, DEFAULT_PLAYER_PHOTO, API_BASE_PATH} from './constants.js';
 import {
     shareModal,
     generatedImageView,
@@ -36,7 +36,7 @@ export async function generateShareImage() {
     const selectedTeamOption = document.querySelector(`#team-select option[value="${teamSelect.value}"]`)
     if (selectedTeamOption && selectedTeamOption.dataset.logoUrl) {
         const originalLogoUrl = selectedTeamOption.dataset.logoUrl;
-        teamLogoUrl = `${BASE_URL}/api/proxy/image?imageUrl=${originalLogoUrl}`;
+        teamLogoUrl = `${API_BASE_PATH}/proxy/image?imageUrl=${originalLogoUrl}`;
     }
 
     const siteLogoUrl = 'assets/images/logo.png';
@@ -107,7 +107,7 @@ export async function generateShareImage() {
                 let icon = slotContent.dataset[`${type}Icon`];
 
                 if (icon && !icon.startsWith('assets/images/')) {
-                    icon = `${BASE_URL}/api/proxy/image?imageUrl=${icon}`;
+                    icon = `${API_BASE_PATH}/proxy/image?imageUrl=${icon}`;
                 }
 
                 contentHtml = `
@@ -145,7 +145,7 @@ export async function generateShareImage() {
                 let icon = benchSlotContent.dataset[`${type}Icon`];
 
                 if (icon && !icon.startsWith('assets/images/')) {
-                    icon = `${BASE_URL}/api/proxy/image?imageUrl=${icon}`;
+                    icon = `${API_BASE_PATH}/proxy/image?imageUrl=${icon}`;
                 }
 
                 contentHtml = `
