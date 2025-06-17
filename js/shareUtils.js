@@ -47,6 +47,7 @@ export async function generateShareImage() {
     }
     imageGenerationContainer = document.createElement('div');
     imageGenerationContainer.id = 'image-generation-container';
+    imageGenerationContainer.style.cssText = 'position: absolute; left: -9999px; top: -9999px;';
     document.body.appendChild(imageGenerationContainer);
 
     const leftColumnHtml = `
@@ -74,6 +75,22 @@ export async function generateShareImage() {
     const imagePitchContainer = imageGenerationContainer.querySelector('#image-pitch-container');
     const imageBenchArea = imageGenerationContainer.querySelector('#image-bench-area');
 
+    const pitchRect = pitchContainer.getBoundingClientRect();
+    const originalPitchWidth = pitchRect.width;
+    const originalPitchHeight = pitchRect.height;
+    const originalPitchLeft = pitchRect.left;
+    const originalPitchTop = pitchRect.top;
+
+    const originalPitchPaddingLeft = 10;
+    const originalPitchPaddingTop = 10;
+
+    const newPitchWidth = 650;
+    const newPitchHeight = 770;
+
+    imagePitchContainer.style.width = `${newPitchWidth}px`;
+    imagePitchContainer.style.height = `${newPitchHeight}px`;
+    imagePitchContainer.style.position = 'relative';
+
     allPositionSlots.forEach(slot => {
         const slotContent = slot.querySelector('.field-player-wrapper, .field-profile-wrapper, .field-slot-placeholder');
         if (slotContent) {
@@ -81,18 +98,13 @@ export async function generateShareImage() {
             newSlotDiv.className = 'image-position-slot';
             newSlotDiv.style.position = 'absolute';
 
-
-            const pitchRect = pitchContainer.getBoundingClientRect();
             const slotRect = slot.getBoundingClientRect();
 
-            const originalPitchPaddingLeft = 10;
-            const originalPitchPaddingTop = 10;
+            const xOffset = slotRect.left - originalPitchLeft;
+            const yOffset = slotRect.top - originalPitchTop;
 
-            const xRatio = (slotRect.left - pitchRect.left - originalPitchPaddingLeft) / (pitchRect.width - (originalPitchPaddingLeft * 2));
-            const yRatio = (slotRect.top - pitchRect.top - originalPitchPaddingTop) / (pitchRect.height - (originalPitchPaddingTop * 2));
-
-            const newPitchWidth = imagePitchContainer.offsetWidth;
-            const newPitchHeight = imagePitchContainer.offsetHeight;
+            const xRatio = (xOffset - originalPitchPaddingLeft) / (originalPitchWidth - (originalPitchPaddingLeft * 2));
+            const yRatio = (yOffset - originalPitchPaddingTop) / (originalPitchHeight - (originalPitchPaddingTop * 2));
 
             const slotWidth = 90;
             const slotHeight = 90;
@@ -167,6 +179,8 @@ export async function generateShareImage() {
             imageBenchArea.appendChild(newBenchSlotDiv);
         }
     });
+
+    await new Promise(resolve => requestAnimationFrame(resolve));
 
     try {
         const canvas = await html2canvas(imageGenerationContainer, {
