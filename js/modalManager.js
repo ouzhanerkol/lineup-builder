@@ -18,6 +18,10 @@ import {fetchAllPlayerProfiles, fetchPlayerProfilesByPosition, fetchSearchResult
 import {displaySearchResults, renderPlayerProfiles} from "./renderUtils.js";
 import {showNotification} from "./uiManager.js";
 
+let searchTimeout;
+const DEBOUNCE_DELAY = 500;
+const MIN_SEARCH_LENGTH = 2;
+
 export function openModal() {
     modal.style.display = "flex";
     playerRolesSection.style.display = "none";
@@ -48,6 +52,8 @@ export function closeModal() {
         playerSearchInput.removeEventListener('input', AppState.searchInputListener);
         setSearchInputListener(null);
     }
+
+    clearTimeout(searchTimeout);
 }
 
 export function showPlayersTab() {
@@ -99,14 +105,23 @@ export async function showRolesTab() {
 export function setupPlayerSearch() {
     if (AppState.searchInputListener) {
         playerSearchInput.removeEventListener('input', AppState.searchInputListener);
+        setSearchInputListener(null);
     }
+    clearTimeout(searchTimeout);
 
-    const newSearchInputListener = async function () {
+    const newSearchInputListener = function () {
         const searchTerm = this.value.toLowerCase().trim();
         playerSearchResults.innerHTML = '';
         playerSearchResults.style.display = 'none';
 
-        if (searchTerm.length >= 2) {
+        clearTimeout(searchTimeout);
+
+        // Minimum karakter kontrol?
+        if (searchTerm.length < MIN_SEARCH_LENGTH) {
+            return;
+        }
+
+        searchTimeout = setTimeout(async () => {
             try {
                 const results = await fetchSearchResults(searchTerm);
                 if (results) {
@@ -116,7 +131,7 @@ export function setupPlayerSearch() {
                 console.error("Error while fetching search results: ", error);
                 showNotification("Error while fetching search results. Please try again later.", "error");
             }
-        }
+        }, DEBOUNCE_DELAY);
     }
 
     setSearchInputListener(newSearchInputListener);
