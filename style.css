@@ -470,7 +470,7 @@ main {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 15px;
     box-sizing: border-box;
     margin: 20px auto;
 }
@@ -480,7 +480,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 3px 0;
+    padding: 1px 0;
     border-top: 1px dashed var(--border-color-pitch-dashed);
     box-sizing: border-box;
 }
@@ -509,10 +509,11 @@ main {
 }
 
 .position-slot {
+    width: 45px;
+    height: 45px;
     border-radius: 10%;
     background-color: rgba(255, 255, 255, 0.05);
     margin: 0 5px;
-
 }
 
 .position-slot.is-middle-empty {
@@ -741,6 +742,46 @@ main {
 }
 
 /* --- Media Queries --- */
+@media (min-width: 340px) {
+    .position-slot .field-slot-icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .pitch-zone{
+        padding: 3px 0;
+    }
+}
+
+@media (min-width: 355px) {
+    .position-slot {
+        width: 48px;
+        height: 48px;
+        margin: 0 10px;
+    }
+}
+
+@media (min-width: 365px) {
+    .position-slot {
+        width: 50px;
+        height: 50px;
+        margin: 0 10px;
+    }
+
+    .position-slot .field-slot-icon {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media (min-width: 385px) {
+    .position-slot {
+        width: 55px;
+        height: 55px;
+        margin: 0 10px;
+    }
+}
+
 @media (max-width: 400px) {
     .logo {
         font-size: 1.2rem;
