@@ -110,7 +110,7 @@ export async function generateShareImage() {
             const slotHeight = 90;
 
             newSlotDiv.style.left = `${(xRatio * newPitchWidth) - (slotWidth / 2) + 43}px`;
-            newSlotDiv.style.top = `${(yRatio * newPitchHeight) - (slotHeight / 2) + 50}px`;
+            newSlotDiv.style.top = `${(yRatio * newPitchHeight) - (slotHeight / 2) + 43}px`;
 
             let contentHtml = '';
             if (slotContent.classList.contains('field-player-wrapper') || slotContent.classList.contains('field-profile-wrapper')) {
