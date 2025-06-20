@@ -126,9 +126,9 @@ body.dark-mode {
     color: var(--dark-mode-text-color);
 }
 
-body.dark-mode .main-header {
+body.dark-mode .main-header,
+body.dark-mode .main-nav {
     background-color: var(--dark-mode-header-bg);
-    box-shadow: var(--box-shadow-dark);
 }
 
 body.dark-mode .logo,
@@ -297,6 +297,7 @@ body.dark-mode .social-icons a:hover {
     flex-grow: 1;
     justify-content: flex-end;
     align-items: center;
+    background-color: var(--bg-color-primary);
 }
 
 .main-nav .nav-links {
@@ -1795,10 +1796,10 @@ label {
         position: absolute;
         top: 100%;
         left: 0;
-        background-color: var(--bg-color-dark-grey);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         padding: 1rem 0;
         z-index: 99;
+        border-top: 1px solid var(--border-color-light);
     }
 
     .main-nav.is-active {
