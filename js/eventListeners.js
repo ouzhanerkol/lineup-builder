@@ -272,7 +272,7 @@ function handleClickOutsidePanel(event) {
         return;
     }
 
-    if (modal && modal.style.display === 'flex') {
+    if (modal && modal.contains(event.target)) {
         return;
     }
 

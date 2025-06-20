@@ -205,12 +205,10 @@ export function handleSlotClick(event) {
         setSelectedSlotForModal(clickedSlot);
         setIsBenchSlotSelected(clickedSlot.classList.contains('bench-slot'));
         openModal();
-        console.log(`Slot clicked: ${clickedSlot.id || clickedSlot.className}. Is bench : ${AppState.isBenchSlotSelected}`);
     }
 }
 
 export function selectPlayer(player) {
-    console.log("selectPlayer called :", AppState.selectedSlotForModal ? AppState.selectedSlotForModal.id : 'Yok');
     if (AppState.selectedSlotForModal) {
         updateSlotContent(AppState.selectedSlotForModal, player.id, player.name, player.photoUrl, 'player');
         closeModal();
@@ -218,7 +216,6 @@ export function selectPlayer(player) {
 }
 
 export function selectProfile(profile) {
-    console.log("selectProfile called :", AppState.selectedSlotForModal ? AppState.selectedSlotForModal.id : 'Yok');
     if (AppState.selectedSlotForModal) {
         updateSlotContent(AppState.selectedSlotForModal, profile.id, profile.name, "assets/images/placeholder-icon.png", 'profile');
         closeModal();
