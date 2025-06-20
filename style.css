@@ -1,5 +1,4 @@
 :root {
-    /* Colors */
     --primary-color: #00A100;
     --primary-color-light: #78CC77;
     --primary-color-dark: #0F600C;
@@ -18,7 +17,6 @@
 
     --pitch-background-color: #2a2a2a;
 
-    /* Background Colors */
     --bg-color-primary: #00A100;
     --bg-color-white: #ffffff;
     --bg-color-light: #F0F7EE;
@@ -35,7 +33,6 @@
     --bg-color-black: black;
 
 
-    /* Dark Mode Colors */
     --dark-mode-bg: #1a1a1a;
     --dark-mode-header-bg: #1D1E18;
     --dark-mode-element-bg: #1D1E18;
@@ -48,7 +45,6 @@
     --dark-mode-text-color: #F0F7EE;
     --dark-mode-text-faded: #ccc;
 
-    /* Shadows */
     --box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
     --box-shadow-medium: 0 0 10px rgba(0,0,0,0.1);
     --box-shadow-modal: 0 5px 15px rgba(0, 0, 0, 0.4);
@@ -60,7 +56,6 @@
     --box-shadow-search-results: 0 2px 5px rgba(0, 0, 0, 0.1);
     --box-shadow-control-panel-item: 0 1px 3px rgba(0,0,0,0.1);
 
-    /* Borders */
     --border-color-light: #F0F7EE;
     --border-color-faded-light: #C9D9C4;
     --border-color-medium: #52554E;
@@ -70,7 +65,6 @@
     --border-color-dark-mode-modal: #555;
     --border-color-control-player-item-empty: #e0e0e0;
 
-    /* Transitions */
     --transition-fast: 0.2s ease;
     --transition-medium: 0.3s ease;
     --transition-slow: 0.3s ease-out;
@@ -85,18 +79,15 @@
     --border-radius-small: 5px;
     --border-radius-button: 4px;
 
-    /* Font Size */
     --font-size-base: 19px;
-    --font-size-large: 1.5rem; /* Logo */
-    --font-size-medium: 1.2rem; /* Footer h3, theme toggle */
-    --font-size-small: 0.9rem; /* Footer p, li a */
-    --font-size-extra-small: 0.8rem; /* Footer bottom */
-    --font-size-player-name: 4px; /* Field slot name */
-    --font-size-bench-player-name: 0.85em; /* Bench slot name */
+    --font-size-large: 1.5rem;
+    --font-size-medium: 1.2rem;
+    --font-size-small: 0.9rem;
+    --font-size-extra-small: 0.8rem;
+    --font-size-player-name: 4px;
+    --font-size-bench-player-name: 0.85em;
     --font-size-modal-tab: 16px;
-    --font-size-control-panel-h3: 16px;
-    --font-size-control-player-number: 14px;
-    --font-size-image-player-name: 10px; /* Share image player name */
+    --font-size-image-player-name: 10px;
 }
 
 html, body {
@@ -262,7 +253,6 @@ body.dark-mode .social-icons a:hover {
     color: var(--primary-color);
 }
 
-/* --- Header --- */
 .main-header {
     background-color: var(--bg-color-primary);
     padding: var(--padding-small) 0;
@@ -360,7 +350,6 @@ body.dark-mode .social-icons a:hover {
     padding: 0.5rem;
 }
 
-/* --- Footer --- */
 .main-footer {
     background-color: var(--primary-color-dark);
     color: var(--text-color-light);
@@ -431,7 +420,6 @@ body.dark-mode .social-icons a:hover {
     color: var(--text-color-inactive);
 }
 
-/* --- Main Content --- */
 main {
     display: flex;
     flex-direction: column;
@@ -462,7 +450,6 @@ main {
     padding: var(--padding-small);
 }
 
-/* Field Section - Main section */
 .field-section {
     width: 100%;
     max-height: 760px;
@@ -607,7 +594,6 @@ main {
     height: 14px;
 }
 
-/* --- Bench Section --- */
 .bench-section {
     background-color: var(--bg-color-faded-light);
     border-radius: var(--border-radius-base);
@@ -714,7 +700,6 @@ main {
     max-width: 60px;
 }
 
-/* Control Panel - Right section */
 .control-panel {
     background-color: var(--bg-color-white);
     border-radius: var(--border-radius-base);
@@ -767,7 +752,6 @@ main {
     white-space: nowrap;
 }
 
-/* --- Media Queries --- */
 @media (min-width: 340px) {
     .position-slot .field-slot-icon {
         width: 25px;
@@ -872,7 +856,6 @@ main {
 }
 
 @media (max-width: 768px) {
-    /* Header */
     .main-nav {
         display: none;
         flex-direction: column;
@@ -930,7 +913,6 @@ main {
         justify-content: space-between;
     }
 
-    /* Footer */
     .footer-content {
         flex-direction: column;
         align-items: center;
@@ -1095,12 +1077,11 @@ main {
     color: var(--primary-color);
 }
 
-/* Order for other positions */
-#zone-row-5 { order: 1; } /* Forward on top */
-#zone-row-4 { order: 2; } /* CAM */
-#zone-row-3 { order: 3; } /* Midfield */
-#zone-row-2 { order: 4; } /* DM */
-#zone-row-1 { order: 5; } /* Defence */
+#zone-row-5 { order: 1; }
+#zone-row-4 { order: 2; }
+#zone-row-3 { order: 3; }
+#zone-row-2 { order: 4; }
+#zone-row-1 { order: 5; }
 
 .pitch-zone.middle-slot-empty {
     justify-content: center;
@@ -1113,7 +1094,10 @@ main {
 
 .position-slot .field-player-wrapper,
 .position-slot .field-profile-wrapper,
-.field-slot-placeholder-content {
+.field-slot-placeholder-content,
+.bench-slot .bench-player-wrapper,
+.bench-slot .bench-profile-wrapper,
+.bench-slot .bench-slot-placeholder {
     cursor: grab;
     opacity: 1;
     height: 100%;
@@ -1159,29 +1143,12 @@ main {
     background-color: rgba(76, 175, 80, 0.1);
 }
 
-.bench-slot .bench-player-wrapper,
-.bench-slot .bench-profile-wrapper,
-.bench-slot .bench-slot-placeholder {
-    cursor: grab;
-    opacity: 1;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    transition: transform var(--transition-medium);
-    text-align: center;
-}
-
 .bench-slot .bench-player-wrapper:hover,
 .bench-slot .bench-profile-wrapper:hover,
 .bench-slot .bench-slot-placeholder:hover {
     transform: scale(1.05);
 }
 
-/* Modal Style Settings */
 .modal {
     display: none;
     position: fixed;
@@ -1526,7 +1493,6 @@ main {
     margin-left: 5px;
 }
 
-/* Share Modal Styles */
 .modal-content.share-modal-content {
     background-color: var(--bg-color-light);
     padding: 0 20px 20px;
@@ -1942,155 +1908,8 @@ main {
     flex: 1;
 }
 
-.control-player-list-section {
-    margin-bottom: 25px;
-    background-color: var(--bg-color-white);
-    border-radius: 6px;
-    padding: 15px;
-    box-shadow: var(--box-shadow-control-panel-item);
-}
-
-.control-player-list-section h3 {
-    margin-bottom: 15px;
-    color: var(--text-color-dark);
-    font-size: var(--font-size-control-panel-h3);
-    font-weight: 600;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #f0f0f0;
-}
-
-.control-starting-players,
-.control-bench-players {
-    list-style: none;
-    padding: 0;
-}
-
-.control-player-item {
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    margin-bottom: 8px;
-    background-color: var(--bg-color-faded-light);
-    border-radius: 6px;
-    cursor: default;
-    transition: all var(--transition-fast);
-}
-
-.control-player-item.empty-slot {
-    background-color: var(--bg-color-empty-slot);
-    color: var(--text-color-dark);
-    border: 1px solid var(--border-color-control-player-item-empty);
-}
-
 .tab-btn:not(.active) {
     border: none;
-}
-
-.player-select {
-    background-color: var(--secondary-dark-color);
-    color: white;
-    padding: 6px 12px;
-    border: none;
-    border-radius: var(--border-radius-button);
-    cursor: pointer;
-    font-size: 12px;
-    transition: background-color var(--transition-fast);
-}
-
-.player-select:hover {
-    background-color: #1565c0;
-}
-
-.control-player-item:hover {
-    background-color: var(--bg-color-extra-faded-light);
-    transform: translateY(-2px);
-    box-shadow: var(--box-shadow-hover);
-}
-
-.control-player-item.selected {
-    border: 2px solid var(--secondary-dark-color);
-    background-color: var(--bg-color-selected-light);
-}
-
-.control-player-number {
-    width: 32px;
-    height: 32px;
-    background-color: var(--secondary-dark-color);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 12px;
-    font-weight: bold;
-    font-size: var(--font-size-control-player-number);
-}
-
-.control-player-name {
-    flex-grow: 1;
-    font-weight: 500;
-}
-
-.control-player-position {
-    display: none;
-}
-
-.field-player {
-    display: none;
-}
-
-.control-player-controls {
-    display: flex;
-    gap: 8px;
-    opacity: 0.7;
-    transition: opacity var(--transition-fast);
-}
-
-.control-player-item:hover .control-player-controls {
-    opacity: 1;
-}
-
-.control-player-controls button {
-    padding: 6px 12px;
-    border: none;
-    border-radius: var(--border-radius-button);
-    cursor: pointer;
-    font-size: 12px;
-    transition: background-color var(--transition-fast);
-}
-
-.control-player-edit-btn {
-    background-color: var(--secondary-dark-color);
-    color: white;
-}
-
-.control-player-edit-btn:hover {
-    background-color: #1565c0;
-}
-
-.control-player-list::-webkit-scrollbar {
-    width: 8px;
-}
-
-.control-player-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: var(--border-radius-button);
-}
-
-.control-player-list::-webkit-scrollbar-thumb {
-    background: #bbb;
-    border-radius: var(--border-radius-button);
-}
-
-.control-player-list::-webkit-scrollbar-thumb:hover {
-    background: #888;
-}
-
-.no-results {
-    text-align: center;
-    padding: 20px;
-    color: var(--text-color-subtle);
-    font-style: italic;
 }
 
 .form-group {
@@ -2123,11 +1942,6 @@ label {
     border-radius: var(--border-radius-button);
     cursor: pointer;
     flex: 1;
-}
-
-.save-btn {
-    background-color: var(--success-color);
-    color: white;
 }
 
 .share-btn {
