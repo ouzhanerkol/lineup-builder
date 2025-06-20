@@ -103,7 +103,7 @@ html, body {
     margin: 0;
     padding: 0;
     font-size: var(--font-size-base);
-    font-family: Arial, sans-serif;
+    font-family: 'Rubik', sans-serif;
     line-height: 1.6;
     background-color: var(--secondary-light-color);
     overflow-x: hidden;
