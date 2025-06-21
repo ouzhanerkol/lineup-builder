@@ -34,7 +34,7 @@ import {
 import {loadTeams, fetchPlayers, fetchAllPlayerProfiles, loadLeagues} from './apiService.js';
 import {clearPlayerLists, closeModal, handleSlotClick, showPlayersTab, showRolesTab} from "./modalManager.js";
 import {renderPlayers} from "./renderUtils.js";
-import {createPlaceholderContent} from "./slotManager.js";
+import {clearFormationSlots, createPlaceholderContent} from "./slotManager.js";
 import {AppState} from "./constants.js";
 
 export async function initializeLeagueAndTeamSelection() {
@@ -167,6 +167,7 @@ export async function populateTeamsAndPlayers(leagueId) {
                 teamSelect.value = team.id;
                 updateCustomTeamSelectDisplay(team.id, team.name, option.dataset.logoUrl);
                 customTeamSelectOptions.classList.remove('show');
+                clearFormationSlots();
                 fetchPlayers(team.id).then(renderPlayers);
             });
         });
@@ -177,7 +178,6 @@ export async function populateTeamsAndPlayers(leagueId) {
 
         teamSelect.value = firstTeamId;
         updateCustomTeamSelectDisplay(firstTeamId, firstTeamName, firstTeamLogoUrl);
-
         const players = await fetchPlayers(firstTeamId);
         if (players) {
             renderPlayers(players);
@@ -188,6 +188,7 @@ export async function populateTeamsAndPlayers(leagueId) {
         if (customTeamSelectDisplay) customTeamSelectDisplay.innerHTML = 'No teams found';
         if (customTeamSelectOptions) customTeamSelectOptions.innerHTML = '';
         clearPlayerLists();
+        clearFormationSlots();
     }
 }
 
