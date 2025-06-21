@@ -5,16 +5,11 @@ import {
 import {
     modal,
     formationSelect,
-    shareModal,
-    leagueSelect, teamSelect
+    shareModal
 } from './js/domElements.js';
-import {populateTeamsAndPlayers, setupEventListeners} from './js/eventListeners.js';
+import {setupEventListeners} from './js/eventListeners.js';
 import { closeShareModal } from './js/shareUtils.js';
 import {
-    loadLeagues
-} from './js/apiService.js'
-import {
-    clearPlayerLists,
     closeModal
 } from "./js/modalManager.js";
 import {setupDragAndDropListeners} from "./js/dragDropManager.js";
@@ -34,28 +29,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     updateMiddleSlotLayouts();
-
-    const leagues = await loadLeagues();
-    if (leagues && Array.isArray(leagues) && leagues.length > 0) {
-        leagues.forEach(league => {
-            const option = document.createElement("option");
-            option.value = league.id;
-            option.textContent = league.name;
-            leagueSelect.appendChild(option);
-        });
-
-        const firstLeague = leagues[0];
-        if (firstLeague) {
-            leagueSelect.value = firstLeague.id;
-
-            await populateTeamsAndPlayers(firstLeague.id);
-        }
-    } else {
-        console.warn("League data is not found or empty.");
-        leagueSelect.innerHTML = '<option value="">No leagues found</option>';
-        teamSelect.innerHTML = '';
-        clearPlayerLists();
-    }
 });
 
 window.addEventListener('click', function (event) {

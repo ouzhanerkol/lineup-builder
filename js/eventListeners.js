@@ -31,11 +31,192 @@ import {
     openShareModal, closeShareModal, downloadImage, shareToTwitter,
     shareToFacebook, copyImageToClipboard
 } from './shareUtils.js';
-import { loadTeams, fetchPlayers, fetchAllPlayerProfiles } from './apiService.js';
+import {loadTeams, fetchPlayers, fetchAllPlayerProfiles, loadLeagues} from './apiService.js';
 import {clearPlayerLists, closeModal, handleSlotClick, showPlayersTab, showRolesTab} from "./modalManager.js";
 import {renderPlayers} from "./renderUtils.js";
-import {clearFormationSlots, createPlaceholderContent} from "./slotManager.js";
+import {createPlaceholderContent} from "./slotManager.js";
 import {AppState} from "./constants.js";
+
+export async function initializeLeagueAndTeamSelection() {
+    const customLeagueSelectDisplay = document.getElementById("custom-league-select-display");
+    const customLeagueSelectOptions = document.getElementById("custom-league-select-options");
+
+    const leagues = await loadLeagues();
+    if (leagues && Array.isArray(leagues) && leagues.length > 0) {
+        leagueSelect.innerHTML = '';
+        customLeagueSelectOptions.innerHTML = '';
+
+        leagues.forEach(league => {
+            const option = document.createElement("option");
+            option.value = league.id;
+            option.textContent = league.name;
+            option.dataset.logoUrl = league.logoUrl?.trim() ? league.logoUrl : 'assets/images/default-league-logo.svg';
+            leagueSelect.appendChild(option);
+
+            const customOption = document.createElement("div");
+            customOption.classList.add("custom-league-option");
+            customOption.dataset.leagueId = league.id;
+            customOption.dataset.logoUrl = option.dataset.logoUrl;
+
+            const img = document.createElement("img");
+            img.src = option.dataset.logoUrl;
+            img.alt = `${league.name} logo`;
+            img.classList.add("league-logo-small");
+
+            const span = document.createElement("span");
+            span.textContent = league.name;
+
+            customOption.appendChild(img);
+            customOption.appendChild(span);
+            customLeagueSelectOptions.appendChild(customOption);
+
+            customOption.addEventListener('click', async () => {
+                leagueSelect.value = league.id;
+                updateCustomLeagueSelectDisplay(league.id, league.name, option.dataset.logoUrl);
+                customLeagueSelectOptions.classList.remove('show');
+                await populateTeamsAndPlayers(league.id);
+            });
+        });
+
+        const firstLeagueId = leagues[0].id;
+        const firstLeagueName = leagues[0].name;
+        const firstLeagueLogoUrl = leagues[0].logoUrl?.trim() ? leagues[0].logoUrl : 'assets/images/default-league-logo.svg';
+
+        leagueSelect.value = firstLeagueId;
+        updateCustomLeagueSelectDisplay(firstLeagueId, firstLeagueName, firstLeagueLogoUrl);
+
+        await populateTeamsAndPlayers(firstLeagueId);
+
+    } else {
+        console.warn("League data is not found or empty.");
+        leagueSelect.innerHTML = '<option value="">No leagues found</option>';
+        if (customLeagueSelectDisplay) customLeagueSelectDisplay.innerHTML = 'No leagues found';
+        if (customLeagueSelectOptions) customLeagueSelectOptions.innerHTML = '';
+        teamSelect.innerHTML = '';
+        clearPlayerLists();
+    }
+}
+
+function updateCustomLeagueSelectDisplay(leagueId, leagueName, logoUrl) {
+    const customLeagueSelectDisplay = document.getElementById("custom-league-select-display");
+    if (customLeagueSelectDisplay) {
+        let img = customLeagueSelectDisplay.querySelector(".league-logo-small");
+        let span = customLeagueSelectDisplay.querySelector("span:not(.dropdown-arrow)");
+
+        if (!img) {
+            img = document.createElement("img");
+            img.classList.add("league-logo-small");
+            customLeagueSelectDisplay.prepend(img);
+        }
+        img.src = logoUrl;
+        img.alt = `${leagueName} logo`;
+
+        if (!span) {
+            span = document.createElement("span");
+            const dropdownArrow = customLeagueSelectDisplay.querySelector(".dropdown-arrow");
+            if (dropdownArrow) {
+                customLeagueSelectDisplay.insertBefore(span, dropdownArrow);
+            } else {
+                customLeagueSelectDisplay.appendChild(span);
+            }
+        }
+        span.textContent = leagueName;
+    }
+}
+
+export async function populateTeamsAndPlayers(leagueId) {
+    if (!leagueId) {
+        teamSelect.innerHTML = '<option value="">No teams found</option>';
+        clearPlayerLists();
+        return;
+    }
+
+    const teams = await loadTeams(leagueId);
+    const customTeamSelectDisplay = document.getElementById("custom-team-select-display");
+    const customTeamSelectOptions = document.getElementById("custom-team-select-options");
+
+    if (teams && Array.isArray(teams) && teams.length > 0) {
+        teamSelect.innerHTML = '';
+        customTeamSelectOptions.innerHTML = '';
+
+        teams.forEach(team => {
+            const option = document.createElement("option");
+            option.value = team.id;
+            option.textContent = team.name;
+            option.dataset.logoUrl = team.logoUrl?.trim() ? team.logoUrl : 'assets/images/default-team-logo.svg';
+            teamSelect.appendChild(option);
+
+            const customOption = document.createElement("div");
+            customOption.classList.add("custom-team-option");
+            customOption.dataset.teamId = team.id;
+            customOption.dataset.logoUrl = option.dataset.logoUrl;
+
+            const img = document.createElement("img");
+            img.src = option.dataset.logoUrl;
+            img.alt = `${team.name} logo`;
+            img.classList.add("team-logo-small");
+
+            const span = document.createElement("span");
+            span.textContent = team.name;
+
+            customOption.appendChild(img);
+            customOption.appendChild(span);
+            customTeamSelectOptions.appendChild(customOption);
+
+            customOption.addEventListener('click', () => {
+                teamSelect.value = team.id;
+                updateCustomTeamSelectDisplay(team.id, team.name, option.dataset.logoUrl);
+                customTeamSelectOptions.classList.remove('show');
+                fetchPlayers(team.id).then(renderPlayers);
+            });
+        });
+
+        const firstTeamId = teams[0].id;
+        const firstTeamName = teams[0].name;
+        const firstTeamLogoUrl = teams[0].logoUrl?.trim() ? teams[0].logoUrl : 'assets/images/default-team-logo.svg';
+
+        teamSelect.value = firstTeamId;
+        updateCustomTeamSelectDisplay(firstTeamId, firstTeamName, firstTeamLogoUrl);
+
+        const players = await fetchPlayers(firstTeamId);
+        if (players) {
+            renderPlayers(players);
+        }
+    } else {
+        console.warn("Team data is not found or empty for this league.");
+        teamSelect.innerHTML = '<option value="">No teams found</option>';
+        if (customTeamSelectDisplay) customTeamSelectDisplay.innerHTML = 'No teams found';
+        if (customTeamSelectOptions) customTeamSelectOptions.innerHTML = '';
+        clearPlayerLists();
+    }
+}
+
+function updateCustomTeamSelectDisplay(teamId, teamName, logoUrl) {
+    const customTeamSelectDisplay = document.getElementById("custom-team-select-display");
+    if (customTeamSelectDisplay) {
+        let img = customTeamSelectDisplay.querySelector(".team-logo-small");
+        let span = customTeamSelectDisplay.querySelector("span:not(.dropdown-arrow)");
+
+        if (!img) {
+            img = document.createElement("img");
+            img.classList.add("team-logo-small");
+            customTeamSelectDisplay.prepend(img);
+        }
+        img.src = logoUrl;
+        img.alt = `${teamName} logo`;
+
+        if (!span) {
+            span = document.createElement("span");
+            const dropdownArrow = customTeamSelectDisplay.querySelector(".dropdown-arrow");
+            if (dropdownArrow) {
+                customTeamSelectDisplay.insertBefore(span, dropdownArrow);
+            } else {
+                customTeamSelectDisplay.appendChild(span);
+            }
+        }
+        span.textContent = teamName;
+    }
+}
 
 export function setupEventListeners() {
     controlPanelTabBtns.forEach(btn => {
@@ -120,27 +301,6 @@ export function setupEventListeners() {
         });
     }
 
-    if (leagueSelect) {
-        leagueSelect.addEventListener("change", async function () {
-            const leagueId = this.value;
-            await populateTeamsAndPlayers(leagueId);
-        });
-    }
-    if (teamSelect) {
-        teamSelect.addEventListener("change", async function () {
-            const teamId = this.value;
-            clearFormationSlots();
-            if (teamId) {
-                const players = await fetchPlayers(teamId);
-                if (players) {
-                    renderPlayers(players);
-                }
-            } else {
-                clearPlayerLists();
-            }
-        });
-    }
-
     if (hamburgerMenu && mainNav) {
         hamburgerMenu.addEventListener('click', () => {
             mainNav.classList.toggle('is-active');
@@ -209,6 +369,36 @@ export function setupEventListeners() {
     window.addEventListener('resize', handlePanelDisplayOnResize);
 
     document.addEventListener('click', handleClickOutsidePanel);
+
+    const customTeamSelectDisplay = document.getElementById("custom-team-select-display");
+    const customTeamSelectOptions = document.getElementById("custom-team-select-options");
+    if (customTeamSelectDisplay && customTeamSelectOptions) {
+        customTeamSelectDisplay.addEventListener('click', () => {
+            customTeamSelectOptions.classList.toggle('show');
+            document.getElementById("custom-league-select-options")?.classList.remove('show');
+        });
+        document.addEventListener('click', (event) => {
+            if (!customTeamSelectDisplay.contains(event.target) && !customTeamSelectOptions.contains(event.target)) {
+                customTeamSelectOptions.classList.remove('show');
+            }
+        });
+    }
+
+    const customLeagueSelectDisplay = document.getElementById("custom-league-select-display");
+    const customLeagueSelectOptions = document.getElementById("custom-league-select-options");
+    if (customLeagueSelectDisplay && customLeagueSelectOptions) {
+        customLeagueSelectDisplay.addEventListener('click', () => {
+            customLeagueSelectOptions.classList.toggle('show');
+            document.getElementById("custom-team-select-options")?.classList.remove('show');
+        });
+        document.addEventListener('click', (event) => {
+            if (!customLeagueSelectDisplay.contains(event.target) && !customLeagueSelectOptions.contains(event.target)) {
+                customLeagueSelectOptions.classList.remove('show');
+            }
+        });
+    }
+
+    initializeLeagueAndTeamSelection();
 }
 
 function toggleControlPanel() {
@@ -281,36 +471,5 @@ function handleClickOutsidePanel(event) {
     }
     if (window.innerWidth < 900 && AppState.isBenchSectionOpen && !benchSection.contains(event.target) && event.target !== benchToggleBtn) {
         toggleBenchSection();
-    }
-}
-
-export async function populateTeamsAndPlayers(leagueId) {
-    if (!leagueId) {
-        teamSelect.innerHTML = '<option value="">No teams found</option>';
-        clearPlayerLists();
-        return;
-    }
-
-    const teams = await loadTeams(leagueId);
-    if (teams && Array.isArray(teams) && teams.length > 0) {
-        teamSelect.innerHTML = '';
-        teams.forEach(team => {
-            const option = document.createElement("option");
-            option.value = team.id;
-            option.textContent = team.name;
-            option.dataset.logoUrl = team.logoUrl?.trim() ? team.logoUrl : 'assets/images/default-team-logo.svg';
-            teamSelect.appendChild(option);
-        });
-
-        const firstTeamId = teams[0].id;
-        teamSelect.value = firstTeamId;
-        const players = await fetchPlayers(firstTeamId);
-        if (players) {
-            renderPlayers(players);
-        }
-    } else {
-        console.warn("Team data is not found or empty for this league.");
-        teamSelect.innerHTML = '<option value="">No teams found</option>';
-        clearPlayerLists();
     }
 }

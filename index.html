@@ -122,14 +122,22 @@
             <div class="tab-panel active" id="style">
               <div class="form-group">
                 <label for="league-select">Lig</label>
-                <select id="league-select">
-                </select>
+                <div class="custom-select-wrapper">
+                  <div id="custom-league-select-display" class="custom-select-display">
+                    <i class="fas fa-chevron-down dropdown-arrow"></i> </div>
+                  <div id="custom-league-select-options" class="custom-select-options"></div>
+                  <select id="league-select" style="display: none;"></select>
+                </div>
               </div>
 
               <div class="form-group">
                 <label for="team-select">Takım</label>
-                <select id="team-select">
-                </select>
+                <div class="custom-select-wrapper">
+                  <div id="custom-team-select-display" class="custom-select-display">
+                    <i class="fas fa-chevron-down dropdown-arrow"></i> </div>
+                  <div id="custom-team-select-options" class="custom-select-options"></div>
+                  <select id="team-select" style="display: none;"></select>
+                </div>
               </div>
 
               <div class="form-group">

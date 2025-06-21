@@ -1974,3 +1974,128 @@ label {
         display: none;
     }
 }
+
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius-button);
+    cursor: pointer;
+    background-color: var(--bg-color-faded-light);
+    transition: all var(--transition-fast);
+}
+
+body.dark-mode .custom-select-wrapper {
+    background-color: var(--dark-mode-select-bg);
+    border-color: var(--dark-mode-border);
+    box-shadow: none;
+}
+
+.custom-select-wrapper:hover {
+    border-color: var(--primary-color-light);
+}
+
+.custom-select-wrapper.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0,161,0,0.25);
+}
+body.dark-mode .custom-select-wrapper.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0,161,0,0.25);
+}
+
+.custom-select-display {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    min-height: 38px;
+    font-size: var(--font-size-base);
+    color: var(--text-color-dark);
+    position: relative;
+}
+
+body.dark-mode .custom-select-display {
+    color: var(--dark-mode-text-color);
+}
+
+.custom-select-options {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius-small);
+    background-color: var(--bg-color-faded-light);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: var(--box-shadow-modal);
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity var(--transition-medium), transform var(--transition-medium);
+}
+
+body.dark-mode .custom-select-options {
+    background-color: var(--dark-mode-select-bg);
+    border-color: var(--dark-mode-border);
+    box-shadow: var(--box-shadow-dark);
+}
+
+.custom-select-options.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.custom-league-option,
+.custom-team-option {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+    color: var(--text-color-dark);
+}
+
+body.dark-mode .custom-league-option,
+body.dark-mode .custom-team-option {
+    color: var(--dark-mode-text-color);
+}
+
+.custom-league-option:hover,
+.custom-team-option:hover {
+    background-color: var(--bg-color-extra-faded-light);
+}
+
+body.dark-mode .custom-league-option:hover,
+body.dark-mode .custom-team-option:hover {
+    background-color: var(--dark-mode-lighter-bg);
+}
+
+.league-logo-small,
+.team-logo-small {
+    width: 28px;
+    height: 28px;
+    margin-right: 10px;
+    object-fit: contain;
+    border-radius: 2px;
+}
+
+.dropdown-arrow {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    transition: transform var(--transition-fast);
+    font-size: 0.5rem;
+    font-weight: 600;
+}
+
+body.dark-mode .dropdown-arrow {
+    color: var(--dark-mode-text-faded);
+}
+
+.custom-select-wrapper.active .dropdown-arrow {
+    transform: translateY(-50%) rotate(180deg);
+}
