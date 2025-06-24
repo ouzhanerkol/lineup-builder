@@ -1,0 +1,230 @@
+<div id="loading-spinner">Yükleniyor...</div>
+
+<div class="grid-layout">
+    <section class="bench-section" id="benchSection">
+        <h3>Yedekler</h3>
+        <div class="bench-list">
+            <div class="bench-slot" id="bench-slot-1"></div>
+            <div class="bench-slot" id="bench-slot-2"></div>
+            <div class="bench-slot" id="bench-slot-3"></div>
+            <div class="bench-slot" id="bench-slot-4"></div>
+            <div class="bench-slot" id="bench-slot-5"></div>
+            <div class="bench-slot" id="bench-slot-6"></div>
+            <div class="bench-slot" id="bench-slot-7"></div>
+            <div class="bench-slot" id="bench-slot-8"></div>
+            <div class="bench-slot" id="bench-slot-9"></div>
+            <div class="bench-slot" id="bench-slot-10"></div>
+            <div class="bench-slot" id="bench-slot-11"></div>
+            <div class="bench-slot" id="bench-slot-12"></div>
+        </div>
+    </section>
+
+    <button class="bench-section-toggle-btn" id="benchToggleBtn">
+        Yedekler
+    </button>
+
+    <div class="field-section">
+        <div id="pitch-container" class="pitch-layout">
+            <div id="goalkeeper-zone" class="pitch-zone zone-gk">
+                <div id="position-gk" class="position-slot"></div>
+            </div>
+
+            <div id="zone-row-1" class="pitch-zone zone-row-defense">
+                <div id="position-1-1" class="position-slot"></div>
+                <div id="position-1-2" class="position-slot"></div>
+                <div id="position-1-3" class="position-slot"></div>
+                <div id="position-1-4" class="position-slot"></div>
+                <div id="position-1-5" class="position-slot"></div>
+            </div>
+
+            <div id="zone-row-2" class="pitch-zone zone-row-def-mid">
+                <div id="position-2-1" class="position-slot"></div>
+                <div id="position-2-2" class="position-slot"></div>
+                <div id="position-2-3" class="position-slot"></div>
+                <div id="position-2-4" class="position-slot"></div>
+                <div id="position-2-5" class="position-slot"></div>
+            </div>
+
+            <div id="zone-row-3" class="pitch-zone zone-row-midfield">
+                <div id="position-3-1" class="position-slot"></div>
+                <div id="position-3-2" class="position-slot"></div>
+                <div id="position-3-3" class="position-slot"></div>
+                <div id="position-3-4" class="position-slot"></div>
+                <div id="position-3-5" class="position-slot"></div>
+            </div>
+
+            <div id="zone-row-4" class="pitch-zone zone-row-att-mid">
+                <div id="position-4-1" class="position-slot"></div>
+                <div id="position-4-2" class="position-slot"></div>
+                <div id="position-4-3" class="position-slot"></div>
+                <div id="position-4-4" class="position-slot"></div>
+                <div id="position-4-5" class="position-slot"></div>
+            </div>
+
+            <div id="zone-row-5" class="pitch-zone zone-row-forward">
+                <div id="position-5-1" class="position-slot"></div>
+                <div id="position-5-2" class="position-slot"></div>
+                <div id="position-5-3" class="position-slot"></div>
+                <div id="position-5-4" class="position-slot"></div>
+                <div id="position-5-5" class="position-slot"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-panel" id="controlPanel">
+        <div class="tab-header">
+            <button class="tab-btn active" data-tab="style"><span>Panel</span></button>
+            <button class="tab-btn" data-tab="players"><span>Oyuncular</span></button>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-panel active" id="style">
+                <div class="form-group">
+                    <label for="league-select">Lig</label>
+                    <div class="custom-select-wrapper">
+                        <div id="custom-league-select-display" class="custom-select-display">
+                            <i class="fas fa-chevron-down dropdown-arrow"></i></div>
+                        <div id="custom-league-select-options" class="custom-select-options"></div>
+                        <select id="league-select" style="display: none;"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="team-select">Takım</label>
+                    <div class="custom-select-wrapper">
+                        <div id="custom-team-select-display" class="custom-select-display">
+                            <i class="fas fa-chevron-down dropdown-arrow"></i></div>
+                        <div id="custom-team-select-options" class="custom-select-options"></div>
+                        <select id="team-select" style="display: none;"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="formation-select">Formasyon</label>
+                    <select id="formation-select">
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="team-name">Takım İsmi</label>
+                    <input type="text" id="team-name">
+                </div>
+
+                <div class="button-group">
+                    <!-- Add the save button again when an account future done -->
+                    <!-- <button class="btn save-btn">Save</button> -->
+                    <button class="btn share-btn">Paylaş</button>
+                </div>
+            </div>
+
+            <div class="tab-panel" id="players">
+                <div class="control-player-list">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="control-panel-toggle-btn" id="controlPanelToggleBtn">
+        Kontrol Paneli
+    </button>
+
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Oyuncu / Profil Seçimi</h3>
+
+            <div class="search-container">
+                <input type="text" id="playerSearchInput" placeholder="Oyuncu Ara...">
+                <div id="playerSearchResults">
+                </div>
+            </div>
+
+            <div class="modal-tabs">
+                <button id="playersTabBtn" class="modal-tab-btn active">Oyuncular</button>
+                <button id="rolesTabBtn" class="modal-tab-btn">Profiller</button>
+            </div>
+
+            <div class="modal-body-scroll-wrapper">
+                <div id="playerListSection">
+                    <div class="modal-player-category">
+                        <h4>Kaleci</h4>
+                        <div class="modal-player-list goalkeepers"></div>
+                    </div>
+                    <div class="modal-player-category">
+                        <h4>Defans</h4>
+                        <div class="modal-player-list defenders"></div>
+                    </div>
+                    <div class="modal-player-category">
+                        <h4>Orta Saha</h4>
+                        <div class="modal-player-list midfielders"></div>
+                    </div>
+                    <div class="modal-player-category">
+                        <h4>Forvet</h4>
+                        <div class="modal-player-list forwards"></div>
+                    </div>
+                </div>
+
+                <div id="playerRolesSection" style="display: none;">
+                    <div class="modal-profile-category">
+                        <h4 class="profile-section-header" data-target="profile-goalkeepers-list">
+                            Kaleci Profilleri <span class="toggle-icon">+</span>
+                        </h4>
+                        <div id="profile-goalkeepers-list"
+                             class="modal-profile-list profile-goalkeepers active-list"></div>
+                    </div>
+                    <div class="modal-profile-category">
+                        <h4 class="profile-section-header" data-target="profile-center-backs-list">
+                            Stoper Profilleri <span class="toggle-icon">+</span>
+                        </h4>
+                        <div id="profile-center-backs-list"
+                             class="modal-profile-list profile-center-backs active-list"></div>
+                    </div>
+                    <div class="modal-profile-category">
+                        <h4 class="profile-section-header" data-target="profile-full-backs-list">
+                            Bek Profilleri <span class="toggle-icon">+</span>
+                        </h4>
+                        <div id="profile-full-backs-list"
+                             class="modal-profile-list profile-full-backs active-list"></div>
+                    </div>
+                    <div class="modal-profile-category">
+                        <h4 class="profile-section-header" data-target="profile-midfielders-list">
+                            Orta Saha Profilleri <span class="toggle-icon">+</span>
+                        </h4>
+                        <div id="profile-midfielders-list"
+                             class="modal-profile-list profile-midfielders active-list"></div>
+                    </div>
+                    <div class="modal-profile-category">
+                        <h4 class="profile-section-header" data-target="profile-wingers-list">
+                            Kanat Profilleri <span class="toggle-icon">+</span>
+                        </h4>
+                        <div id="profile-wingers-list" class="modal-profile-list profile-wingers active-list"></div>
+                    </div>
+                    <div class="modal-profile-category">
+                        <h4 class="profile-section-header" data-target="profile-forwards-list">
+                            Forvet Profilleri <span class="toggle-icon">+</span>
+                        </h4>
+                        <div id="profile-forwards-list" class="modal-profile-list profile-forwards active-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="shareModal" class="modal">
+        <div class="modal-content share-modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Takımını Paylaş</h3>
+            <div class="share-options-container">
+                <div id="generatedImageView" class="generated-image-preview">
+                    <img src="" alt="Generated Formation Image" style="max-width: 100%; height: auto; display: block;">
+                </div>
+                <div class="share-buttons-wrapper">
+                    <button id="downloadImageBtn" class="btn share-action-btn">Kaydet</button>
+                    <button id="twitterShareBtn" class="btn share-action-btn">X'te paylaş</button>
+                    <button id="facebookShareBtn" class="btn share-action-btn">Facebook'ta paylaş</button>
+                    <button id="copyImageLinkBtn" class="btn share-action-btn">Fotoğrafı kopyala</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
